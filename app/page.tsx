@@ -6,7 +6,6 @@ import {
   Cookie,
   Gift,
   Heart,
-  Instagram,
   Sparkles,
   Star,
 } from "lucide-react";
@@ -141,27 +140,18 @@ export default function Home() {
 
       <section id="sabores" className="px-5 py-16 md:px-12 lg:px-20">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-            <div>
-              <p className="text-sm uppercase tracking-[0.35em] text-[#D8A85B]">
-                Menú inicial
-              </p>
-              <h2 className="mt-3 text-4xl font-black md:text-5xl">
-                Sabores destacados
-              </h2>
-            </div>
+          <p className="text-sm uppercase tracking-[0.35em] text-[#D8A85B]">
+            Menú inicial
+          </p>
+          <h2 className="mt-3 text-4xl font-black md:text-5xl">
+            Sabores destacados
+          </h2>
 
-            <p className="max-w-xl text-[#FFF3EE]/65">
-              Cada sabor será evaluado con opiniones reales para definir los
-              favoritos del lanzamiento.
-            </p>
-          </div>
-
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {flavors.map((flavor) => (
               <div
                 key={flavor.name}
-                className="group rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/80 p-6 shadow-xl shadow-black/20 transition hover:-translate-y-1 hover:border-[#F2B6AD]/40"
+                className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/80 p-6 shadow-xl shadow-black/20 transition hover:-translate-y-1 hover:border-[#F2B6AD]/40"
               >
                 <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F2B6AD] text-[#0B0706]">
                   <Cookie />
@@ -242,8 +232,8 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-2 text-[#F2B6AD]">
-            <Instagram size={20} />
-            <span className="font-bold">@ianis_bakery</span>
+            <span className="text-xl">📸</span>
+            <span className="font-bold">Instagram @ianis_bakery</span>
           </div>
         </div>
       </footer>
