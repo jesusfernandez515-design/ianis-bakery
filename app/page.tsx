@@ -46,6 +46,7 @@ export default function Home() {
                 className="rounded-full border border-[#E8A39A]/30 object-cover"
                 priority
               />
+
               <div>
                 <p className="text-lg font-black leading-none text-[#F2B6AD]">
                   Ianis Bakery
@@ -127,6 +128,7 @@ export default function Home() {
                       <Star key={star} fill="currentColor" size={20} />
                     ))}
                   </div>
+
                   <p className="mt-3 font-bold text-[#FFF3EE]">
                     “Una marca dulce, elegante y hecha para crear momentos
                     especiales.”
@@ -143,6 +145,7 @@ export default function Home() {
           <p className="text-sm uppercase tracking-[0.35em] text-[#D8A85B]">
             Menú inicial
           </p>
+
           <h2 className="mt-3 text-4xl font-black md:text-5xl">
             Sabores destacados
           </h2>
@@ -156,9 +159,11 @@ export default function Home() {
                 <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F2B6AD] text-[#0B0706]">
                   <Cookie />
                 </div>
+
                 <h3 className="text-xl font-black text-[#F2B6AD]">
                   {flavor.name}
                 </h3>
+
                 <p className="mt-3 text-sm leading-6 text-[#FFF3EE]/65">
                   {flavor.desc}
                 </p>
@@ -223,6 +228,7 @@ export default function Home() {
               height={48}
               className="rounded-full object-cover"
             />
+
             <div>
               <p className="font-black text-[#F2B6AD]">Ianis Bakery</p>
               <p className="text-sm text-[#FFF3EE]/55">
@@ -264,7 +270,9 @@ function Feature({
       <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F2B6AD] text-[#0B0706]">
         {icon}
       </div>
+
       <h3 className="text-2xl font-black text-[#F2B6AD]">{title}</h3>
+
       <p className="mt-3 leading-7 text-[#FFF3EE]/65">{desc}</p>
     </div>
   );
