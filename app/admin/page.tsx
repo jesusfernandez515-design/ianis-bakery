@@ -9,6 +9,8 @@ import {
   Cookie,
   DollarSign,
   Heart,
+  Home,
+  QrCode,
   Search,
   Star,
   Trophy,
@@ -47,12 +49,17 @@ type Feedback = {
   comments?: string;
 };
 
+const surveyUrl = "https://ianis-bakery.vercel.app/taste";
+
 export default function AdminDashboardPage() {
   const [feedback, setFeedback] = useState<Feedback[]>([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const q = query(collection(db, "ianisFeedback"), orderBy("createdAt", "desc"));
+    const q = query(
+      collection(db, "ianisFeedback"),
+      orderBy("createdAt", "desc")
+    );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const data = snapshot.docs.map((doc) => ({
@@ -84,7 +91,9 @@ export default function AdminDashboardPage() {
     if (!values.length) return 0;
 
     return Number(
-      (values.reduce((total, value) => total + value, 0) / values.length).toFixed(1)
+      (values.reduce((total, value) => total + value, 0) / values.length).toFixed(
+        1
+      )
     );
   };
 
@@ -101,7 +110,10 @@ export default function AdminDashboardPage() {
   }, [feedback]);
 
   const flavorRanking = useMemo(() => {
-    const map = new Map<string, { flavor: string; total: number; count: number }>();
+    const map = new Map<
+      string,
+      { flavor: string; total: number; count: number }
+    >();
 
     feedback.forEach((item) => {
       const flavor = item.flavor || "Sin sabor";
@@ -152,22 +164,22 @@ export default function AdminDashboardPage() {
       <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(232,163,154,0.20),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(216,168,91,0.14),transparent_35%)]" />
 
       <div className="mx-auto max-w-7xl">
-        <header className="mb-8 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-          <div>
-            <Link
-              href="/"
-              className="mb-5 inline-flex items-center gap-2 text-sm font-bold text-[#F2B6AD]"
-            >
-              <ArrowLeft size={18} />
-              Volver al inicio
-            </Link>
+        <header className="mb-8">
+          <Link
+            href="/"
+            className="mb-5 inline-flex items-center gap-2 text-sm font-bold text-[#F2B6AD]"
+          >
+            <ArrowLeft size={18} />
+            Volver al inicio
+          </Link>
 
+          <div className="flex flex-col gap-6 rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-4">
               <Image
                 src="/logo-ianis.png"
                 alt="Ianis Bakery"
-                width={76}
-                height={76}
+                width={84}
+                height={84}
                 className="rounded-full border border-[#E8A39A]/30 object-cover"
                 priority
               />
@@ -179,17 +191,69 @@ export default function AdminDashboardPage() {
                 <h1 className="mt-2 text-4xl font-black md:text-5xl">
                   Ianis Bakery
                 </h1>
+                <p className="mt-2 text-sm text-[#FFF3EE]/55">
+                  Panel premium para analizar degustaciones y decisiones de venta.
+                </p>
               </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              <QuickLink href="/" icon={<Home />} label="Inicio" />
+              <QuickLink href="/taste" icon={<Cookie />} label="Encuesta" />
+              <QuickLink href="/qr" icon={<QrCode />} label="QR" />
+            </div>
+          </div>
+        </header>
+
+        <section className="mb-8 grid gap-5 lg:grid-cols-3">
+          <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-gradient-to-br from-[#F2B6AD] to-[#D8A85B] p-6 text-[#0B0706] shadow-2xl shadow-[#E8A39A]/20 lg:col-span-2">
+            <p className="text-sm font-black uppercase tracking-[0.3em]">
+              Acceso rápido
+            </p>
+            <h2 className="mt-3 text-3xl font-black md:text-4xl">
+              Comparte el QR de degustación
+            </h2>
+            <p className="mt-3 max-w-2xl text-[#2A1713]/80">
+              Usa esta página para que las personas escaneen, prueben la galleta
+              y dejen su opinión en menos de dos minutos.
+            </p>
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/qr"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#0B0706] px-6 py-4 font-black text-[#FFF3EE]"
+              >
+                <QrCode />
+                Abrir página QR
+              </Link>
+
+              <Link
+                href="/taste"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl border border-[#0B0706]/20 bg-[#FFF3EE]/60 px-6 py-4 font-black text-[#0B0706]"
+              >
+                <Cookie />
+                Abrir encuesta
+              </Link>
             </div>
           </div>
 
-          <Link
-            href="/taste"
-            className="rounded-2xl bg-[#F2B6AD] px-6 py-4 text-center font-black text-[#0B0706]"
-          >
-            Ver encuesta
-          </Link>
-        </header>
+          <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30">
+            <p className="text-sm uppercase tracking-[0.25em] text-[#D8A85B]">
+              Redes
+            </p>
+            <h2 className="mt-2 text-2xl font-black text-[#F2B6AD]">
+              Instagram
+            </h2>
+            <p className="mt-3 text-[#FFF3EE]/60">
+              Usa esta cuenta en stickers, empaques, tarjetas y publicaciones.
+            </p>
+            <div className="mt-5 rounded-2xl border border-[#E8A39A]/15 bg-[#0B0706]/70 p-4">
+              <p className="text-xl font-black text-[#F2B6AD]">
+                @ianis_bakery
+              </p>
+            </div>
+          </div>
+        </section>
 
         <section className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           <StatCard
@@ -263,7 +327,11 @@ export default function AdminDashboardPage() {
                     {priceData.map((_, index) => (
                       <Cell
                         key={index}
-                        fill={["#F2B6AD", "#D8A85B", "#E8A39A", "#FFF3EE"][index % 4]}
+                        fill={
+                          ["#F2B6AD", "#D8A85B", "#E8A39A", "#FFF3EE"][
+                            index % 4
+                          ]
+                        }
                       />
                     ))}
                   </Pie>
@@ -380,6 +448,26 @@ export default function AdminDashboardPage() {
   );
 }
 
+function QuickLink({
+  href,
+  icon,
+  label,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#E8A39A]/15 bg-[#0B0706]/70 px-5 py-4 font-black text-[#F2B6AD] transition hover:bg-[#2A1713]"
+    >
+      {icon}
+      {label}
+    </Link>
+  );
+}
+
 function StatCard({
   icon,
   label,
@@ -428,4 +516,4 @@ function Empty({ text }: { text: string }) {
       <p className="text-[#FFF3EE]/55">{text}</p>
     </div>
   );
-      }
+}
