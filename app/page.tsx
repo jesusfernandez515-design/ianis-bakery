@@ -6,6 +6,7 @@ import {
   Cookie,
   Gift,
   Heart,
+  ShoppingBag,
   Sparkles,
   Star,
 } from "lucide-react";
@@ -13,125 +14,150 @@ import {
 const flavors = [
   {
     name: "Nutella Supreme",
-    desc: "Galleta gourmet rellena con Nutella cremosa hasta el centro.",
-  },
-  {
-    name: "Double Chocolate Lava",
-    desc: "Chocolate intenso, centro suave y textura de brownie premium.",
-  },
-  {
-    name: "Dulce de Leche Dream",
-    desc: "Dulce de leche artesanal con una mordida suave y elegante.",
+    desc: "Galleta con chispas de chocolate rellena de Nutella y cubierta con más Nutella.",
+    price: "$4.99",
+    image: "/cookies/menu-board.png",
   },
   {
     name: "Peanut Butter Explosion",
-    desc: "Mantequilla de maní cremosa con balance perfecto de dulzura.",
+    desc: "Cookie suave con mantequilla de maní cremosa y chips de chocolate.",
+    price: "$4.99",
+    image: "/cookies/peanut-butter.png",
+  },
+  {
+    name: "Double Chocolate Lava",
+    desc: "Chocolate intenso, centro suave y relleno de chocolate fundido.",
+    price: "$4.99",
+    image: "/cookies/double-chocolate.png",
+  },
+  {
+    name: "Dulce de Leche Dream",
+    desc: "Dulce de leche artesanal con una mordida suave, cremosa y deliciosa.",
+    price: "$4.99",
+    image: "/cookies/dulce-leche.png",
+  },
+  {
+    name: "Marshmallow Chocolate",
+    desc: "Rellena de malvavisco suave y trozos de chocolate irresistibles.",
+    price: "$5.49",
+    image: "/cookies/marshmallow.png",
+  },
+  {
+    name: "Coconut Paradise",
+    desc: "Chocolate relleno de coco cremoso y cubierta con coco rallado premium.",
+    price: "$5.49",
+    image: "/cookies/coconut.png",
   },
 ];
 
 export default function Home() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[#050202] text-[#FFF3EE]">
-      <section className="relative px-5 py-6 md:px-12 lg:px-20">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(242,182,173,0.22),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(216,168,91,0.16),transparent_38%)]" />
+    <main className="min-h-screen overflow-hidden bg-[#120704] text-[#FFF6EF]">
+      <section className="relative min-h-screen px-5 py-6 md:px-12 lg:px-20">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,172,177,0.24),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(210,142,71,0.24),transparent_38%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,7,4,0.20),#120704_88%)]" />
 
         <div className="relative mx-auto max-w-7xl">
-          <nav className="flex items-center justify-between rounded-full border border-[#E8A39A]/20 bg-[#120706]/80 px-4 py-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
+          <nav className="flex items-center justify-between rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/80 px-4 py-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
             <Link href="/" className="flex items-center gap-3">
               <Image
                 src="/logo-ianis.png"
                 alt="Ianis Bakery"
                 width={64}
                 height={64}
-                className="rounded-full border-2 border-[#FFF3EE]/80 object-contain shadow-[0_0_22px_rgba(242,182,173,0.35)]"
+                className="rounded-full border-2 border-[#FFF6EF]/80 object-contain shadow-[0_0_24px_rgba(245,172,177,0.45)]"
                 priority
               />
 
               <div>
-                <p className="text-lg font-black leading-none text-[#F2B6AD]">
+                <p className="text-lg font-black leading-none text-[#F5ACB1]">
                   Ianis Bakery
                 </p>
-                <p className="text-xs tracking-wide text-[#D8A85B]">
+                <p className="text-xs tracking-wide text-[#D99B55]">
                   Cookies gourmet
                 </p>
               </div>
             </Link>
 
             <Link
-              href="/taste"
-              className="rounded-full bg-[#F2B6AD] px-5 py-3 text-sm font-black text-[#0B0706] shadow-lg shadow-[#E8A39A]/20 transition hover:bg-[#FFF3EE]"
+              href="/cart"
+              className="rounded-full bg-[#F5ACB1] px-5 py-3 text-sm font-black text-[#120704] shadow-lg shadow-[#F5ACB1]/20 transition hover:bg-[#FFF6EF]"
             >
-              Dar opinión
+              Ordenar
             </Link>
           </nav>
 
-          <div className="grid gap-12 py-14 md:grid-cols-2 md:items-center md:py-24">
+          <div className="grid gap-12 py-14 lg:grid-cols-[1fr_560px] lg:items-center lg:py-24">
             <div>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#E8A39A]/25 bg-[#1A0D0B]/70 px-4 py-2 text-sm text-[#F2B6AD] backdrop-blur">
-                <Sparkles size={16} />
-                Rellenas hasta el centro
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/75 px-5 py-3 text-sm font-black text-[#F5ACB1] backdrop-blur">
+                <Sparkles size={17} />
+                Frescas todos los días
               </div>
 
-              <h1 className="text-5xl font-black leading-[0.95] tracking-tight md:text-7xl">
-                Cookies gourmet hechas con amor.
+              <h1 className="max-w-4xl text-6xl font-black leading-[0.9] tracking-tight md:text-8xl">
+                Cookies gourmet rellenas hasta el centro.
               </h1>
 
-              <p className="mt-6 max-w-xl text-lg leading-8 text-[#FFF3EE]/75">
-                Ianis Bakery crea galletas artesanales premium con sabores
-                intensos, textura suave y rellenos que llegan hasta el centro.
+              <p className="mt-7 max-w-2xl text-xl leading-9 text-[#FFF6EF]/76">
+                Ianis Bakery crea galletas artesanales premium con rellenos
+                cremosos, sabores intensos y una presentación hecha para
+                enamorar desde la primera mordida.
               </p>
 
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <div className="mt-9 flex flex-col gap-4 sm:flex-row">
                 <Link
-                  href="/taste"
-                  className="group inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F2B6AD] px-8 py-5 text-lg font-black text-[#0B0706] shadow-2xl shadow-[#E8A39A]/20 transition hover:bg-[#FFF3EE]"
+                  href="/menu"
+                  className="group inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704] shadow-2xl shadow-[#F5ACB1]/20 transition hover:bg-[#FFF6EF]"
                 >
-                  Probar y dejar mi opinión
+                  Ver menú premium
                   <ArrowRight className="transition group-hover:translate-x-1" />
                 </Link>
 
-                <a
-                  href="#sabores"
-                  className="inline-flex items-center justify-center rounded-2xl border border-[#E8A39A]/20 bg-[#1A0D0B]/70 px-8 py-5 font-bold text-[#FFF3EE] backdrop-blur transition hover:bg-[#2A1713]"
+                <Link
+                  href="/taste"
+                  className="inline-flex items-center justify-center rounded-2xl border border-[#F5ACB1]/25 bg-[#210D08]/75 px-8 py-5 font-black text-[#FFF6EF] backdrop-blur transition hover:bg-[#35160F]"
                 >
-                  Ver sabores
-                </a>
+                  Dejar opinión
+                </Link>
               </div>
 
-              <div className="mt-10 grid max-w-xl grid-cols-3 gap-3">
+              <div className="mt-10 grid max-w-2xl grid-cols-3 gap-3">
                 <Stat value="100%" label="Artesanal" />
-                <Stat value="Gourmet" label="Calidad" />
+                <Stat value="6" label="Sabores" />
                 <Stat value="QR" label="Encuesta" />
               </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-[520px]">
-              <div className="absolute -inset-8 rounded-full bg-[#F2B6AD]/20 blur-3xl" />
+            <div className="relative mx-auto w-full max-w-[560px]">
+              <div className="absolute -inset-10 rounded-full bg-[#F5ACB1]/20 blur-3xl" />
+              <div className="absolute -right-8 -top-8 hidden rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/85 px-7 py-5 text-center shadow-2xl backdrop-blur md:block">
+                <p className="text-sm font-black uppercase tracking-[0.25em] text-[#D99B55]">
+                  Nueva
+                </p>
+                <p className="text-xl font-black text-[#F5ACB1]">
+                  Doble Chocolate
+                </p>
+              </div>
 
-              <div className="relative rounded-[3rem] border border-[#E8A39A]/20 bg-[#1A0D0B]/72 p-5 shadow-2xl shadow-black/50 backdrop-blur-xl">
-                <div className="rounded-[2.5rem] bg-gradient-to-br from-[#F2B6AD] via-[#D8A85B] to-[#2A1713] p-3">
-                  <div className="rounded-[2.1rem] bg-[#050202] p-5">
-                    <Image
-                      src="/logo-ianis.png"
-                      alt="Logo oficial de Ianis Bakery"
-                      width={900}
-                      height={900}
-                      className="aspect-square w-full rounded-[1.7rem] object-contain bg-[#050202] shadow-[0_0_45px_rgba(242,182,173,0.32)]"
-                      priority
-                    />
-                  </div>
-                </div>
+              <div className="relative overflow-hidden rounded-[3rem] border border-[#F5ACB1]/25 bg-[#210D08]/85 p-4 shadow-2xl shadow-black/50 backdrop-blur-xl">
+                <Image
+                  src="/cookies/double-chocolate.png"
+                  alt="Cookie doble chocolate Ianis Bakery"
+                  width={900}
+                  height={1200}
+                  className="aspect-[4/5] w-full rounded-[2.4rem] object-cover object-center shadow-[0_0_50px_rgba(245,172,177,0.28)]"
+                  priority
+                />
 
-                <div className="mt-5 rounded-[2rem] border border-[#E8A39A]/20 bg-[#050202]/85 p-5">
-                  <div className="flex items-center gap-2 text-[#D8A85B]">
+                <div className="absolute bottom-8 left-8 right-8 rounded-[2rem] border border-[#F5ACB1]/20 bg-[#120704]/82 p-5 backdrop-blur-xl">
+                  <div className="flex items-center gap-2 text-[#D99B55]">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star key={star} fill="currentColor" size={20} />
                     ))}
                   </div>
 
-                  <p className="mt-3 font-bold text-[#FFF3EE]">
-                    “Una marca dulce, elegante y hecha para crear momentos
-                    especiales.”
+                  <p className="mt-3 text-lg font-black text-[#FFF6EF]">
+                    “Pura tentación en cada bocado.”
                   </p>
                 </div>
               </div>
@@ -140,34 +166,60 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="sabores" className="px-5 py-16 md:px-12 lg:px-20">
+      <section id="sabores" className="px-5 py-18 md:px-12 lg:px-20">
         <div className="mx-auto max-w-7xl">
-          <p className="text-sm uppercase tracking-[0.35em] text-[#D8A85B]">
-            Menú inicial
-          </p>
+          <div className="mb-10 text-center">
+            <p className="text-sm uppercase tracking-[0.4em] text-[#D99B55]">
+              Nuestros sabores
+            </p>
 
-          <h2 className="mt-3 text-4xl font-black md:text-5xl">
-            Sabores destacados
-          </h2>
+            <h2 className="mt-4 text-5xl font-black md:text-7xl">
+              Menú gourmet
+            </h2>
 
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-[#FFF6EF]/65">
+              Sabores diseñados para vender, regalar y crear una experiencia
+              dulce con apariencia premium.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {flavors.map((flavor) => (
-              <div
+              <article
                 key={flavor.name}
-                className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/80 p-6 shadow-xl shadow-black/20 transition hover:-translate-y-1 hover:border-[#F2B6AD]/40"
+                className="group overflow-hidden rounded-[2.5rem] border border-[#E6B47C]/35 bg-[#FFF6EF] text-[#2A120B] shadow-2xl shadow-black/30 transition hover:-translate-y-1"
               >
-                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F2B6AD] text-[#0B0706]">
-                  <Cookie />
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image
+                    src={flavor.image}
+                    alt={flavor.name}
+                    width={900}
+                    height={900}
+                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute left-4 top-4 rounded-full bg-[#C95867] px-4 py-2 text-sm font-black text-white shadow-lg">
+                    {flavor.price}
+                  </div>
                 </div>
 
-                <h3 className="text-xl font-black text-[#F2B6AD]">
-                  {flavor.name}
-                </h3>
+                <div className="p-6 text-center">
+                  <h3 className="text-2xl font-black uppercase tracking-tight">
+                    {flavor.name}
+                  </h3>
 
-                <p className="mt-3 text-sm leading-6 text-[#FFF3EE]/65">
-                  {flavor.desc}
-                </p>
-              </div>
+                  <p className="mt-3 min-h-16 text-sm leading-6 text-[#2A120B]/75">
+                    {flavor.desc}
+                  </p>
+
+                  <Link
+                    href="/cart"
+                    className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-[#C95867] px-6 py-3 font-black text-white shadow-xl transition hover:bg-[#A74250]"
+                  >
+                    <ShoppingBag size={18} />
+                    Ordenar
+                  </Link>
+                </div>
+              </article>
             ))}
           </div>
         </div>
@@ -178,47 +230,66 @@ export default function Home() {
           <Feature
             icon={<Heart />}
             title="Hechas con amor"
-            desc="Cada galleta está pensada para sentirse especial desde la primera mordida."
+            desc="Cada cookie está pensada para sentirse especial desde la primera mordida."
           />
           <Feature
             icon={<BadgeCheck />}
             title="Cookies gourmet"
-            desc="Sabores intensos, presentación premium y rellenos hasta el centro."
+            desc="Sabores intensos, rellenos cremosos y presentación lista para vender."
           />
           <Feature
             icon={<Gift />}
             title="Listas para regalar"
-            desc="Una experiencia dulce ideal para muestras, pedidos y detalles especiales."
+            desc="Perfectas para cajas, degustaciones, detalles y pedidos especiales."
           />
         </div>
       </section>
 
       <section className="px-5 py-16 md:px-12 lg:px-20">
-        <div className="mx-auto max-w-7xl rounded-[2.5rem] border border-[#E8A39A]/25 bg-gradient-to-br from-[#F2B6AD] to-[#D8A85B] p-8 text-[#0B0706] shadow-2xl shadow-[#E8A39A]/20 md:p-12">
-          <p className="text-sm font-black uppercase tracking-[0.3em]">
-            Degustación activa
-          </p>
+        <div className="mx-auto grid max-w-7xl gap-8 rounded-[3rem] border border-[#F5ACB1]/25 bg-[#210D08]/88 p-6 shadow-2xl shadow-black/40 md:p-10 lg:grid-cols-[1fr_420px] lg:items-center">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.4em] text-[#D99B55]">
+              Caja degustación
+            </p>
 
-          <h2 className="mt-4 max-w-3xl text-4xl font-black md:text-6xl">
-            ¿Probaste una galleta de Ianis Bakery?
-          </h2>
+            <h2 className="mt-4 max-w-3xl text-5xl font-black leading-tight md:text-6xl">
+              Prueba los 6 sabores y elige tu favorito.
+            </h2>
 
-          <p className="mt-5 max-w-2xl text-lg text-[#2A1713]/80">
-            Contesta la encuesta en menos de dos minutos y ayuda a definir los
-            sabores, precios y presentación oficial.
-          </p>
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-[#FFF6EF]/70">
+              Una caja perfecta para validar sabores, compartir con familia o
+              regalar una experiencia dulce premium.
+            </p>
 
-          <Link
-            href="/taste"
-            className="mt-8 inline-flex items-center gap-3 rounded-2xl bg-[#0B0706] px-8 py-5 text-lg font-black text-[#FFF3EE]"
-          >
-            Contestar encuesta
-            <ArrowRight />
-          </Link>
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <Link
+                href="/cart"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704]"
+              >
+                Ordenar caja
+                <ArrowRight />
+              </Link>
+
+              <Link
+                href="/qr"
+                className="inline-flex items-center justify-center rounded-2xl border border-[#F5ACB1]/25 bg-[#120704]/70 px-8 py-5 font-black text-[#FFF6EF]"
+              >
+                Compartir QR
+              </Link>
+            </div>
+          </div>
+
+          <Image
+            src="/cookies/menu-board-2.png"
+            alt="Menú premium Ianis Bakery"
+            width={900}
+            height={1200}
+            className="aspect-[4/5] w-full rounded-[2.3rem] object-cover shadow-2xl"
+          />
         </div>
       </section>
 
-      <footer className="border-t border-[#E8A39A]/10 px-5 py-10 md:px-12 lg:px-20">
+      <footer className="border-t border-[#F5ACB1]/10 px-5 py-10 md:px-12 lg:px-20">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
             <Image
@@ -226,18 +297,18 @@ export default function Home() {
               alt="Ianis Bakery"
               width={56}
               height={56}
-              className="rounded-full border border-[#FFF3EE]/70 object-contain"
+              className="rounded-full border border-[#FFF6EF]/70 object-contain"
             />
 
             <div>
-              <p className="font-black text-[#F2B6AD]">Ianis Bakery</p>
-              <p className="text-sm text-[#FFF3EE]/55">
+              <p className="font-black text-[#F5ACB1]">Ianis Bakery</p>
+              <p className="text-sm text-[#FFF6EF]/55">
                 Cookies gourmet · Rellenas hasta el centro
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-[#F2B6AD]">
+          <div className="flex items-center gap-2 text-[#F5ACB1]">
             <span className="text-xl">📸</span>
             <span className="font-bold">Instagram @ianis_bakery</span>
           </div>
@@ -249,9 +320,9 @@ export default function Home() {
 
 function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-2xl border border-[#E8A39A]/15 bg-[#1A0D0B]/70 p-4 backdrop-blur">
-      <p className="text-xl font-black text-[#F2B6AD]">{value}</p>
-      <p className="mt-1 text-xs text-[#FFF3EE]/55">{label}</p>
+    <div className="rounded-2xl border border-[#F5ACB1]/15 bg-[#210D08]/70 p-4 backdrop-blur">
+      <p className="text-2xl font-black text-[#F5ACB1]">{value}</p>
+      <p className="mt-1 text-xs text-[#FFF6EF]/55">{label}</p>
     </div>
   );
 }
@@ -266,14 +337,14 @@ function Feature({
   desc: string;
 }) {
   return (
-    <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/80 p-7 shadow-xl shadow-black/20">
-      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F2B6AD] text-[#0B0706]">
+    <div className="rounded-[2rem] border border-[#F5ACB1]/15 bg-[#210D08]/80 p-7 shadow-xl shadow-black/20">
+      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F5ACB1] text-[#120704]">
         {icon}
       </div>
 
-      <h3 className="text-2xl font-black text-[#F2B6AD]">{title}</h3>
+      <h3 className="text-2xl font-black text-[#F5ACB1]">{title}</h3>
 
-      <p className="mt-3 leading-7 text-[#FFF3EE]/65">{desc}</p>
+      <p className="mt-3 leading-7 text-[#FFF6EF]/65">{desc}</p>
     </div>
   );
 }
