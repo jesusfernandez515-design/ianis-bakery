@@ -31,19 +31,19 @@ const flavors = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[#0B0706] text-[#FFF3EE]">
+    <main className="min-h-screen overflow-hidden bg-[#050202] text-[#FFF3EE]">
       <section className="relative px-5 py-6 md:px-12 lg:px-20">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(232,163,154,0.22),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(216,168,91,0.18),transparent_36%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(242,182,173,0.22),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(216,168,91,0.16),transparent_38%)]" />
 
         <div className="relative mx-auto max-w-7xl">
-          <nav className="flex items-center justify-between rounded-full border border-[#E8A39A]/20 bg-[#1A0D0B]/80 px-4 py-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
+          <nav className="flex items-center justify-between rounded-full border border-[#E8A39A]/20 bg-[#120706]/80 px-4 py-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
             <Link href="/" className="flex items-center gap-3">
               <Image
                 src="/logo-ianis.png"
                 alt="Ianis Bakery"
-                width={56}
-                height={56}
-                className="rounded-full border border-[#E8A39A]/30 object-cover"
+                width={64}
+                height={64}
+                className="rounded-full border-2 border-[#FFF3EE]/80 object-contain shadow-[0_0_22px_rgba(242,182,173,0.35)]"
                 priority
               />
 
@@ -72,7 +72,7 @@ export default function Home() {
                 Rellenas hasta el centro
               </div>
 
-              <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-[#FFF3EE] md:text-7xl">
+              <h1 className="text-5xl font-black leading-[0.95] tracking-tight md:text-7xl">
                 Cookies gourmet hechas con amor.
               </h1>
 
@@ -105,24 +105,24 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative">
-              <div className="absolute -inset-6 rounded-[3rem] bg-[#E8A39A]/20 blur-3xl" />
+            <div className="relative mx-auto w-full max-w-[520px]">
+              <div className="absolute -inset-8 rounded-full bg-[#F2B6AD]/20 blur-3xl" />
 
-              <div className="relative rounded-[3rem] border border-[#E8A39A]/20 bg-[#1A0D0B]/80 p-5 shadow-2xl shadow-black/50 backdrop-blur-xl">
-                <div className="rounded-[2.4rem] bg-gradient-to-br from-[#F2B6AD] via-[#D8A85B] to-[#2A1713] p-4">
-                  <div className="rounded-[2rem] bg-[#0B0706] p-4">
+              <div className="relative rounded-[3rem] border border-[#E8A39A]/20 bg-[#1A0D0B]/72 p-5 shadow-2xl shadow-black/50 backdrop-blur-xl">
+                <div className="rounded-[2.5rem] bg-gradient-to-br from-[#F2B6AD] via-[#D8A85B] to-[#2A1713] p-3">
+                  <div className="rounded-[2.1rem] bg-[#050202] p-5">
                     <Image
                       src="/logo-ianis.png"
                       alt="Logo oficial de Ianis Bakery"
-                      width={720}
-                      height={720}
-                      className="aspect-square w-full rounded-[1.6rem] object-cover shadow-2xl"
+                      width={900}
+                      height={900}
+                      className="aspect-square w-full rounded-[1.7rem] object-contain bg-[#050202] shadow-[0_0_45px_rgba(242,182,173,0.32)]"
                       priority
                     />
                   </div>
                 </div>
 
-                <div className="mt-5 rounded-[2rem] border border-[#E8A39A]/20 bg-[#0B0706]/80 p-5">
+                <div className="mt-5 rounded-[2rem] border border-[#E8A39A]/20 bg-[#050202]/85 p-5">
                   <div className="flex items-center gap-2 text-[#D8A85B]">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star key={star} fill="currentColor" size={20} />
@@ -224,9 +224,9 @@ export default function Home() {
             <Image
               src="/logo-ianis.png"
               alt="Ianis Bakery"
-              width={48}
-              height={48}
-              className="rounded-full object-cover"
+              width={56}
+              height={56}
+              className="rounded-full border border-[#FFF3EE]/70 object-contain"
             />
 
             <div>
