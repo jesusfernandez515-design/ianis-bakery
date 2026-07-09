@@ -2,19 +2,20 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import {
   ArrowLeft,
   CreditCard,
   Gift,
-  Heart,
+  Loader2,
   Minus,
   Plus,
   ShoppingBag,
-  Sparkles,
   Trash2,
   Truck,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { db } from "@/lib/firebase";
 
 type CartItem = {
   id: string;
@@ -63,12 +64,6 @@ const products = [
   },
 ];
 
-const boxes = [
-  { name: "Caja 4 Cookies", qty: 4, price: 18 },
-  { name: "Caja 6 Cookies", qty: 6, price: 26 },
-  { name: "Caja 12 Cookies", qty: 12, price: 49 },
-];
-
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([
     { ...products[2], qty: 1 },
@@ -76,16 +71,21 @@ export default function CartPage() {
   ]);
   const [delivery, setDelivery] = useState<"pickup" | "delivery">("pickup");
   const [coupon, setCoupon] = useState("");
-  const [selectedBox, setSelectedBox] = useState("Caja 6 Cookies");
   const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [note, setNote] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [orderId, setOrderId] = useState("");
 
   const subtotal = useMemo(
     () => items.reduce((sum, item) => sum + item.price * item.qty, 0),
     [items]
   );
 
-  const discount = coupon.trim().toUpperCase() === "IANIS10" ? subtotal * 0.1 : 0;
+  const discount =
+    coupon.trim().toUpperCase() === "IANIS10" ? subtotal * 0.1 : 0;
+
   const deliveryFee = delivery === "delivery" ? 3 : 0;
   const total = subtotal - discount + deliveryFee;
 
@@ -115,21 +115,69 @@ export default function CartPage() {
     setItems((prev) => prev.filter((item) => item.id !== id));
   };
 
+  const createOrder = async () => {
+    if (!customerName || !customerPhone) {
+      alert("Escribe el nombre y teléfono del cliente.");
+      return;
+    }
+
+    if (delivery === "delivery" && !address) {
+      alert("Escribe la dirección para delivery.");
+      return;
+    }
+
+    if (items.length === 0) {
+      alert("Agrega al menos una cookie.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const docRef = await addDoc(collection(db, "orders"), {
+        customerName,
+        customerPhone,
+        address,
+        note,
+        delivery,
+        coupon,
+        items,
+        subtotal,
+        discount,
+        deliveryFee,
+        total,
+        status: "Pendiente",
+        paymentStatus: "Pendiente",
+        source: "website",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+
+      setOrderId(docRef.id);
+      alert("Pedido creado correctamente.");
+    } catch (error) {
+      console.error(error);
+      alert("Error creando el pedido.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const message = encodeURIComponent(
-    `Hola Ianis Bakery 🍪\n\nQuiero hacer un pedido:\n\nCliente: ${
-      customerName || "Sin nombre"
-    }\nCaja: ${selectedBox}\n\n${items
+    `Hola Ianis Bakery 🍪\n\nPedido creado desde la web:\n\nCliente: ${customerName}\nTeléfono: ${customerPhone}\n\n${items
       .map(
         (item) =>
           `• ${item.qty} x ${item.name} - $${(item.qty * item.price).toFixed(2)}`
       )
       .join("\n")}\n\nEntrega: ${
       delivery === "pickup" ? "Recogido" : "Delivery"
-    }\nSubtotal: $${subtotal.toFixed(2)}\nDescuento: $${discount.toFixed(
+    }\nDirección: ${address || "N/A"}\nSubtotal: $${subtotal.toFixed(
       2
-    )}\nDelivery: $${deliveryFee.toFixed(2)}\nTotal: $${total.toFixed(
+    )}\nDescuento: $${discount.toFixed(2)}\nDelivery: $${deliveryFee.toFixed(
       2
-    )}\n\nNota: ${note || "Sin nota"}`
+    )}\nTotal: $${total.toFixed(2)}\n\nNota: ${note || "Sin nota"}\n\nOrder ID: ${
+      orderId || "Pendiente"
+    }`
   );
 
   return (
@@ -138,7 +186,10 @@ export default function CartPage() {
 
       <div className="mx-auto max-w-7xl">
         <nav className="mb-8 flex items-center justify-between rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/80 px-4 py-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
-          <Link href="/menu" className="flex items-center gap-2 font-black text-[#F5ACB1]">
+          <Link
+            href="/menu"
+            className="flex items-center gap-2 font-black text-[#F5ACB1]"
+          >
             <ArrowLeft size={18} />
             Menú
           </Link>
@@ -153,10 +204,10 @@ export default function CartPage() {
           />
 
           <Link
-            href="/taste"
+            href="/shop"
             className="rounded-full bg-[#F5ACB1] px-5 py-3 text-sm font-black text-[#120704]"
           >
-            Opinión
+            Shop
           </Link>
         </nav>
 
@@ -168,60 +219,29 @@ export default function CartPage() {
             </div>
 
             <h1 className="text-5xl font-black leading-[1.02] md:text-7xl">
-              Crea tu caja dulce perfecta.
+              Crea un pedido real.
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-[#FFF6EF]/70">
-              Selecciona sabores, tipo de caja, entrega y envía el pedido directo
-              por WhatsApp con el total calculado automáticamente.
+              Este carrito guarda el pedido en Firebase para que aparezca en el
+              panel administrativo en tiempo real.
             </p>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[420px]">
-            <div className="absolute -inset-8 rounded-full bg-[#F5ACB1]/20 blur-3xl" />
-            <Image
-              src="/cookies/menu-board-2.png"
-              alt="Caja Ianis Bakery"
-              width={900}
-              height={1200}
-              className="relative aspect-[4/5] w-full rounded-[3rem] object-cover shadow-2xl"
-              priority
-            />
-          </div>
+          <Image
+            src="/cookies/menu-board-2.png"
+            alt="Caja Ianis Bakery"
+            width={900}
+            height={1200}
+            className="relative aspect-[4/5] w-full rounded-[3rem] object-cover shadow-2xl"
+            priority
+          />
         </header>
 
         <section className="mt-12 grid gap-8 lg:grid-cols-[1fr_420px]">
           <div className="space-y-8">
             <section className="rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/85 p-6 shadow-2xl shadow-black/30">
-              <div className="mb-6 flex items-center gap-3">
-                <Gift className="text-[#F5ACB1]" />
-                <h2 className="text-3xl font-black">Tipo de caja</h2>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-3">
-                {boxes.map((box) => (
-                  <button
-                    key={box.name}
-                    onClick={() => setSelectedBox(box.name)}
-                    className={`rounded-3xl border p-5 text-left transition ${
-                      selectedBox === box.name
-                        ? "border-[#F5ACB1] bg-[#F5ACB1] text-[#120704]"
-                        : "border-[#F5ACB1]/20 bg-[#120704]/70 text-[#FFF6EF]"
-                    }`}
-                  >
-                    <p className="text-xl font-black">{box.name}</p>
-                    <p className="mt-2 text-sm opacity-80">{box.qty} unidades</p>
-                    <p className="mt-4 text-3xl font-black">${box.price}</p>
-                  </button>
-                ))}
-              </div>
-            </section>
-
-            <section className="rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/85 p-6 shadow-2xl shadow-black/30">
-              <div className="mb-6 flex items-center gap-3">
-                <CookieIcon />
-                <h2 className="text-3xl font-black">Sabores disponibles</h2>
-              </div>
+              <h2 className="mb-6 text-3xl font-black">Sabores disponibles</h2>
 
               <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 {products.map((product) => (
@@ -323,14 +343,28 @@ export default function CartPage() {
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 placeholder="Nombre del cliente"
-                className="w-full rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/75 px-5 py-4 outline-none placeholder:text-[#FFF6EF]/35"
+                className="input"
+              />
+
+              <input
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+                placeholder="Teléfono"
+                className="input"
+              />
+
+              <textarea
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Dirección si es delivery"
+                className="input min-h-24"
               />
 
               <textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                placeholder="Nota especial, mensaje o instrucciones..."
-                className="min-h-28 w-full rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/75 px-5 py-4 outline-none placeholder:text-[#FFF6EF]/35"
+                placeholder="Nota especial o instrucciones..."
+                className="input min-h-28"
               />
 
               <div className="grid grid-cols-2 gap-3">
@@ -361,7 +395,7 @@ export default function CartPage() {
                 value={coupon}
                 onChange={(e) => setCoupon(e.target.value)}
                 placeholder="Cupón: IANIS10"
-                className="w-full rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/75 px-5 py-4 outline-none placeholder:text-[#FFF6EF]/35"
+                className="input"
               />
 
               <div className="space-y-3 rounded-2xl border border-[#F5ACB1]/15 bg-[#120704]/75 p-5">
@@ -373,15 +407,35 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <a
-                href={`https://wa.me/?text=${message}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704]"
+              <button
+                onClick={createOrder}
+                disabled={loading}
+                className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704] disabled:opacity-60"
               >
-                <Truck />
-                Enviar por WhatsApp
-              </a>
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin" />
+                    Creando pedido...
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag />
+                    Crear pedido
+                  </>
+                )}
+              </button>
+
+              {orderId && (
+                <a
+                  href={`https://wa.me/?text=${message}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-8 py-5 text-lg font-black text-white"
+                >
+                  <Truck />
+                  Enviar por WhatsApp
+                </a>
+              )}
 
               <button className="flex w-full items-center justify-center gap-3 rounded-2xl border border-[#F5ACB1]/25 bg-[#120704]/75 px-8 py-5 font-black text-[#FFF6EF]">
                 <CreditCard />
@@ -391,6 +445,22 @@ export default function CartPage() {
           </aside>
         </section>
       </div>
+
+      <style jsx>{`
+        .input {
+          width: 100%;
+          border-radius: 18px;
+          border: 1px solid rgba(245, 172, 177, 0.2);
+          background: rgba(18, 7, 4, 0.75);
+          padding: 15px 16px;
+          color: #fff6ef;
+          outline: none;
+        }
+
+        .input::placeholder {
+          color: rgba(255, 246, 239, 0.35);
+        }
+      `}</style>
     </main>
   );
 }
@@ -406,20 +476,22 @@ function Row({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <span className={highlight ? "text-xl font-black text-[#F5ACB1]" : "text-[#FFF6EF]/60"}>
+      <span
+        className={
+          highlight
+            ? "text-xl font-black text-[#F5ACB1]"
+            : "text-[#FFF6EF]/60"
+        }
+      >
         {label}
       </span>
-      <span className={highlight ? "text-2xl font-black text-[#F5ACB1]" : "font-black"}>
+      <span
+        className={
+          highlight ? "text-2xl font-black text-[#F5ACB1]" : "font-black"
+        }
+      >
         {value}
       </span>
     </div>
   );
-}
-
-function CookieIcon() {
-  return (
-    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F5ACB1] text-[#120704]">
-      🍪
-    </div>
-  );
-      }
+                }
