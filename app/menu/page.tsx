@@ -1,10 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowLeft,
   ArrowRight,
-  Cookie,
-  Flame,
+  Gift,
   Heart,
   ShoppingBag,
   Sparkles,
@@ -13,201 +11,177 @@ import {
 
 const cookies = [
   {
+    id: "nutella",
     name: "Nutella Supreme",
     price: "$4.99",
-    tag: "Más pedido",
-    desc: "Galleta con chispas de chocolate rellena de Nutella y cubierta con más Nutella.",
-    image: "/cookies/menu-board.png",
+    tag: "Nueva",
+    description:
+      "Cookie con chispas de chocolate, rellena de Nutella cremosa y decorada con una galleta.",
+    image: "/nutella.png",
   },
   {
+    id: "peanut-butter",
     name: "Peanut Butter Explosion",
     price: "$4.99",
-    tag: "Nuevo",
-    desc: "Cookie suave con mantequilla de maní cremosa y chips de chocolate.",
-    image: "/cookies/peanut-butter.png",
+    tag: "Especial",
+    description:
+      "Mantequilla de maní cremosa con deliciosas chispas de chocolate.",
+    image: "/peanut-butter.png",
   },
   {
+    id: "double-chocolate",
     name: "Double Chocolate Lava",
     price: "$4.99",
-    tag: "Chocolate lover",
-    desc: "Chocolate intenso, centro suave y relleno de chocolate fundido.",
-    image: "/cookies/double-chocolate.png",
+    tag: "Favorita",
+    description:
+      "Chocolate intenso con chips y un irresistible centro fundido.",
+    image: "/double-chocolate.png",
   },
   {
+    id: "dulce-leche",
     name: "Dulce de Leche Dream",
     price: "$4.99",
     tag: "Premium",
-    desc: "Dulce de leche artesanal con una mordida suave, cremosa y deliciosa.",
-    image: "/cookies/dulce-leche.png",
+    description:
+      "Cookie artesanal rellena de dulce de leche suave y cremoso.",
+    image: "/dulce-leche.png",
   },
   {
+    id: "marshmallow",
     name: "Marshmallow Chocolate",
     price: "$5.49",
-    tag: "Sweet",
-    desc: "Rellena de malvavisco suave y trozos de chocolate irresistibles.",
-    image: "/cookies/marshmallow.png",
+    tag: "Especial",
+    description:
+      "Malvavisco suave con chocolate y una combinación irresistible.",
+    image: "/marshmallow.png",
   },
   {
+    id: "coconut",
     name: "Coconut Paradise",
     price: "$5.49",
     tag: "Tropical",
-    desc: "Chocolate relleno de coco cremoso y cubierta con coco rallado premium.",
-    image: "/cookies/coconut.png",
+    description:
+      "Chocolate relleno de coco cremoso y cubierto con coco rallado.",
+    image: "/coconut.png",
   },
 ];
 
 export default function MenuPage() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[#120704] px-5 py-7 text-[#FFF6EF]">
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,172,177,0.24),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(210,142,71,0.20),transparent_38%)]" />
-
+    <div className="min-h-screen bg-[#120704] px-5 py-10 text-[#FFF6EF] md:px-10 lg:px-20">
       <div className="mx-auto max-w-7xl">
-        <nav className="mb-8 flex items-center justify-between rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/80 px-4 py-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm font-black text-[#F5ACB1]"
-          >
-            <ArrowLeft size={18} />
-            Inicio
-          </Link>
-
-          <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/logo-ianis.png"
-              alt="Ianis Bakery"
-              width={58}
-              height={58}
-              className="rounded-full border border-[#FFF6EF]/70 object-contain shadow-[0_0_24px_rgba(245,172,177,0.35)]"
-              priority
-            />
-            <span className="hidden font-black text-[#F5ACB1] sm:inline">
-              Ianis Bakery
-            </span>
-          </Link>
-
-          <Link
-            href="/cart"
-            className="rounded-full bg-[#F5ACB1] px-5 py-3 text-sm font-black text-[#120704]"
-          >
-            Ordenar
-          </Link>
-        </nav>
-
-        <section className="grid gap-10 lg:grid-cols-[1fr_480px] lg:items-center">
+        <header className="grid gap-10 lg:grid-cols-[1fr_500px] lg:items-center">
           <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/80 px-5 py-3 text-sm font-black text-[#F5ACB1]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/75 px-5 py-3 text-sm font-black text-[#F5ACB1]">
               <Sparkles size={17} />
               Menú gourmet premium
             </div>
 
-            <h1 className="text-6xl font-black leading-[0.93] md:text-8xl">
+            <h1 className="mt-7 text-5xl font-black leading-[0.95] md:text-7xl">
               Elige tu cookie favorita.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-xl leading-9 text-[#FFF6EF]/70">
-              Sabores artesanales, rellenos cremosos y una presentación diseñada
-              para vender, regalar y enamorar desde la primera mordida.
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#FFF6EF]/65">
+              Seis sabores artesanales, rellenos cremosos y una experiencia
+              preparada para enamorar desde la primera mordida.
             </p>
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <Link
-                href="/cart"
-                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704]"
+                href="/box-builder"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 font-black text-[#120704]"
               >
-                Crear mi caja
-                <ArrowRight />
+                Crear caja personalizada
+                <Gift size={20} />
               </Link>
 
               <Link
                 href="/taste"
-                className="inline-flex items-center justify-center rounded-2xl border border-[#F5ACB1]/25 bg-[#210D08]/75 px-8 py-5 font-black text-[#FFF6EF]"
+                className="inline-flex items-center justify-center rounded-2xl border border-[#F5ACB1]/25 px-8 py-5 font-black"
               >
                 Dejar opinión
               </Link>
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[480px]">
-            <div className="absolute -inset-8 rounded-full bg-[#F5ACB1]/20 blur-3xl" />
-            <div className="relative overflow-hidden rounded-[3rem] border border-[#F5ACB1]/25 bg-[#210D08]/85 p-4 shadow-2xl shadow-black/50">
-              <Image
-                src="/cookies/menu-board-2.png"
-                alt="Menú premium Ianis Bakery"
-                width={900}
-                height={1200}
-                className="aspect-[4/5] w-full rounded-[2.4rem] object-cover shadow-[0_0_50px_rgba(245,172,177,0.25)]"
-                priority
-              />
-            </div>
+          <div className="overflow-hidden rounded-[2.7rem] border border-[#F5ACB1]/20 bg-[#210D08] p-3">
+            <Image
+              src="/cookie-boxes.png"
+              alt="Cajas de cookies Ianis Bakery"
+              width={1536}
+              height={1024}
+              className="aspect-[3/2] w-full rounded-[2.2rem] object-cover"
+              priority
+            />
           </div>
-        </section>
+        </header>
 
         <section className="mt-16">
-          <div className="mb-10 text-center">
-            <p className="text-sm uppercase tracking-[0.4em] text-[#D99B55]">
-              Catálogo
+          <div className="text-center">
+            <p className="text-sm font-black uppercase tracking-[0.4em] text-[#D99B55]">
+              Sabores
             </p>
 
-            <h2 className="mt-4 text-5xl font-black md:text-7xl">
+            <h2 className="mt-4 text-4xl font-black md:text-6xl">
               Sabores disponibles
             </h2>
-
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-[#FFF6EF]/65">
-              Precios iniciales sugeridos. Luego se pueden ajustar con los datos
-              reales de la encuesta y el costo de producción.
-            </p>
           </div>
 
-          <div className="grid gap-7 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-10 grid gap-7 md:grid-cols-2 xl:grid-cols-3">
             {cookies.map((cookie) => (
               <article
-                key={cookie.name}
-                className="group overflow-hidden rounded-[2.5rem] border border-[#E6B47C]/35 bg-[#FFF6EF] text-[#2A120B] shadow-2xl shadow-black/30 transition hover:-translate-y-1"
+                key={cookie.id}
+                className="overflow-hidden rounded-[2.3rem] border border-[#E6B47C]/30 bg-[#FFF6EF] text-[#2A120B] shadow-2xl shadow-black/25"
               >
-                <div className="relative aspect-[4/3] overflow-hidden">
+                <div className="relative aspect-[3/4] bg-[#EEDAC8]">
                   <Image
                     src={cookie.image}
                     alt={cookie.name}
-                    width={900}
-                    height={900}
-                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    className="object-cover"
                   />
-
-                  <div className="absolute left-4 top-4 rounded-full bg-[#C95867] px-4 py-2 text-sm font-black text-white shadow-lg">
-                    {cookie.tag}
-                  </div>
-
-                  <div className="absolute right-4 top-4 rounded-full bg-[#120704]/85 px-4 py-2 text-sm font-black text-[#F5ACB1] shadow-lg">
-                    {cookie.price}
-                  </div>
                 </div>
 
-                <div className="p-6 text-center">
-                  <h3 className="text-2xl font-black uppercase tracking-tight">
+                <div className="p-5 md:p-6">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="rounded-full bg-[#C95867] px-4 py-2 text-xs font-black text-white">
+                      {cookie.tag}
+                    </span>
+
+                    <span className="rounded-full bg-[#120704] px-4 py-2 text-sm font-black text-[#F5ACB1]">
+                      {cookie.price}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-5 text-2xl font-black uppercase leading-tight">
                     {cookie.name}
                   </h3>
 
-                  <div className="mt-3 flex items-center justify-center gap-1 text-[#D99B55]">
+                  <div className="mt-3 flex gap-1 text-[#D99B55]">
                     {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} size={16} fill="currentColor" />
+                      <Star key={star} size={15} fill="currentColor" />
                     ))}
                   </div>
 
-                  <p className="mt-4 min-h-20 text-sm leading-6 text-[#2A120B]/75">
-                    {cookie.desc}
+                  <p className="mt-4 text-sm leading-6 text-[#2A120B]/70">
+                    {cookie.description}
                   </p>
 
-                  <div className="mt-6 grid grid-cols-2 gap-3">
-                    <button className="inline-flex items-center justify-center gap-2 rounded-full border border-[#C95867]/25 bg-white px-5 py-3 font-black text-[#C95867]">
-                      <Heart size={18} />
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      className="inline-flex items-center justify-center gap-2 rounded-full border border-[#C95867]/25 px-4 py-3 font-black text-[#C95867]"
+                    >
+                      <Heart size={17} />
                       Favorito
                     </button>
 
                     <Link
                       href="/cart"
-                      className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C95867] px-5 py-3 font-black text-white shadow-xl transition hover:bg-[#A74250]"
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C95867] px-4 py-3 font-black text-white"
                     >
-                      <ShoppingBag size={18} />
+                      <ShoppingBag size={17} />
                       Ordenar
                     </Link>
                   </div>
@@ -217,34 +191,25 @@ export default function MenuPage() {
           </div>
         </section>
 
-        <section className="mt-16 rounded-[3rem] border border-[#F5ACB1]/25 bg-gradient-to-br from-[#F5ACB1] to-[#D99B55] p-8 text-[#120704] shadow-2xl shadow-[#F5ACB1]/20 md:p-12">
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#120704]/12 px-4 py-2 text-sm font-black">
-                <Flame size={18} />
-                Caja recomendada
-              </div>
+        <section className="mt-16 rounded-[2.7rem] bg-gradient-to-br from-[#F5ACB1] to-[#D99B55] p-8 text-[#120704] md:p-12">
+          <h2 className="text-4xl font-black md:text-6xl">
+            Prueba los seis sabores en una caja premium.
+          </h2>
 
-              <h2 className="text-5xl font-black leading-tight md:text-6xl">
-                Prueba los 6 sabores en una caja premium.
-              </h2>
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-[#120704]/70">
+            Combina tus cookies favoritas en una caja de cuatro, seis o doce
+            unidades.
+          </p>
 
-              <p className="mt-4 max-w-2xl text-lg leading-8 text-[#2A120B]/80">
-                Perfecta para degustaciones, regalos o para decidir cuál será tu
-                próxima cookie favorita.
-              </p>
-            </div>
-
-            <Link
-              href="/cart"
-              className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#120704] px-8 py-5 text-lg font-black text-[#FFF6EF]"
-            >
-              Crear caja
-              <Cookie />
-            </Link>
-          </div>
+          <Link
+            href="/box-builder"
+            className="mt-8 inline-flex items-center gap-3 rounded-2xl bg-[#120704] px-8 py-5 font-black text-[#FFF6EF]"
+          >
+            Crear mi caja
+            <ArrowRight />
+          </Link>
         </section>
       </div>
-    </main>
+    </div>
   );
 }
