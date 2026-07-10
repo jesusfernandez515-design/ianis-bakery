@@ -5,14 +5,13 @@ import Link from "next/link";
 import {
   Home,
   Menu,
-  MessageCircle,
   ShoppingBag,
   Star,
   User,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-const desktopLinks = [
+const navigationItems = [
   {
     href: "/",
     label: "Inicio",
@@ -56,14 +55,14 @@ export default function PremiumAppChrome({
 
   return (
     <div className="min-h-screen bg-[#120704]">
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-[#F5ACB1]/10 bg-[#120704]/92 backdrop-blur-xl">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-[#F5ACB1]/10 bg-[#120704]/95 shadow-lg shadow-black/20 backdrop-blur-xl">
         <div className="mx-auto flex h-[78px] max-w-7xl items-center justify-between gap-3 px-4 md:h-[86px] md:px-8">
           <Link href="/" className="flex min-w-0 items-center gap-3">
             <Image
               src="/logo-ianis.png"
               alt="Ianis Bakery"
-              width={54}
-              height={54}
+              width={56}
+              height={56}
               className="h-12 w-12 shrink-0 rounded-full border border-[#FFF6EF]/60 object-cover shadow-[0_0_22px_rgba(245,172,177,0.28)] md:h-14 md:w-14"
               priority
             />
@@ -80,15 +79,19 @@ export default function PremiumAppChrome({
           </Link>
 
           <nav className="hidden items-center gap-1 lg:flex">
-            {desktopLinks.map((item) => (
-              <DesktopNavItem
-                key={item.href}
-                href={item.href}
-                label={item.label}
-                active={isActivePath(pathname, item.href)}
-                icon={<item.icon size={17} />}
-              />
-            ))}
+            {navigationItems.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <DesktopNavItem
+                  key={item.href}
+                  href={item.href}
+                  label={item.label}
+                  active={isActivePath(pathname, item.href)}
+                  icon={<Icon size={17} />}
+                />
+              );
+            })}
           </nav>
 
           <Link
@@ -104,32 +107,24 @@ export default function PremiumAppChrome({
         {children}
       </main>
 
-      <a
-        href={`https://wa.me/?text=${encodeURIComponent(
-          "Hola Ianis Bakery, quiero hacer un pedido."
-        )}`}
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Contactar por WhatsApp"
-        className="fixed bottom-[104px] right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-2xl transition hover:scale-105 md:bottom-6 md:right-6"
-      >
-        <MessageCircle size={26} />
-      </a>
+      <nav className="fixed bottom-3 left-1/2 z-50 flex w-[calc(100%-24px)] max-w-md -translate-x-1/2 items-center justify-around rounded-[1.7rem] border border-[#F5ACB1]/20 bg-[#210D08]/96 px-2 py-2 shadow-2xl shadow-black/60 backdrop-blur-xl lg:hidden">
+        {navigationItems.map((item) => {
+          const Icon = item.icon;
 
-      <nav className="fixed bottom-3 left-1/2 z-50 flex w-[calc(100%-24px)] max-w-md -translate-x-1/2 items-center justify-around rounded-[1.7rem] border border-[#F5ACB1]/20 bg-[#210D08]/95 px-2 py-2 shadow-2xl shadow-black/60 backdrop-blur-xl lg:hidden">
-        {desktopLinks.map((item) => (
-          <MobileNavItem
-            key={item.href}
-            href={item.href}
-            label={item.label}
-            active={isActivePath(pathname, item.href)}
-            icon={<item.icon size={20} />}
-          />
-        ))}
+          return (
+            <MobileNavItem
+              key={item.href}
+              href={item.href}
+              label={item.label}
+              active={isActivePath(pathname, item.href)}
+              icon={<Icon size={20} />}
+            />
+          );
+        })}
       </nav>
 
       <footer className="border-t border-[#F5ACB1]/10 bg-[#0C0403] px-5 py-10 text-[#FFF6EF]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 pb-20 md:flex-row md:items-center md:justify-between md:pb-0">
           <div className="flex items-center gap-3">
             <Image
               src="/logo-ianis.png"
@@ -153,9 +148,20 @@ export default function PremiumAppChrome({
               href="https://www.instagram.com/ianis_bakery"
               target="_blank"
               rel="noreferrer"
-              className="block font-bold text-[#F5ACB1]"
+              className="block font-bold text-[#F5ACB1] transition hover:text-[#FFF6EF]"
             >
               Instagram @ianis_bakery
+            </a>
+
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(
+                "Hola Ianis Bakery, quiero hacer un pedido."
+              )}`}
+              target="_blank"
+              rel="noreferrer"
+              className="block text-sm font-bold text-[#25D366] transition hover:text-white"
+            >
+              Hacer pedido por WhatsApp
             </a>
 
             <Link
@@ -223,7 +229,7 @@ function MobileNavItem({
       className={`flex min-w-[58px] flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-[10px] font-black transition ${
         active
           ? "bg-[#F5ACB1] text-[#120704]"
-          : "text-[#F5ACB1]"
+          : "text-[#F5ACB1] hover:bg-[#F5ACB1]/10"
       }`}
     >
       {icon}
