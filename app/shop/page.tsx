@@ -2,10 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { collection, onSnapshot, query } from "firebase/firestore";
 import {
-  ArrowLeft,
-  Cookie,
+  Gift,
   Heart,
   Search,
   ShoppingBag,
@@ -25,236 +24,278 @@ type Product = {
   active?: boolean;
 };
 
+const fallbackProducts: Product[] = [
+  {
+    id: "nutella",
+    name: "Nutella Supreme",
+    price: 4.99,
+    tag: "Nueva",
+    description:
+      "Cookie rellena de Nutella cremosa con chispas de chocolate.",
+    image: "/nutella.png",
+    active: true,
+  },
+  {
+    id: "peanut-butter",
+    name: "Peanut Butter Explosion",
+    price: 4.99,
+    tag: "Especial",
+    description:
+      "Mantequilla de maní cremosa con chispas de chocolate.",
+    image: "/peanut-butter.png",
+    active: true,
+  },
+  {
+    id: "double-chocolate",
+    name: "Double Chocolate Lava",
+    price: 4.99,
+    tag: "Favorita",
+    description:
+      "Chocolate intenso con un irresistible centro fundido.",
+    image: "/double-chocolate.png",
+    active: true,
+  },
+  {
+    id: "dulce-leche",
+    name: "Dulce de Leche Dream",
+    price: 4.99,
+    tag: "Premium",
+    description:
+      "Cookie artesanal rellena de dulce de leche cremoso.",
+    image: "/dulce-leche.png",
+    active: true,
+  },
+  {
+    id: "marshmallow",
+    name: "Marshmallow Chocolate",
+    price: 5.49,
+    tag: "Especial",
+    description:
+      "Malvavisco suave con chocolate irresistible.",
+    image: "/marshmallow.png",
+    active: true,
+  },
+  {
+    id: "coconut",
+    name: "Coconut Paradise",
+    price: 5.49,
+    tag: "Tropical",
+    description:
+      "Chocolate relleno de coco cremoso y coco rallado.",
+    image: "/coconut.png",
+    active: true,
+  },
+];
+
 export default function ShopPage() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [firebaseProducts, setFirebaseProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [tag, setTag] = useState("Todos");
+  const [selectedTag, setSelectedTag] = useState("Todos");
 
   useEffect(() => {
-    const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+    const productsQuery = query(collection(db, "products"));
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Product[];
+    const unsubscribe = onSnapshot(
+      productsQuery,
+      (snapshot) => {
+        const products = snapshot.docs.map((item) => ({
+          id: item.id,
+          ...item.data(),
+        })) as Product[];
 
-      setProducts(data.filter((product) => product.active !== false));
-    });
+        setFirebaseProducts(
+          products
+            .filter((product) => product.active !== false)
+            .map((product) => ({
+              ...product,
+              image: normalizeImagePath(product.image, product.name),
+            }))
+        );
+
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Error cargando productos:", error);
+        setFirebaseProducts([]);
+        setLoading(false);
+      }
+    );
 
     return () => unsubscribe();
   }, []);
 
-  const tags = useMemo(() => {
-    const unique = Array.from(
-      new Set(products.map((product) => product.tag || "Premium"))
-    );
+  const products =
+    firebaseProducts.length > 0 ? firebaseProducts : fallbackProducts;
 
-    return ["Todos", ...unique];
+  const tags = useMemo(() => {
+    return [
+      "Todos",
+      ...Array.from(
+        new Set(products.map((product) => product.tag || "Premium"))
+      ),
+    ];
   }, [products]);
 
-  const filtered = useMemo(() => {
+  const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-      const matchesSearch = `${product.name || ""} ${product.description || ""}`
-        .toLowerCase()
-        .includes(search.toLowerCase());
+      const content = `${product.name || ""} ${
+        product.description || ""
+      }`.toLowerCase();
 
-      const matchesTag = tag === "Todos" || (product.tag || "Premium") === tag;
+      const matchesSearch = content.includes(search.toLowerCase());
+      const matchesTag =
+        selectedTag === "Todos" ||
+        (product.tag || "Premium") === selectedTag;
 
       return matchesSearch && matchesTag;
     });
-  }, [products, search, tag]);
+  }, [products, search, selectedTag]);
 
   return (
-    <main className="min-h-screen bg-[#120704] px-5 py-7 text-[#FFF6EF]">
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,172,177,0.24),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(210,142,71,0.20),transparent_38%)]" />
-
+    <div className="min-h-screen bg-[#120704] px-5 py-10 text-[#FFF6EF] md:px-10 lg:px-20">
       <div className="mx-auto max-w-7xl">
-        <nav className="mb-8 flex items-center justify-between rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/80 px-4 py-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm font-black text-[#F5ACB1]"
-          >
-            <ArrowLeft size={18} />
-            Inicio
-          </Link>
-
-          <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/logo-ianis.png"
-              alt="Ianis Bakery"
-              width={58}
-              height={58}
-              className="rounded-full border border-[#FFF6EF]/70 object-contain shadow-[0_0_24px_rgba(245,172,177,0.35)]"
-              priority
-            />
-            <span className="hidden font-black text-[#F5ACB1] sm:inline">
-              Ianis Bakery
-            </span>
-          </Link>
-
-          <Link
-            href="/cart"
-            className="rounded-full bg-[#F5ACB1] px-5 py-3 text-sm font-black text-[#120704]"
-          >
-            Carrito
-          </Link>
-        </nav>
-
-        <header className="grid gap-10 lg:grid-cols-[1fr_480px] lg:items-center">
+        <header className="grid gap-10 lg:grid-cols-[1fr_520px] lg:items-center">
           <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/80 px-5 py-3 text-sm font-black text-[#F5ACB1]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/75 px-5 py-3 text-sm font-black text-[#F5ACB1]">
               <Sparkles size={17} />
-              Tienda dinámica Firebase
+              Tienda Ianis Bakery
             </div>
 
-            <h1 className="text-6xl font-black leading-[0.93] md:text-8xl">
+            <h1 className="mt-7 text-5xl font-black leading-[0.95] md:text-7xl">
               Ordena tus cookies favoritas.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-xl leading-9 text-[#FFF6EF]/70">
-              Esta tienda se alimenta directamente del catálogo administrativo.
-              Si agregas, editas o desactivas productos en Firebase, aquí se
-              actualizan automáticamente.
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#FFF6EF]/65">
+              Explora nuestros sabores, crea tu caja personalizada y prepara tu
+              próximo momento dulce.
             </p>
 
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <Link
-                href="/box-builder"
-                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704]"
-              >
-                Crear caja personalizada
-                <ShoppingBag />
-              </Link>
-
-              <Link
-                href="/taste"
-                className="inline-flex items-center justify-center rounded-2xl border border-[#F5ACB1]/25 bg-[#210D08]/75 px-8 py-5 font-black text-[#FFF6EF]"
-              >
-                Dejar opinión
-              </Link>
-            </div>
+            <Link
+              href="/box-builder"
+              className="mt-8 inline-flex items-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 font-black text-[#120704]"
+            >
+              Crear caja personalizada
+              <Gift size={20} />
+            </Link>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[480px]">
-            <div className="absolute -inset-8 rounded-full bg-[#F5ACB1]/20 blur-3xl" />
-            <div className="relative overflow-hidden rounded-[3rem] border border-[#F5ACB1]/25 bg-[#210D08]/85 p-4 shadow-2xl shadow-black/50">
-              <Image
-                src="/cookies/menu-board-2.png"
-                alt="Tienda Ianis Bakery"
-                width={900}
-                height={1200}
-                className="aspect-[4/5] w-full rounded-[2.4rem] object-cover shadow-[0_0_50px_rgba(245,172,177,0.25)]"
-                priority
-              />
-            </div>
+          <div className="overflow-hidden rounded-[2.7rem] border border-[#F5ACB1]/20 bg-[#210D08] p-3">
+            <Image
+              src="/cookie-boxes.png"
+              alt="Cajas Ianis Bakery"
+              width={1536}
+              height={1024}
+              className="aspect-[3/2] w-full rounded-[2.2rem] object-cover"
+              priority
+            />
           </div>
         </header>
 
-        <section className="mt-12 rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/85 p-5 shadow-2xl shadow-black/30">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.35em] text-[#D99B55]">
-                Catálogo
-              </p>
-              <h2 className="mt-2 text-3xl font-black">
-                Productos disponibles
-              </h2>
+        <section className="mt-14 rounded-[2.3rem] border border-[#F5ACB1]/20 bg-[#210D08]/85 p-5 md:p-7">
+          <p className="text-sm font-black uppercase tracking-[0.35em] text-[#D99B55]">
+            Catálogo
+          </p>
+
+          <h2 className="mt-3 text-4xl font-black">Productos disponibles</h2>
+
+          <div className="mt-6 flex flex-col gap-4 md:flex-row">
+            <div className="flex flex-1 items-center gap-3 rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-5 py-4">
+              <Search size={19} className="text-[#F5ACB1]" />
+
+              <input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Buscar sabor..."
+                className="w-full bg-transparent outline-none placeholder:text-[#FFF6EF]/30"
+              />
             </div>
 
-            <div className="flex flex-col gap-3 md:flex-row">
-              <div className="flex items-center gap-2 rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-4 py-3">
-                <Search size={18} className="text-[#F5ACB1]" />
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Buscar sabor..."
-                  className="w-full bg-transparent text-sm outline-none placeholder:text-[#FFF6EF]/35 md:w-72"
-                />
-              </div>
-
-              <select
-                value={tag}
-                onChange={(e) => setTag(e.target.value)}
-                className="rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-4 py-3 text-sm font-bold text-[#FFF6EF] outline-none"
-              >
-                {tags.map((item) => (
-                  <option key={item} value={item} className="bg-[#120704]">
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <select
+              value={selectedTag}
+              onChange={(event) => setSelectedTag(event.target.value)}
+              className="rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-5 py-4 font-black outline-none"
+            >
+              {tags.map((tag) => (
+                <option key={tag} value={tag} className="bg-[#120704]">
+                  {tag}
+                </option>
+              ))}
+            </select>
           </div>
         </section>
 
-        <section className="mt-8">
-          {filtered.length === 0 ? (
-            <div className="rounded-[2rem] border border-dashed border-[#F5ACB1]/25 bg-[#210D08]/70 p-10 text-center">
-              <Cookie className="mx-auto mb-4 text-[#F5ACB1]" size={48} />
-              <h2 className="text-3xl font-black">No hay productos</h2>
-              <p className="mt-2 text-[#FFF6EF]/55">
-                Agrega productos desde el panel de catálogo.
+        <section className="mt-10">
+          {loading ? (
+            <div className="rounded-[2rem] border border-[#F5ACB1]/20 bg-[#210D08]/70 p-10 text-center">
+              <p className="font-black text-[#F5ACB1]">
+                Cargando productos...
               </p>
-
-              <Link
-                href="/admin/catalog"
-                className="mt-6 inline-flex rounded-2xl bg-[#F5ACB1] px-6 py-4 font-black text-[#120704]"
-              >
-                Ir al catálogo
-              </Link>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="rounded-[2rem] border border-dashed border-[#F5ACB1]/25 p-10 text-center">
+              <h2 className="text-3xl font-black">No encontramos productos</h2>
+              <p className="mt-3 text-[#FFF6EF]/55">
+                Prueba con otro nombre o categoría.
+              </p>
             </div>
           ) : (
             <div className="grid gap-7 md:grid-cols-2 xl:grid-cols-3">
-              {filtered.map((product) => (
+              {filteredProducts.map((product) => (
                 <article
                   key={product.id}
-                  className="group overflow-hidden rounded-[2.5rem] border border-[#E6B47C]/35 bg-[#FFF6EF] text-[#2A120B] shadow-2xl shadow-black/30 transition hover:-translate-y-1"
+                  className="overflow-hidden rounded-[2.3rem] border border-[#E6B47C]/30 bg-[#FFF6EF] text-[#2A120B] shadow-2xl shadow-black/25"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden">
+                  <div className="relative aspect-[3/4] bg-[#EEDAC8]">
                     <Image
-                      src={product.image || "/cookies/double-chocolate.png"}
-                      alt={product.name || "Ianis Bakery cookie"}
-                      width={900}
-                      height={900}
-                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                      src={normalizeImagePath(product.image, product.name)}
+                      alt={product.name || "Cookie Ianis Bakery"}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                      className="object-cover"
                     />
-
-                    <div className="absolute left-4 top-4 rounded-full bg-[#C95867] px-4 py-2 text-sm font-black text-white shadow-lg">
-                      {product.tag || "Premium"}
-                    </div>
-
-                    <div className="absolute right-4 top-4 rounded-full bg-[#120704]/85 px-4 py-2 text-sm font-black text-[#F5ACB1] shadow-lg">
-                      ${Number(product.price || 0).toFixed(2)}
-                    </div>
                   </div>
 
-                  <div className="p-6 text-center">
-                    <h3 className="text-2xl font-black uppercase tracking-tight">
-                      {product.name || "Producto sin nombre"}
+                  <div className="p-5 md:p-6">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="rounded-full bg-[#C95867] px-4 py-2 text-xs font-black text-white">
+                        {product.tag || "Premium"}
+                      </span>
+
+                      <span className="rounded-full bg-[#120704] px-4 py-2 text-sm font-black text-[#F5ACB1]">
+                        ${Number(product.price || 0).toFixed(2)}
+                      </span>
+                    </div>
+
+                    <h3 className="mt-5 text-2xl font-black uppercase leading-tight">
+                      {product.name || "Producto Ianis Bakery"}
                     </h3>
 
-                    <div className="mt-3 flex items-center justify-center gap-1 text-[#D99B55]">
+                    <div className="mt-3 flex gap-1 text-[#D99B55]">
                       {[1, 2, 3, 4, 5].map((star) => (
-                        <Star key={star} size={16} fill="currentColor" />
+                        <Star key={star} size={15} fill="currentColor" />
                       ))}
                     </div>
 
-                    <p className="mt-4 min-h-20 text-sm leading-6 text-[#2A120B]/75">
-                      {product.description || "Cookie gourmet Ianis Bakery."}
+                    <p className="mt-4 text-sm leading-6 text-[#2A120B]/70">
+                      {product.description ||
+                        "Cookie gourmet rellena hasta el centro."}
                     </p>
 
-                    <div className="mt-6 grid grid-cols-2 gap-3">
-                      <button className="inline-flex items-center justify-center gap-2 rounded-full border border-[#C95867]/25 bg-white px-5 py-3 font-black text-[#C95867]">
-                        <Heart size={18} />
+                    <div className="mt-5 grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        className="inline-flex items-center justify-center gap-2 rounded-full border border-[#C95867]/25 px-4 py-3 font-black text-[#C95867]"
+                      >
+                        <Heart size={17} />
                         Favorito
                       </button>
 
                       <Link
                         href="/cart"
-                        className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C95867] px-5 py-3 font-black text-white shadow-xl transition hover:bg-[#A74250]"
+                        className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C95867] px-4 py-3 font-black text-white"
                       >
-                        <ShoppingBag size={18} />
+                        <ShoppingBag size={17} />
                         Ordenar
                       </Link>
                     </div>
@@ -265,6 +306,36 @@ export default function ShopPage() {
           )}
         </section>
       </div>
-    </main>
+    </div>
   );
 }
+
+function normalizeImagePath(image?: string, productName?: string) {
+  const name = (productName || "").toLowerCase();
+
+  if (name.includes("nutella")) return "/nutella.png";
+  if (name.includes("peanut")) return "/peanut-butter.png";
+  if (name.includes("double") || name.includes("doble")) {
+    return "/double-chocolate.png";
+  }
+  if (name.includes("dulce")) return "/dulce-leche.png";
+  if (name.includes("marshmallow") || name.includes("malvavisco")) {
+    return "/marshmallow.png";
+  }
+  if (name.includes("coconut") || name.includes("coco")) {
+    return "/coconut.png";
+  }
+
+  if (!image) return "/nutella.png";
+
+  let normalized = image.trim();
+
+  normalized = normalized.replace(/^https?:\/\/[^/]+/, "");
+  normalized = normalized.replace("/cookies/", "/");
+
+  if (!normalized.startsWith("/")) {
+    normalized = `/${normalized}`;
+  }
+
+  return normalized;
+              }
