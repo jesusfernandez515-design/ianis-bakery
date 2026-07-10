@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   ArrowRight,
   BadgeCheck,
-  Cookie,
   Gift,
   Heart,
   ShoppingBag,
@@ -13,22 +12,34 @@ import {
 
 const flavors = [
   {
+    id: "nutella",
+    name: "Nutella Supreme",
+    description:
+      "Cookie con chispas de chocolate, rellena de Nutella cremosa y decorada con una galleta.",
+    price: "$4.99",
+    tag: "Nueva",
+    image: "/nutella.png",
+  },
+  {
+    id: "peanut-butter",
     name: "Peanut Butter Explosion",
     description:
       "Mantequilla de maní cremosa con deliciosas chispas de chocolate.",
     price: "$4.99",
-    tag: "Nuevo",
+    tag: "Especial",
     image: "/peanut-butter.png",
   },
   {
+    id: "double-chocolate",
     name: "Double Chocolate Lava",
     description:
       "Chocolate intenso con chips y un irresistible centro fundido.",
     price: "$4.99",
-    tag: "Favorito",
+    tag: "Favorita",
     image: "/double-chocolate.png",
   },
   {
+    id: "dulce-leche",
     name: "Dulce de Leche Dream",
     description:
       "Cookie artesanal rellena de dulce de leche suave y cremoso.",
@@ -37,17 +48,19 @@ const flavors = [
     image: "/dulce-leche.png",
   },
   {
+    id: "marshmallow",
     name: "Marshmallow Chocolate",
     description:
-      "Malvavisco suave con chocolate y una combinación irresistible.",
+      "Malvavisco suave, chocolate y una combinación irresistible.",
     price: "$5.49",
     tag: "Especial",
     image: "/marshmallow.png",
   },
   {
+    id: "coconut",
     name: "Coconut Paradise",
     description:
-      "Masa de chocolate con relleno cremoso y auténtico coco rallado.",
+      "Chocolate con relleno cremoso de coco y coco rallado.",
     price: "$5.49",
     tag: "Tropical",
     image: "/coconut.png",
@@ -57,37 +70,38 @@ const flavors = [
 export default function HomePage() {
   return (
     <div className="overflow-hidden bg-[#120704] text-[#FFF6EF]">
-      <section className="relative px-5 pb-14 pt-9 md:px-10 md:pb-24 md:pt-16 lg:px-20">
+      <section className="relative px-5 pb-14 pt-10 md:px-10 md:pb-24 md:pt-16 lg:px-20">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,172,177,0.20),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(217,155,85,0.18),transparent_38%)]" />
 
         <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1fr_520px] lg:items-center">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/75 px-5 py-3 text-sm font-black text-[#F5ACB1] backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/75 px-5 py-3 text-sm font-black text-[#F5ACB1]">
               <Sparkles size={17} />
               Frescas todos los días
             </div>
 
-            <h1 className="mt-7 max-w-4xl text-[3.2rem] font-black leading-[0.92] tracking-[-0.05em] sm:text-6xl md:text-7xl lg:text-[5.6rem]">
+            <h1 className="mt-7 max-w-4xl text-[3.2rem] font-black leading-[0.92] tracking-[-0.05em] sm:text-6xl md:text-7xl lg:text-[5.5rem]">
               Cookies gourmet rellenas hasta el centro.
             </h1>
 
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-[#FFF6EF]/70 md:text-xl md:leading-9">
+            <p className="mt-7 max-w-2xl text-lg leading-8 text-[#FFF6EF]/70 md:text-xl">
               Ianis Bakery crea galletas artesanales premium con rellenos
-              cremosos, sabores intensos y una presentación hecha para enamorar.
+              cremosos, sabores intensos y una presentación hecha para
+              enamorar.
             </p>
 
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
               <Link
                 href="/shop"
-                className="group inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704] shadow-2xl shadow-[#F5ACB1]/20 transition hover:bg-[#FFF6EF]"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704]"
               >
                 Ver tienda
-                <ArrowRight className="transition group-hover:translate-x-1" />
+                <ArrowRight />
               </Link>
 
               <Link
                 href="/box-builder"
-                className="inline-flex items-center justify-center gap-3 rounded-2xl border border-[#F5ACB1]/25 bg-[#210D08]/75 px-8 py-5 font-black text-[#FFF6EF]"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl border border-[#F5ACB1]/25 bg-[#210D08]/75 px-8 py-5 font-black"
               >
                 <Gift size={20} />
                 Crear mi caja
@@ -96,49 +110,58 @@ export default function HomePage() {
 
             <div className="mt-10 grid max-w-2xl grid-cols-3 gap-3">
               <Stat value="100%" label="Artesanal" />
-              <Stat value="5" label="Sabores" />
+              <Stat value="6" label="Sabores" />
               <Stat value="Premium" label="Calidad" />
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[520px]">
-            <div className="absolute -inset-8 rounded-full bg-[#F5ACB1]/15 blur-3xl" />
+          <article className="overflow-hidden rounded-[2.7rem] border border-[#F5ACB1]/20 bg-[#210D08] shadow-2xl shadow-black/50">
+            <div className="relative aspect-[3/4]">
+              <Image
+                src="/nutella.png"
+                alt="Nutella Supreme de Ianis Bakery"
+                fill
+                sizes="(max-width: 1024px) 100vw, 520px"
+                className="object-cover"
+                priority
+              />
+            </div>
 
-            <article className="relative overflow-hidden rounded-[2.7rem] border border-[#F5ACB1]/20 bg-[#210D08] shadow-2xl shadow-black/60">
-              <div className="relative aspect-[2/3] w-full overflow-hidden bg-[#2A120B]">
-                <Image
-                  src="/double-chocolate.png"
-                  alt="Double Chocolate Lava de Ianis Bakery"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 520px"
-                  className="object-contain"
-                  priority
-                />
+            <div className="p-6">
+              <div className="flex items-center justify-between gap-4">
+                <span className="rounded-full bg-[#C95867] px-4 py-2 text-xs font-black text-white">
+                  Nueva
+                </span>
+
+                <span className="rounded-full bg-[#F5ACB1] px-4 py-2 text-sm font-black text-[#120704]">
+                  $4.99
+                </span>
               </div>
 
-              <div className="border-t border-[#F5ACB1]/15 bg-[#210D08] p-5 md:p-6">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex gap-1 text-[#D99B55]">
-                    {[1, 2, 3, 4, 5].map((item) => (
-                      <Star key={item} size={18} fill="currentColor" />
-                    ))}
-                  </div>
-
-                  <span className="rounded-full bg-[#F5ACB1] px-4 py-2 text-sm font-black text-[#120704]">
-                    $4.99
-                  </span>
-                </div>
-
-                <p className="mt-4 text-xl font-black text-[#FFF6EF]">
-                  Pura tentación en cada bocado.
-                </p>
-
-                <p className="mt-1 text-sm font-semibold text-[#FFF6EF]/55">
-                  Double Chocolate Lava
-                </p>
+              <div className="mt-5 flex gap-1 text-[#D99B55]">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star key={star} size={18} fill="currentColor" />
+                ))}
               </div>
-            </article>
-          </div>
+
+              <h2 className="mt-4 text-3xl font-black text-[#F5ACB1]">
+                Nutella Supreme
+              </h2>
+
+              <p className="mt-3 leading-7 text-[#FFF6EF]/65">
+                Una nueva cookie rellena de Nutella cremosa y preparada para
+                convertirse en tu favorita.
+              </p>
+
+              <Link
+                href="/cart"
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#F5ACB1] px-6 py-4 font-black text-[#120704]"
+              >
+                <ShoppingBag size={19} />
+                Ordenar
+              </Link>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -149,29 +172,29 @@ export default function HomePage() {
               Nuestros sabores
             </p>
 
-            <h2 className="mt-4 text-5xl font-black tracking-tight md:text-7xl">
+            <h2 className="mt-4 text-5xl font-black md:text-7xl">
               Menú gourmet
             </h2>
 
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-[#FFF6EF]/60">
-              Cookies grandes, rellenas y preparadas para convertir cada pedido
-              en una experiencia especial.
+              Seis sabores grandes, rellenos y preparados para convertir cada
+              pedido en una experiencia especial.
             </p>
           </div>
 
           <div className="mt-12 grid gap-7 md:grid-cols-2 xl:grid-cols-3">
             {flavors.map((flavor) => (
               <article
-                key={flavor.name}
-                className="group overflow-hidden rounded-[2.3rem] border border-[#E6B47C]/30 bg-[#FFF6EF] text-[#2A120B] shadow-2xl shadow-black/30 transition hover:-translate-y-1"
+                key={flavor.id}
+                className="overflow-hidden rounded-[2.3rem] border border-[#E6B47C]/30 bg-[#FFF6EF] text-[#2A120B] shadow-2xl shadow-black/30"
               >
-                <div className="relative aspect-[2/3] overflow-hidden bg-[#EEDAC8]">
+                <div className="relative aspect-[3/4] bg-[#EEDAC8]">
                   <Image
                     src={flavor.image}
                     alt={flavor.name}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                    className="object-contain transition duration-700 group-hover:scale-[1.02]"
+                    className="object-cover"
                   />
                 </div>
 
@@ -186,13 +209,13 @@ export default function HomePage() {
                     </span>
                   </div>
 
-                  <h3 className="mt-5 text-2xl font-black uppercase leading-tight tracking-tight">
+                  <h3 className="mt-5 text-2xl font-black uppercase leading-tight">
                     {flavor.name}
                   </h3>
 
                   <div className="mt-3 flex gap-1 text-[#D99B55]">
-                    {[1, 2, 3, 4, 5].map((item) => (
-                      <Star key={item} size={15} fill="currentColor" />
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star key={star} size={15} fill="currentColor" />
                     ))}
                   </div>
 
@@ -202,7 +225,7 @@ export default function HomePage() {
 
                   <Link
                     href="/cart"
-                    className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#C95867] px-6 py-4 font-black text-white shadow-xl transition hover:bg-[#A74250]"
+                    className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#C95867] px-6 py-4 font-black text-white"
                   >
                     <ShoppingBag size={18} />
                     Ordenar
@@ -210,32 +233,6 @@ export default function HomePage() {
                 </div>
               </article>
             ))}
-
-            <article className="flex min-h-[440px] flex-col items-center justify-center rounded-[2.3rem] border border-dashed border-[#F5ACB1]/30 bg-[#210D08]/70 p-8 text-center shadow-2xl shadow-black/20">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#F5ACB1] text-[#120704]">
-                <Cookie size={36} />
-              </div>
-
-              <p className="mt-6 text-sm font-black uppercase tracking-[0.35em] text-[#D99B55]">
-                Próximamente
-              </p>
-
-              <h3 className="mt-3 text-3xl font-black text-[#F5ACB1]">
-                Nuevo sabor
-              </h3>
-
-              <p className="mt-4 max-w-sm leading-7 text-[#FFF6EF]/60">
-                Seguiremos agregando nuevos sabores al catálogo de Ianis
-                Bakery.
-              </p>
-
-              <Link
-                href="/taste"
-                className="mt-7 rounded-full border border-[#F5ACB1]/25 px-6 py-4 font-black text-[#F5ACB1]"
-              >
-                Sugerir un sabor
-              </Link>
-            </article>
           </div>
         </div>
       </section>
@@ -251,48 +248,14 @@ export default function HomePage() {
           <Feature
             icon={<BadgeCheck />}
             title="Calidad premium"
-            description="Sabores intensos, rellenos cremosos y una presentación profesional."
+            description="Sabores intensos, rellenos cremosos y presentación profesional."
           />
 
           <Feature
             icon={<Gift />}
             title="Perfectas para regalar"
-            description="Cajas personalizadas para cumpleaños, reuniones y detalles especiales."
+            description="Cajas personalizadas para cumpleaños, reuniones y detalles."
           />
-        </div>
-      </section>
-
-      <section className="px-5 pb-20 pt-8 md:px-10 md:pb-28 lg:px-20">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-[3rem] border border-[#F5ACB1]/20 bg-gradient-to-br from-[#F5ACB1] to-[#D99B55] p-8 text-[#120704] shadow-2xl shadow-[#F5ACB1]/15 md:p-12">
-          <p className="text-sm font-black uppercase tracking-[0.35em]">
-            Caja personalizada
-          </p>
-
-          <h2 className="mt-4 max-w-4xl text-4xl font-black leading-tight md:text-6xl">
-            Combina tus sabores favoritos.
-          </h2>
-
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-[#2A120B]/75">
-            Selecciona una caja de cuatro, seis o doce cookies y llena cada
-            espacio con tus sabores preferidos.
-          </p>
-
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <Link
-              href="/box-builder"
-              className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#120704] px-8 py-5 text-lg font-black text-[#FFF6EF]"
-            >
-              Crear mi caja
-              <ArrowRight />
-            </Link>
-
-            <Link
-              href="/taste"
-              className="inline-flex items-center justify-center rounded-2xl border border-[#120704]/20 px-8 py-5 font-black"
-            >
-              Dejar una opinión
-            </Link>
-          </div>
         </div>
       </section>
     </div>
@@ -301,9 +264,8 @@ export default function HomePage() {
 
 function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-2xl border border-[#F5ACB1]/15 bg-[#210D08]/70 p-4 backdrop-blur">
+    <div className="rounded-2xl border border-[#F5ACB1]/15 bg-[#210D08]/70 p-4">
       <p className="text-xl font-black text-[#F5ACB1] md:text-2xl">{value}</p>
-
       <p className="mt-1 text-xs text-[#FFF6EF]/50">{label}</p>
     </div>
   );
@@ -319,7 +281,7 @@ function Feature({
   description: string;
 }) {
   return (
-    <article className="rounded-[2rem] border border-[#F5ACB1]/15 bg-[#210D08]/80 p-7 shadow-2xl shadow-black/20">
+    <article className="rounded-[2rem] border border-[#F5ACB1]/15 bg-[#210D08]/80 p-7">
       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F5ACB1] text-[#120704]">
         {icon}
       </div>
