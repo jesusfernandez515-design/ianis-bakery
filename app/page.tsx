@@ -285,4 +285,4 @@ function Feature({
       <p className="mt-3 leading-7 text-[#FFF6EF]/60">{description}</p>
     </article>
   );
-}
+  }
