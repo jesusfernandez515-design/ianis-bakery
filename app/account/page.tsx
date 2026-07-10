@@ -7,29 +7,53 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
-  User,
+  updateProfile,
+  type User,
 } from "firebase/auth";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import {
+  doc,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
+import {
+  AlertCircle,
   ArrowLeft,
+  CheckCircle2,
   Gift,
   Heart,
   Loader2,
   Lock,
   Mail,
   Package,
+  ShoppingBag,
   Sparkles,
   UserCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
 
-export default function AccountPage() {
-  const [mode, setMode] = useState<"login" | "register">("login");
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false);
+type AccountMode = "login" | "register";
 
-  const [form, setForm] = useState({
+type FormState = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+type Notice = {
+  type: "success" | "error";
+  message: string;
+} | null;
+
+export default function AccountPage() {
+  const [mode, setMode] = useState<AccountMode>("login");
+  const [user, setUser] = useState<User | null>(null);
+  const [checkingSession, setCheckingSession] = useState(true);
+  const [processing, setProcessing] = useState(false);
+  const [notice, setNotice] = useState<Notice>(null);
+
+  const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
     password: "",
@@ -38,93 +62,291 @@ export default function AccountPage() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setCheckingSession(false);
     });
 
-    return () => unsubscribe();
+    return unsubscribe;
   }, []);
 
-  const update = (field: string, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
+  const updateField = (field: keyof FormState, value: string) => {
+    setForm((current) => ({
+      ...current,
+      [field]: value,
+    }));
+
+    setNotice(null);
   };
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const changeMode = () => {
+    setMode((current) =>
+      current === "login" ? "register" : "login"
+    );
+
+    setForm({
+      name: "",
+      email: "",
+      password: "",
+    });
+
+    setNotice(null);
+  };
+
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+
+    if (processing) return;
+
+    const cleanName = form.name.trim();
+    const cleanEmail = form.email.trim().toLowerCase();
+    const cleanPassword = form.password;
+
+    if (!cleanEmail || !cleanPassword) {
+      setNotice({
+        type: "error",
+        message: "Escribe tu correo electrónico y contraseña.",
+      });
+      return;
+    }
+
+    if (mode === "register" && !cleanName) {
+      setNotice({
+        type: "error",
+        message: "Escribe tu nombre para crear la cuenta.",
+      });
+      return;
+    }
+
+    if (cleanPassword.length < 6) {
+      setNotice({
+        type: "error",
+        message: "La contraseña debe tener al menos 6 caracteres.",
+      });
+      return;
+    }
+
+    setProcessing(true);
+    setNotice(null);
 
     try {
       if (mode === "register") {
         const credential = await createUserWithEmailAndPassword(
           auth,
-          form.email,
-          form.password
+          cleanEmail,
+          cleanPassword
         );
 
-        await addDoc(collection(db, "customers"), {
-          uid: credential.user.uid,
-          name: form.name,
-          email: form.email,
-          points: 0,
-          createdAt: serverTimestamp(),
+        await updateProfile(credential.user, {
+          displayName: cleanName,
+        });
+
+        await setDoc(
+          doc(db, "customers", credential.user.uid),
+          {
+            uid: credential.user.uid,
+            name: cleanName,
+            email: cleanEmail,
+            phone: "",
+            points: 0,
+            favorites: [],
+            role: "customer",
+            active: true,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          },
+          { merge: true }
+        );
+
+        setNotice({
+          type: "success",
+          message: "Tu cuenta fue creada exitosamente.",
         });
       } else {
-        await signInWithEmailAndPassword(auth, form.email, form.password);
+        const credential = await signInWithEmailAndPassword(
+          auth,
+          cleanEmail,
+          cleanPassword
+        );
+
+        const customerReference = doc(
+          db,
+          "customers",
+          credential.user.uid
+        );
+
+        const customerSnapshot = await getDoc(customerReference);
+
+        if (!customerSnapshot.exists()) {
+          await setDoc(
+            customerReference,
+            {
+              uid: credential.user.uid,
+              name: credential.user.displayName || "",
+              email: credential.user.email || cleanEmail,
+              phone: "",
+              points: 0,
+              favorites: [],
+              role: "customer",
+              active: true,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+            },
+            { merge: true }
+          );
+        } else {
+          await setDoc(
+            customerReference,
+            {
+              updatedAt: serverTimestamp(),
+              lastLoginAt: serverTimestamp(),
+            },
+            { merge: true }
+          );
+        }
+
+        setNotice({
+          type: "success",
+          message: "Sesión iniciada correctamente.",
+        });
       }
-    } catch (error) {
-      console.error(error);
-      alert("No se pudo completar la acción. Revisa el email y contraseña.");
+
+      setForm({
+        name: "",
+        email: "",
+        password: "",
+      });
+    } catch (error: unknown) {
+      console.error("Firebase authentication error:", error);
+
+      setNotice({
+        type: "error",
+        message: getFirebaseErrorMessage(error),
+      });
     } finally {
-      setLoading(false);
+      setProcessing(false);
     }
   };
 
-  const logout = async () => {
-    await signOut(auth);
+  const handleLogout = async () => {
+    try {
+      setProcessing(true);
+
+      await signOut(auth);
+
+      setNotice({
+        type: "success",
+        message: "Sesión cerrada correctamente.",
+      });
+    } catch (error) {
+      console.error("Logout error:", error);
+
+      setNotice({
+        type: "error",
+        message: "No se pudo cerrar la sesión.",
+      });
+    } finally {
+      setProcessing(false);
+    }
   };
+
+  if (checkingSession) {
+    return (
+      <main className="flex min-h-[80vh] items-center justify-center bg-[#120704] px-5 text-[#FFF6EF]">
+        <div className="text-center">
+          <Loader2
+            size={44}
+            className="mx-auto animate-spin text-[#F5ACB1]"
+          />
+
+          <p className="mt-4 font-black text-[#F5ACB1]">
+            Verificando tu cuenta...
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   if (user) {
     return (
-      <main className="min-h-screen bg-[#120704] px-5 py-8 text-[#FFF6EF]">
+      <main className="min-h-screen bg-[#120704] px-5 py-10 text-[#FFF6EF] md:px-10 lg:px-20">
         <div className="mx-auto max-w-5xl">
           <Link
             href="/"
             className="mb-6 inline-flex items-center gap-2 font-black text-[#F5ACB1]"
           >
             <ArrowLeft size={18} />
-            Volver
+            Volver al inicio
           </Link>
 
-          <section className="rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/90 p-8 shadow-2xl">
+          <section className="rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/90 p-7 shadow-2xl shadow-black/40 md:p-10">
             <Image
               src="/logo-ianis.png"
               alt="Ianis Bakery"
               width={120}
               height={120}
-              className="mx-auto rounded-full border border-[#FFF6EF]/70 object-contain"
+              className="mx-auto h-28 w-28 rounded-full border border-[#FFF6EF]/60 object-cover"
               priority
             />
 
-            <p className="mt-6 text-center text-sm uppercase tracking-[0.35em] text-[#D99B55]">
+            <p className="mt-6 text-center text-sm font-black uppercase tracking-[0.35em] text-[#D99B55]">
               Mi cuenta
             </p>
 
-            <h1 className="mt-3 text-center text-4xl font-black">
-              Bienvenido a Ianis Bakery
+            <h1 className="mt-3 text-center text-4xl font-black md:text-5xl">
+              ¡Bienvenido
+              {user.displayName ? `, ${user.displayName}` : ""}!
             </h1>
 
-            <p className="mt-3 text-center text-[#FFF6EF]/60">{user.email}</p>
+            <p className="mt-3 text-center text-[#FFF6EF]/60">
+              {user.email}
+            </p>
+
+            {notice && (
+              <NoticeBox
+                type={notice.type}
+                message={notice.message}
+              />
+            )}
 
             <div className="mt-8 grid gap-5 md:grid-cols-3">
-              <Card icon={<Package />} title="Pedidos" text="Historial próximamente" />
-              <Card icon={<Heart />} title="Favoritos" text="Tus cookies favoritas" />
-              <Card icon={<Gift />} title="Puntos" text="0 puntos acumulados" />
+              <AccountCard
+                icon={<Package />}
+                title="Mis pedidos"
+                description="Consulta tus pedidos y su estado."
+              />
+
+              <AccountCard
+                icon={<Heart />}
+                title="Favoritos"
+                description="Guarda las cookies que más te gustan."
+              />
+
+              <AccountCard
+                icon={<Gift />}
+                title="Recompensas"
+                description="Comienza a acumular puntos."
+              />
             </div>
 
-            <button
-              onClick={logout}
-              className="mt-8 w-full rounded-2xl bg-[#F5ACB1] px-8 py-5 font-black text-[#120704]"
-            >
-              Cerrar sesión
-            </button>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              <Link
+                href="/shop"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 font-black text-[#120704]"
+              >
+                <ShoppingBag size={20} />
+                Ir a la tienda
+              </Link>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={processing}
+                className="rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-8 py-5 font-black text-[#FFF6EF] disabled:opacity-50"
+              >
+                {processing ? "Cerrando sesión..." : "Cerrar sesión"}
+              </button>
+            </div>
           </section>
         </div>
       </main>
@@ -132,82 +354,115 @@ export default function AccountPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#120704] px-5 py-8 text-[#FFF6EF]">
-      <div className="mx-auto flex min-h-[85vh] max-w-md items-center justify-center">
+    <main className="min-h-screen bg-[#120704] px-5 py-10 text-[#FFF6EF]">
+      <div className="mx-auto flex min-h-[78vh] max-w-md items-center justify-center">
         <form
-          onSubmit={submit}
-          className="w-full rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/90 p-7 shadow-2xl"
+          onSubmit={handleSubmit}
+          className="w-full rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/92 p-7 shadow-2xl shadow-black/45"
         >
           <Image
             src="/logo-ianis.png"
             alt="Ianis Bakery"
-            width={130}
-            height={130}
-            className="mx-auto rounded-full border border-[#FFF6EF]/70 object-contain"
+            width={128}
+            height={128}
+            className="mx-auto h-28 w-28 rounded-full border border-[#FFF6EF]/60 object-cover"
             priority
           />
 
-          <div className="mx-auto mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#F5ACB1]/25 bg-[#120704]/70 px-4 py-3 text-sm font-black text-[#F5ACB1]">
+          <div className="mt-6 flex items-center justify-center gap-2 rounded-full border border-[#F5ACB1]/20 bg-[#120704]/70 px-4 py-3 text-sm font-black text-[#F5ACB1]">
             <Sparkles size={16} />
             Cuenta de cliente
           </div>
 
           <h1 className="mt-6 text-center text-4xl font-black">
-            {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
+            {mode === "login"
+              ? "Iniciar sesión"
+              : "Crear cuenta"}
           </h1>
 
-          <p className="mt-3 text-center text-sm text-[#FFF6EF]/55">
+          <p className="mt-3 text-center text-sm leading-6 text-[#FFF6EF]/55">
             Accede a pedidos, favoritos y recompensas.
           </p>
 
-          <div className="mt-8 space-y-4">
+          {notice && (
+            <NoticeBox
+              type={notice.type}
+              message={notice.message}
+            />
+          )}
+
+          <div className="mt-7 space-y-4">
             {mode === "register" && (
-              <Field icon={<UserCircle />} label="Nombre">
+              <FormField
+                label="Nombre"
+                icon={<UserCircle size={21} />}
+              >
                 <input
+                  type="text"
                   value={form.name}
-                  onChange={(e) => update("name", e.target.value)}
+                  onChange={(event) =>
+                    updateField("name", event.target.value)
+                  }
+                  autoComplete="name"
                   required
                   placeholder="Tu nombre"
-                  className="input"
+                  className="w-full bg-transparent text-[#FFF6EF] outline-none placeholder:text-[#FFF6EF]/30"
                 />
-              </Field>
+              </FormField>
             )}
 
-            <Field icon={<Mail />} label="Email">
+            <FormField
+              label="Correo electrónico"
+              icon={<Mail size={21} />}
+            >
               <input
                 type="email"
                 value={form.email}
-                onChange={(e) => update("email", e.target.value)}
+                onChange={(event) =>
+                  updateField("email", event.target.value)
+                }
+                autoComplete="email"
                 required
                 placeholder="cliente@email.com"
-                className="input"
+                className="w-full bg-transparent text-[#FFF6EF] outline-none placeholder:text-[#FFF6EF]/30"
               />
-            </Field>
+            </FormField>
 
-            <Field icon={<Lock />} label="Contraseña">
+            <FormField
+              label="Contraseña"
+              icon={<Lock size={21} />}
+            >
               <input
                 type="password"
                 value={form.password}
-                onChange={(e) => update("password", e.target.value)}
+                onChange={(event) =>
+                  updateField("password", event.target.value)
+                }
+                autoComplete={
+                  mode === "register"
+                    ? "new-password"
+                    : "current-password"
+                }
                 required
                 minLength={6}
                 placeholder="Mínimo 6 caracteres"
-                className="input"
+                className="w-full bg-transparent text-[#FFF6EF] outline-none placeholder:text-[#FFF6EF]/30"
               />
-            </Field>
+            </FormField>
           </div>
 
           <button
-            disabled={loading}
-            className="mt-7 flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704] disabled:opacity-60"
+            type="submit"
+            disabled={processing}
+            className="mt-7 flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704] disabled:cursor-not-allowed disabled:opacity-55"
           >
-            {loading ? (
+            {processing ? (
               <>
                 <Loader2 className="animate-spin" />
                 Procesando...
               </>
             ) : mode === "login" ? (
-              "Entrar"
+              "Iniciar sesión"
             ) : (
               "Crear cuenta"
             )}
@@ -215,68 +470,154 @@ export default function AccountPage() {
 
           <button
             type="button"
-            onClick={() => setMode(mode === "login" ? "register" : "login")}
-            className="mt-5 w-full text-center font-bold text-[#F5ACB1]"
+            onClick={changeMode}
+            disabled={processing}
+            className="mt-5 w-full text-center font-black text-[#F5ACB1] disabled:opacity-50"
           >
             {mode === "login"
               ? "¿No tienes cuenta? Crear cuenta"
               : "¿Ya tienes cuenta? Iniciar sesión"}
           </button>
+
+          <Link
+            href="/"
+            className="mt-5 block text-center text-sm font-semibold text-[#FFF6EF]/45"
+          >
+            Continuar sin iniciar sesión
+          </Link>
         </form>
       </div>
-
-      <style jsx>{`
-        .input {
-          width: 100%;
-          background: transparent;
-          outline: none;
-          color: #fff6ef;
-        }
-
-        .input::placeholder {
-          color: rgba(255, 246, 239, 0.35);
-        }
-      `}</style>
     </main>
   );
 }
 
-function Field({
-  icon,
+function FormField({
   label,
+  icon,
   children,
 }: {
-  icon: React.ReactNode;
   label: string;
+  icon: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
     <label className="block">
-      <span className="font-bold text-[#F5ACB1]">{label}</span>
-      <div className="mt-2 flex items-center gap-3 rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/75 px-4 py-4">
-        <span className="text-[#F5ACB1]">{icon}</span>
+      <span className="font-black text-[#F5ACB1]">
+        {label}
+      </span>
+
+      <div className="mt-2 flex items-center gap-3 rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/72 px-4 py-4 focus-within:border-[#F5ACB1]/60">
+        <span className="shrink-0 text-[#F5ACB1]">
+          {icon}
+        </span>
+
         {children}
       </div>
     </label>
   );
 }
 
-function Card({
+function NoticeBox({
+  type,
+  message,
+}: {
+  type: "success" | "error";
+  message: string;
+}) {
+  return (
+    <div
+      className={`mt-6 flex items-start gap-3 rounded-2xl border p-4 text-sm font-semibold leading-6 ${
+        type === "success"
+          ? "border-green-500/25 bg-green-500/10 text-green-200"
+          : "border-red-400/25 bg-red-400/10 text-red-200"
+      }`}
+    >
+      {type === "success" ? (
+        <CheckCircle2
+          className="mt-0.5 shrink-0"
+          size={20}
+        />
+      ) : (
+        <AlertCircle
+          className="mt-0.5 shrink-0"
+          size={20}
+        />
+      )}
+
+      <p>{message}</p>
+    </div>
+  );
+}
+
+function AccountCard({
   icon,
   title,
-  text,
+  description,
 }: {
   icon: React.ReactNode;
   title: string;
-  text: string;
+  description: string;
 }) {
   return (
-    <div className="rounded-[2rem] border border-[#F5ACB1]/15 bg-[#120704]/70 p-5">
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F5ACB1] text-[#120704]">
+    <article className="rounded-[2rem] border border-[#F5ACB1]/15 bg-[#120704]/70 p-5">
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F5ACB1] text-[#120704]">
         {icon}
       </div>
-      <h3 className="text-xl font-black text-[#F5ACB1]">{title}</h3>
-      <p className="mt-2 text-sm text-[#FFF6EF]/60">{text}</p>
-    </div>
+
+      <h3 className="mt-4 text-xl font-black text-[#F5ACB1]">
+        {title}
+      </h3>
+
+      <p className="mt-2 text-sm leading-6 text-[#FFF6EF]/60">
+        {description}
+      </p>
+    </article>
   );
+}
+
+function getFirebaseErrorMessage(error: unknown) {
+  const code =
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    typeof error.code === "string"
+      ? error.code
+      : "";
+
+  switch (code) {
+    case "auth/operation-not-allowed":
+      return "El acceso con correo y contraseña no está activado en Firebase Authentication.";
+
+    case "auth/email-already-in-use":
+      return "Ya existe una cuenta registrada con este correo electrónico.";
+
+    case "auth/invalid-email":
+      return "El correo electrónico no tiene un formato válido.";
+
+    case "auth/weak-password":
+      return "La contraseña es demasiado débil. Usa al menos 6 caracteres.";
+
+    case "auth/invalid-credential":
+    case "auth/wrong-password":
+    case "auth/user-not-found":
+      return "El correo electrónico o la contraseña son incorrectos.";
+
+    case "auth/too-many-requests":
+      return "Se hicieron demasiados intentos. Espera unos minutos y vuelve a intentarlo.";
+
+    case "auth/network-request-failed":
+      return "No se pudo conectar con Firebase. Revisa tu conexión a internet.";
+
+    case "auth/unauthorized-domain":
+      return "Este dominio de Vercel no está autorizado en Firebase Authentication.";
+
+    case "permission-denied":
+    case "firestore/permission-denied":
+      return "Firebase permitió el acceso, pero Firestore bloqueó el perfil del cliente.";
+
+    default:
+      return code
+        ? `No se pudo completar la acción. Código: ${code}`
+        : "No se pudo completar la acción. Intenta nuevamente.";
+  }
 }
