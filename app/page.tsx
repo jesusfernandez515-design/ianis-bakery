@@ -87,7 +87,7 @@ export default function HomePage() {
 
               <Link
                 href="/box-builder"
-                className="inline-flex items-center justify-center gap-3 rounded-2xl border border-[#F5ACB1]/25 bg-[#210D08]/75 px-8 py-5 font-black text-[#FFF6EF] transition hover:border-[#F5ACB1]/50"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl border border-[#F5ACB1]/25 bg-[#210D08]/75 px-8 py-5 font-black text-[#FFF6EF]"
               >
                 <Gift size={20} />
                 Crear mi caja
@@ -113,22 +113,22 @@ export default function HomePage() {
                 className="aspect-[4/5] w-full rounded-[2.2rem] object-cover"
                 priority
               />
+            </div>
 
-              <div className="absolute bottom-7 left-7 right-7 rounded-[1.8rem] border border-[#F5ACB1]/20 bg-[#120704]/85 p-5 backdrop-blur-xl">
-                <div className="flex gap-1 text-[#D99B55]">
-                  {[1, 2, 3, 4, 5].map((item) => (
-                    <Star key={item} size={18} fill="currentColor" />
-                  ))}
-                </div>
-
-                <p className="mt-3 text-lg font-black">
-                  Pura tentación en cada bocado.
-                </p>
-
-                <p className="mt-1 text-sm text-[#FFF6EF]/55">
-                  Double Chocolate Lava
-                </p>
+            <div className="relative z-10 mx-3 -mt-1 rounded-[2rem] border border-[#F5ACB1]/20 bg-[#210D08] p-5 shadow-2xl md:mx-8 md:-mt-10">
+              <div className="flex gap-1 text-[#D99B55]">
+                {[1, 2, 3, 4, 5].map((item) => (
+                  <Star key={item} size={18} fill="currentColor" />
+                ))}
               </div>
+
+              <p className="mt-3 text-lg font-black">
+                Pura tentación en cada bocado.
+              </p>
+
+              <p className="mt-1 text-sm text-[#FFF6EF]/55">
+                Double Chocolate Lava
+              </p>
             </div>
           </div>
         </div>
@@ -165,18 +165,20 @@ export default function HomePage() {
                     sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                     className="object-cover transition duration-700 group-hover:scale-105"
                   />
-
-                  <span className="absolute left-4 top-4 rounded-full bg-[#C95867] px-4 py-2 text-xs font-black text-white shadow-lg">
-                    {flavor.tag}
-                  </span>
-
-                  <span className="absolute right-4 top-4 rounded-full bg-[#120704]/90 px-4 py-2 text-sm font-black text-[#F5ACB1] shadow-lg">
-                    {flavor.price}
-                  </span>
                 </div>
 
                 <div className="p-6">
-                  <h3 className="text-2xl font-black uppercase tracking-tight">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="rounded-full bg-[#C95867] px-4 py-2 text-xs font-black text-white">
+                      {flavor.tag}
+                    </span>
+
+                    <span className="rounded-full bg-[#120704] px-4 py-2 text-sm font-black text-[#F5ACB1]">
+                      {flavor.price}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-5 text-2xl font-black uppercase tracking-tight">
                     {flavor.name}
                   </h3>
 
@@ -192,7 +194,7 @@ export default function HomePage() {
 
                   <Link
                     href="/cart"
-                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#C95867] px-6 py-4 font-black text-white shadow-xl transition hover:bg-[#A74250]"
+                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#C95867] px-6 py-4 font-black text-white shadow-xl"
                   >
                     <ShoppingBag size={18} />
                     Ordenar
@@ -201,7 +203,7 @@ export default function HomePage() {
               </article>
             ))}
 
-            <article className="flex min-h-[520px] flex-col items-center justify-center rounded-[2.3rem] border border-dashed border-[#F5ACB1]/30 bg-[#210D08]/70 p-8 text-center shadow-2xl shadow-black/20">
+            <article className="flex min-h-[520px] flex-col items-center justify-center rounded-[2.3rem] border border-dashed border-[#F5ACB1]/30 bg-[#210D08]/70 p-8 text-center">
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#F5ACB1] text-[#120704]">
                 <Cookie size={36} />
               </div>
@@ -250,47 +252,13 @@ export default function HomePage() {
           />
         </div>
       </section>
-
-      <section className="px-5 pb-20 pt-10 md:px-10 md:pb-28 lg:px-20">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-[3rem] border border-[#F5ACB1]/20 bg-gradient-to-br from-[#F5ACB1] to-[#D99B55] p-8 text-[#120704] shadow-2xl shadow-[#F5ACB1]/15 md:p-12">
-          <p className="text-sm font-black uppercase tracking-[0.35em]">
-            Caja personalizada
-          </p>
-
-          <h2 className="mt-4 max-w-4xl text-4xl font-black leading-tight md:text-6xl">
-            Combina tus sabores favoritos en una sola caja.
-          </h2>
-
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-[#2A120B]/75">
-            Selecciona una caja de cuatro, seis o doce cookies y llena cada
-            espacio con los sabores que más te gusten.
-          </p>
-
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <Link
-              href="/box-builder"
-              className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#120704] px-8 py-5 text-lg font-black text-[#FFF6EF]"
-            >
-              Crear mi caja
-              <ArrowRight />
-            </Link>
-
-            <Link
-              href="/taste"
-              className="inline-flex items-center justify-center rounded-2xl border border-[#120704]/20 px-8 py-5 font-black"
-            >
-              Dejar una opinión
-            </Link>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
 
 function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-2xl border border-[#F5ACB1]/15 bg-[#210D08]/70 p-4 backdrop-blur">
+    <div className="rounded-2xl border border-[#F5ACB1]/15 bg-[#210D08]/70 p-4">
       <p className="text-xl font-black text-[#F5ACB1] md:text-2xl">{value}</p>
       <p className="mt-1 text-xs text-[#FFF6EF]/50">{label}</p>
     </div>
@@ -307,7 +275,7 @@ function Feature({
   description: string;
 }) {
   return (
-    <article className="rounded-[2rem] border border-[#F5ACB1]/15 bg-[#210D08]/80 p-7 shadow-2xl shadow-black/20">
+    <article className="rounded-[2rem] border border-[#F5ACB1]/15 bg-[#210D08]/80 p-7">
       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F5ACB1] text-[#120704]">
         {icon}
       </div>
