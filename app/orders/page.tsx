@@ -697,4 +697,4 @@ function formatOrderDate(
     dateStyle: "long",
     timeStyle: "short",
   }).format(new Date(timestamp));
-        }
+}
