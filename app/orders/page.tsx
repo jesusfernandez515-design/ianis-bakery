@@ -2,1003 +2,605 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import {
+  collection,
+  onSnapshot,
+  query,
+  Timestamp,
+  where,
+  type DocumentData,
+  type QueryDocumentSnapshot,
+} from "firebase/firestore";
+import {
+  AlertCircle,
   ArrowLeft,
+  CalendarDays,
   CheckCircle2,
-  CreditCard,
+  Clock3,
   Loader2,
   LogIn,
-  Minus,
-  PackageCheck,
-  Plus,
+  Package,
+  ReceiptText,
+  RefreshCcw,
   ShoppingBag,
-  Trash2,
   Truck,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { auth, db } from "@/lib/firebase";
 
-type Product = {
+type OrderItem = {
+  id?: string;
+  name?: string;
+  price?: number;
+  qty?: number;
+  image?: string;
+  lineTotal?: number;
+};
+
+type Order = {
   id: string;
-  name: string;
-  price: number;
-  image: string;
-  fallbackImage?: string;
+  customerId?: string;
+  customerEmail?: string;
+  customerName?: string;
+  customerPhone?: string;
+  address?: string;
+  note?: string;
+  delivery?: "pickup" | "delivery" | string;
+  coupon?: string;
+  items?: OrderItem[];
+  itemCount?: number;
+  subtotal?: number;
+  discount?: number;
+  deliveryFee?: number;
+  total?: number;
+  status?: string;
+  paymentStatus?: string;
+  source?: string;
+  createdAt?: Timestamp | Date | string | number | null;
+  updatedAt?: Timestamp | Date | string | number | null;
 };
 
-type CartItem = Product & {
-  qty: number;
-};
-
-type DeliveryType = "pickup" | "delivery";
-
-type CreatedOrder = {
-  id: string;
-  customerName: string;
-  customerPhone: string;
-  address: string;
-  note: string;
-  delivery: DeliveryType;
-  items: CartItem[];
-  subtotal: number;
-  discount: number;
-  deliveryFee: number;
-  total: number;
-};
-
-const BUSINESS_WHATSAPP_NUMBER = "17274039118";
-
-const products: Product[] = [
-  {
-    id: "nutella",
-    name: "Nutella Supreme",
-    price: 4.99,
-    image: "/nutella.png",
-    fallbackImage: "/Nutella%20Supreme.png",
-  },
-  {
-    id: "peanut-butter",
-    name: "Peanut Butter Explosion",
-    price: 4.99,
-    image: "/peanut-butter.png",
-  },
-  {
-    id: "double-chocolate",
-    name: "Double Chocolate Lava",
-    price: 4.99,
-    image: "/double-chocolate.png",
-  },
-  {
-    id: "dulce-leche",
-    name: "Dulce de Leche Dream",
-    price: 4.99,
-    image: "/dulce-leche.png",
-  },
-  {
-    id: "marshmallow",
-    name: "Marshmallow Chocolate",
-    price: 5.49,
-    image: "/marshmallow.png",
-  },
-  {
-    id: "coconut",
-    name: "Coconut Paradise",
-    price: 5.49,
-    image: "/coconut.png",
-  },
-];
-
-export default function CartPage() {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [delivery, setDelivery] =
-    useState<DeliveryType>("pickup");
-
-  const [coupon, setCoupon] = useState("");
-  const [customerName, setCustomerName] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [note, setNote] = useState("");
-
-  const [loading, setLoading] = useState(false);
-  const [createdOrder, setCreatedOrder] =
-    useState<CreatedOrder | null>(null);
-
+export default function OrdersPage() {
+  const [user, setUser] = useState<User | null>(null);
+  const [checkingSession, setCheckingSession] = useState(true);
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const subtotal = useMemo(() => {
-    return items.reduce(
-      (sum, item) => sum + item.price * item.qty,
-      0
-    );
-  }, [items]);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setCheckingSession(false);
 
-  const normalizedCoupon = coupon.trim().toUpperCase();
-
-  const discount =
-    normalizedCoupon === "IANIS10"
-      ? subtotal * 0.1
-      : 0;
-
-  const deliveryFee =
-    delivery === "delivery" ? 3 : 0;
-
-  const total = Math.max(
-    subtotal - discount + deliveryFee,
-    0
-  );
-
-  const totalItems = useMemo(() => {
-    return items.reduce(
-      (sum, item) => sum + item.qty,
-      0
-    );
-  }, [items]);
-
-  const addProduct = (product: Product) => {
-    setItems((currentItems) => {
-      const existingProduct = currentItems.find(
-        (item) => item.id === product.id
-      );
-
-      if (existingProduct) {
-        return currentItems.map((item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                qty: item.qty + 1,
-              }
-            : item
-        );
+      if (!currentUser) {
+        setOrders([]);
+        setLoadingOrders(false);
       }
-
-      return [
-        ...currentItems,
-        {
-          ...product,
-          qty: 1,
-        },
-      ];
     });
 
-    setCreatedOrder(null);
-    setErrorMessage("");
-  };
+    return unsubscribe;
+  }, []);
 
-  const updateQty = (
-    id: string,
-    amount: number
-  ) => {
-    setItems((currentItems) =>
-      currentItems
-        .map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                qty: item.qty + amount,
-              }
-            : item
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    setLoadingOrders(true);
+    setErrorMessage("");
+
+    const ordersQuery = query(
+      collection(db, "orders"),
+      where("customerId", "==", user.uid)
+    );
+
+    const unsubscribe = onSnapshot(
+      ordersQuery,
+      (snapshot) => {
+        const loadedOrders = snapshot.docs
+          .map(mapOrderDocument)
+          .sort(
+            (firstOrder, secondOrder) =>
+              getTimestamp(secondOrder.createdAt) -
+              getTimestamp(firstOrder.createdAt)
+          );
+
+        setOrders(loadedOrders);
+        setLoadingOrders(false);
+      },
+      (error) => {
+        console.error("Error cargando pedidos:", error);
+
+        setErrorMessage(
+          "No se pudieron cargar tus pedidos. Verifica que los pedidos tengan el campo customerId y que las reglas de Firestore permitan leerlos."
+        );
+
+        setOrders([]);
+        setLoadingOrders(false);
+      }
+    );
+
+    return unsubscribe;
+  }, [user]);
+
+  const totalPurchased = useMemo(() => {
+    return orders.reduce(
+      (total, order) => total + Number(order.total || 0),
+      0
+    );
+  }, [orders]);
+
+  const totalCookies = useMemo(() => {
+    return orders.reduce((total, order) => {
+      if (typeof order.itemCount === "number") {
+        return total + order.itemCount;
+      }
+
+      return (
+        total +
+        (order.items || []).reduce(
+          (itemTotal, item) => itemTotal + Number(item.qty || 0),
+          0
         )
-        .filter((item) => item.qty > 0)
+      );
+    }, 0);
+  }, [orders]);
+
+  const activeOrders = useMemo(() => {
+    return orders.filter((order) => {
+      const status = normalizeText(order.status);
+
+      return ![
+        "completado",
+        "completada",
+        "completed",
+        "cancelado",
+        "cancelada",
+        "cancelled",
+        "rechazado",
+        "rechazada",
+      ].includes(status);
+    }).length;
+  }, [orders]);
+
+  if (checkingSession) {
+    return (
+      <PageShell>
+        <LoadingState message="Verificando tu cuenta..." />
+      </PageShell>
     );
+  }
 
-    setCreatedOrder(null);
-    setErrorMessage("");
-  };
-
-  const removeItem = (id: string) => {
-    setItems((currentItems) =>
-      currentItems.filter(
-        (item) => item.id !== id
-      )
-    );
-
-    setCreatedOrder(null);
-    setErrorMessage("");
-  };
-
-  const clearCart = () => {
-    setItems([]);
-    setCreatedOrder(null);
-    setErrorMessage("");
-  };
-
-  const clearMessages = () => {
-    setCreatedOrder(null);
-    setErrorMessage("");
-  };
-
-  const createOrder = async () => {
-    clearMessages();
-
-    const currentUser = auth.currentUser;
-
-    if (!currentUser) {
-      setErrorMessage(
-        "Debes iniciar sesión antes de confirmar el pedido para que aparezca en Mis pedidos."
-      );
-      return;
-    }
-
-    const cleanCustomerName =
-      customerName.trim();
-
-    const cleanCustomerPhone =
-      customerPhone.trim();
-
-    const cleanAddress = address.trim();
-    const cleanNote = note.trim();
-
-    if (!cleanCustomerName) {
-      setErrorMessage(
-        "Escribe el nombre del cliente."
-      );
-      return;
-    }
-
-    if (!cleanCustomerPhone) {
-      setErrorMessage(
-        "Escribe el número de teléfono del cliente."
-      );
-      return;
-    }
-
-    if (
-      delivery === "delivery" &&
-      !cleanAddress
-    ) {
-      setErrorMessage(
-        "Escribe la dirección completa para el delivery."
-      );
-      return;
-    }
-
-    if (items.length === 0) {
-      setErrorMessage(
-        "Agrega al menos una cookie al pedido."
-      );
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const orderItems = items.map((item) => ({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        qty: item.qty,
-        image: item.image,
-        lineTotal: Number(
-          (item.price * item.qty).toFixed(2)
-        ),
-      }));
-
-      const savedSubtotal = Number(
-        subtotal.toFixed(2)
-      );
-
-      const savedDiscount = Number(
-        discount.toFixed(2)
-      );
-
-      const savedDeliveryFee = Number(
-        deliveryFee.toFixed(2)
-      );
-
-      const savedTotal = Number(
-        total.toFixed(2)
-      );
-
-      const savedItems = [...items];
-
-      const orderReference = await addDoc(
-        collection(db, "orders"),
-        {
-          customerId: currentUser.uid,
-          customerEmail:
-            currentUser.email || "",
-
-          customerName: cleanCustomerName,
-          customerPhone: cleanCustomerPhone,
-
-          address:
-            delivery === "delivery"
-              ? cleanAddress
-              : "",
-
-          note: cleanNote,
-          delivery,
-          coupon: normalizedCoupon,
-          items: orderItems,
-          itemCount: totalItems,
-
-          subtotal: savedSubtotal,
-          discount: savedDiscount,
-          deliveryFee: savedDeliveryFee,
-          total: savedTotal,
-
-          status: "Pendiente",
-          paymentStatus: "Pendiente",
-          source: "website",
-
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        }
-      );
-
-      setCreatedOrder({
-        id: orderReference.id,
-        customerName: cleanCustomerName,
-        customerPhone: cleanCustomerPhone,
-        address:
-          delivery === "delivery"
-            ? cleanAddress
-            : "",
-        note: cleanNote,
-        delivery,
-        items: savedItems,
-        subtotal: savedSubtotal,
-        discount: savedDiscount,
-        deliveryFee: savedDeliveryFee,
-        total: savedTotal,
-      });
-
-      setItems([]);
-      setCoupon("");
-      setAddress("");
-      setNote("");
-      setDelivery("pickup");
-    } catch (error) {
-      console.error(
-        "Error creando el pedido:",
-        error
-      );
-
-      setErrorMessage(
-        "No se pudo crear el pedido. Revisa las reglas de Firestore y vuelve a intentarlo."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const whatsappMessage = useMemo(() => {
-    if (!createdOrder) {
-      return "";
-    }
-
-    const itemLines = createdOrder.items
-      .map(
-        (item) =>
-          `• ${item.qty} × ${item.name} — $${(
-            item.qty * item.price
-          ).toFixed(2)}`
-      )
-      .join("\n");
-
-    return encodeURIComponent(
-      [
-        "Hola Ianis Bakery 🍪",
-        "",
-        "Nuevo pedido desde la página web.",
-        "",
-        `Orden: ${createdOrder.id}`,
-        `Cliente: ${createdOrder.customerName}`,
-        `Teléfono: ${createdOrder.customerPhone}`,
-        "",
-        "PRODUCTOS",
-        itemLines,
-        "",
-        `Método: ${
-          createdOrder.delivery === "pickup"
-            ? "Recogido en tienda"
-            : "Delivery"
-        }`,
-        `Dirección: ${
-          createdOrder.delivery === "delivery"
-            ? createdOrder.address ||
-              "Sin dirección"
-            : "No aplica"
-        }`,
-        "",
-        `Subtotal: $${createdOrder.subtotal.toFixed(
-          2
-        )}`,
-        `Descuento: -$${createdOrder.discount.toFixed(
-          2
-        )}`,
-        `Delivery: $${createdOrder.deliveryFee.toFixed(
-          2
-        )}`,
-        `TOTAL: $${createdOrder.total.toFixed(
-          2
-        )}`,
-        "",
-        `Nota: ${
-          createdOrder.note ||
-          "Sin nota especial"
-        }`,
-      ].join("\n")
-    );
-  }, [createdOrder]);
-
-  const whatsappUrl = createdOrder
-    ? `https://wa.me/${BUSINESS_WHATSAPP_NUMBER}?text=${whatsappMessage}`
-    : "";
-
-  return (
-    <main className="min-h-screen bg-[#120704] px-5 py-7 text-[#FFF6EF]">
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,172,177,0.24),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(210,142,71,0.20),transparent_38%)]" />
-
-      <div className="mx-auto max-w-7xl">
-        <nav className="mb-8 flex items-center justify-between rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/80 px-4 py-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
-          <Link
-            href="/menu"
-            className="flex items-center gap-2 font-black text-[#F5ACB1]"
-          >
-            <ArrowLeft size={18} />
-            Menú
-          </Link>
-
-          <Image
-            src="/logo-ianis.png"
-            alt="Ianis Bakery"
-            width={56}
-            height={56}
-            className="h-14 w-14 rounded-full border border-[#FFF6EF]/70 object-cover"
-            priority
-          />
-
-          <Link
-            href="/shop"
-            className="rounded-full bg-[#F5ACB1] px-5 py-3 text-sm font-black text-[#120704]"
-          >
-            Tienda
-          </Link>
-        </nav>
-
-        <header className="grid gap-10 lg:grid-cols-[1fr_460px] lg:items-center">
-          <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/80 px-5 py-3 text-sm font-black text-[#F5ACB1]">
-              <ShoppingBag size={17} />
-              Checkout premium
+  if (!user) {
+    return (
+      <PageShell>
+        <div className="mx-auto flex min-h-[70vh] max-w-xl items-center justify-center">
+          <section className="w-full rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/95 p-7 text-center shadow-2xl shadow-black/40 md:p-10">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#F5ACB1] text-[#120704]">
+              <LogIn size={38} />
             </div>
 
-            <h1 className="text-5xl font-black leading-[1.02] md:text-7xl">
-              Crea un pedido real.
-            </h1>
+            <h1 className="mt-6 text-4xl font-black">Inicia sesión</h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#FFF6EF]/70">
-              Selecciona tus sabores, completa
-              los datos y guarda el pedido en
-              Firebase para verlo desde tu
+            <p className="mt-4 leading-7 text-[#FFF6EF]/60">
+              Debes iniciar sesión para consultar los pedidos vinculados con tu
               cuenta.
             </p>
 
-            <div className="mt-8 grid max-w-lg grid-cols-3 gap-3">
-              <HeaderStat
-                value="6"
-                label="Sabores"
-              />
+            <Link
+              href="/account"
+              className="mt-7 inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-7 py-5 font-black text-[#120704]"
+            >
+              <LogIn size={20} />
+              Ir a mi cuenta
+            </Link>
 
-              <HeaderStat
-                value={String(totalItems)}
-                label="Cookies"
-              />
+            <Link
+              href="/shop"
+              className="mt-4 inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-7 py-5 font-black"
+            >
+              <ShoppingBag size={20} />
+              Ir a la tienda
+            </Link>
+          </section>
+        </div>
+      </PageShell>
+    );
+  }
 
-              <HeaderStat
-                value={`$${total.toFixed(2)}`}
-                label="Total"
-              />
+  return (
+    <PageShell>
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-7 flex flex-wrap items-center justify-between gap-4">
+          <Link
+            href="/account"
+            className="inline-flex items-center gap-2 font-black text-[#F5ACB1]"
+          >
+            <ArrowLeft size={19} />
+            Volver a mi cuenta
+          </Link>
+
+          <Link
+            href="/cart"
+            className="inline-flex items-center gap-2 rounded-full bg-[#F5ACB1] px-5 py-3 font-black text-[#120704]"
+          >
+            <ShoppingBag size={18} />
+            Crear otro pedido
+          </Link>
+        </div>
+
+        <header className="rounded-[2.7rem] border border-[#F5ACB1]/20 bg-[#210D08]/90 p-6 shadow-2xl shadow-black/35 md:p-9">
+          <div className="flex flex-col gap-7 md:flex-row md:items-center md:justify-between">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/20 bg-[#120704]/65 px-4 py-2 text-sm font-black text-[#F5ACB1]">
+                <ReceiptText size={17} />
+                Historial de compras
+              </div>
+
+              <h1 className="mt-5 text-4xl font-black md:text-6xl">
+                Mis pedidos
+              </h1>
+
+              <p className="mt-4 max-w-2xl leading-7 text-[#FFF6EF]/60">
+                Consulta los productos, el total, el método de entrega y el
+                estado de cada pedido.
+              </p>
+
+              <p className="mt-3 break-all text-sm text-[#FFF6EF]/40">
+                {user.email}
+              </p>
             </div>
-          </div>
 
-          <div className="overflow-hidden rounded-[2.7rem] border border-[#F5ACB1]/20 bg-[#210D08] p-3 shadow-2xl shadow-black/45">
-            <SafeProductImage
-              src="/cookie-boxes.png"
-              fallbackSrc="/logo-ianis.png"
-              alt="Cajas de cookies Ianis Bakery"
-              width={1200}
-              height={800}
+            <Image
+              src="/logo-ianis.png"
+              alt="Ianis Bakery"
+              width={126}
+              height={126}
+              className="h-28 w-28 rounded-full border border-[#FFF6EF]/50 object-cover"
               priority
-              className="aspect-[3/2] w-full rounded-[2.2rem] object-cover"
             />
           </div>
-        </header>
 
-        <section className="mt-12 grid gap-8 lg:grid-cols-[1fr_420px]">
-          <div className="space-y-8">
-            <section className="rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/85 p-5 shadow-2xl shadow-black/30 md:p-6">
-              <div className="mb-6">
-                <p className="text-xs font-black uppercase tracking-[0.3em] text-[#D99B55]">
-                  Catálogo
-                </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <StatCard
+              label="Pedidos"
+              value={String(orders.length)}
+              icon={<Package size={22} />}
+            />
 
-                <h2 className="mt-2 text-3xl font-black">
-                  Sabores disponibles
-                </h2>
+            <StatCard
+              label="Cookies compradas"
+              value={String(totalCookies)}
+              icon={<ShoppingBag size={22} />}
+            />
 
-                <p className="mt-2 text-sm font-semibold text-[#FFF6EF]/50">
-                  Toca “Agregar” para comenzar.
-                </p>
-              </div>
-
-              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                {products.map((product) => (
-                  <article
-                    key={product.id}
-                    className="overflow-hidden rounded-[2rem] border border-[#E6B47C]/25 bg-[#FFF6EF] text-[#2A120B] shadow-xl"
-                  >
-                    <SafeProductImage
-                      src={product.image}
-                      fallbackSrc={
-                        product.fallbackImage ||
-                        "/logo-ianis.png"
-                      }
-                      alt={product.name}
-                      width={700}
-                      height={700}
-                      className="aspect-square w-full object-cover"
-                    />
-
-                    <div className="p-5">
-                      <h3 className="min-h-14 text-xl font-black leading-tight">
-                        {product.name}
-                      </h3>
-
-                      <p className="mt-2 text-2xl font-black text-[#C95867]">
-                        ${product.price.toFixed(2)}
-                      </p>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          addProduct(product)
-                        }
-                        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#C95867] px-5 py-3 font-black text-white transition hover:bg-[#A84251]"
-                      >
-                        <Plus size={18} />
-                        Agregar
-                      </button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-
-            <section className="rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/85 p-5 shadow-2xl shadow-black/25 md:p-6">
-              <div className="mb-6 flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.3em] text-[#D99B55]">
-                    Carrito
-                  </p>
-
-                  <h2 className="mt-2 text-3xl font-black">
-                    Productos seleccionados
-                  </h2>
-                </div>
-
-                <span className="rounded-full bg-[#F5ACB1] px-4 py-2 text-sm font-black text-[#120704]">
-                  {totalItems}
-                </span>
-              </div>
-
-              {items.length === 0 ? (
-                <div className="rounded-[2rem] border border-dashed border-[#F5ACB1]/25 bg-[#120704]/50 px-5 py-12 text-center">
-                  <ShoppingBag
-                    size={44}
-                    className="mx-auto text-[#F5ACB1]/60"
-                  />
-
-                  <h3 className="mt-4 text-2xl font-black text-[#F5ACB1]">
-                    Tu carrito está vacío
-                  </h3>
-
-                  <p className="mx-auto mt-3 max-w-sm leading-7 text-[#FFF6EF]/50">
-                    Agrega uno o más sabores para
-                    preparar tu pedido.
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <div className="space-y-4">
-                    {items.map((item) => (
-                      <article
-                        key={item.id}
-                        className="rounded-[2rem] border border-[#F5ACB1]/15 bg-[#120704]/55 p-4"
-                      >
-                        <div className="flex items-center gap-4">
-                          <SafeProductImage
-                            src={item.image}
-                            fallbackSrc={
-                              item.fallbackImage ||
-                              "/logo-ianis.png"
-                            }
-                            alt={item.name}
-                            width={100}
-                            height={100}
-                            className="h-24 w-24 shrink-0 rounded-[1.4rem] object-cover"
-                          />
-
-                          <div className="min-w-0 flex-1">
-                            <h3 className="font-black leading-tight text-[#F5ACB1]">
-                              {item.name}
-                            </h3>
-
-                            <p className="mt-2 text-sm text-[#FFF6EF]/55">
-                              {item.qty} × $
-                              {item.price.toFixed(2)}
-                            </p>
-
-                            <p className="mt-1 font-black text-[#D99B55]">
-                              $
-                              {(
-                                item.price * item.qty
-                              ).toFixed(2)}
-                            </p>
-                          </div>
-
-                          <div className="flex flex-col items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                updateQty(
-                                  item.id,
-                                  1
-                                )
-                              }
-                              className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F5ACB1] text-[#120704]"
-                            >
-                              <Plus size={18} />
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() =>
-                                updateQty(
-                                  item.id,
-                                  -1
-                                )
-                              }
-                              className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#210D08] text-[#F5ACB1]"
-                            >
-                              <Minus size={18} />
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() =>
-                                removeItem(item.id)
-                              }
-                              className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#F5ACB1]/20 text-[#F5ACB1]"
-                            >
-                              <Trash2 size={17} />
-                            </button>
-                          </div>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={clearCart}
-                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl border border-[#F5ACB1]/20 px-5 py-4 font-black text-[#F5ACB1]"
-                  >
-                    <Trash2 size={18} />
-                    Vaciar carrito
-                  </button>
-                </>
-              )}
-            </section>
+            <StatCard
+              label="Total comprado"
+              value={`$${totalPurchased.toFixed(2)}`}
+              icon={<ReceiptText size={22} />}
+            />
           </div>
 
-          <aside className="h-fit rounded-[2.5rem] border border-[#F5ACB1]/25 bg-[#210D08]/95 p-6 shadow-2xl shadow-black/40 lg:sticky lg:top-24">
-            <p className="text-sm font-black uppercase tracking-[0.35em] text-[#D99B55]">
-              Resumen
-            </p>
+          {activeOrders > 0 && (
+            <div className="mt-5 rounded-2xl border border-[#D99B55]/20 bg-[#D99B55]/10 px-5 py-4 font-black text-[#F1C581]">
+              Tienes {activeOrders} pedido
+              {activeOrders === 1 ? "" : "s"} activo
+              {activeOrders === 1 ? "" : "s"}.
+            </div>
+          )}
+        </header>
 
-            <h2 className="mt-3 text-4xl font-black">
-              Tu pedido
+        {errorMessage && (
+          <div className="mt-7 flex items-start gap-3 rounded-[2rem] border border-red-400/25 bg-red-400/10 p-5 text-red-100">
+            <AlertCircle className="mt-0.5 shrink-0" size={24} />
+
+            <div>
+              <p className="font-black">No se pudieron cargar tus pedidos</p>
+              <p className="mt-2 text-sm leading-6 text-red-100/75">
+                {errorMessage}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {loadingOrders ? (
+          <LoadingState message="Cargando tus pedidos..." />
+        ) : orders.length === 0 ? (
+          <section className="mt-8 rounded-[2.7rem] border border-dashed border-[#F5ACB1]/25 bg-[#210D08]/60 px-6 py-16 text-center">
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#F5ACB1]/10 text-[#F5ACB1]">
+              <Package size={48} />
+            </div>
+
+            <h2 className="mt-6 text-4xl font-black">
+              No tienes pedidos vinculados
             </h2>
 
-            {createdOrder && (
-              <div className="mt-6 rounded-2xl border border-green-500/25 bg-green-500/10 p-5 text-green-100">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2
-                    size={24}
-                    className="mt-0.5 shrink-0"
-                  />
+            <p className="mx-auto mt-4 max-w-xl leading-7 text-[#FFF6EF]/55">
+              Los pedidos nuevos aparecerán aquí cuando los confirmes mientras
+              tienes iniciada esta cuenta.
+            </p>
 
-                  <div>
-                    <p className="font-black">
-                      ¡Tu orden fue recibida
-                      exitosamente!
-                    </p>
+            <Link
+              href="/cart"
+              className="mt-7 inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 font-black text-[#120704]"
+            >
+              <ShoppingBag size={20} />
+              Crear un pedido
+            </Link>
+          </section>
+        ) : (
+          <section className="mt-8 space-y-6">
+            {orders.map((order) => (
+              <OrderCard key={order.id} order={order} />
+            ))}
+          </section>
+        )}
 
-                    <p className="mt-2 break-all text-sm text-green-100/70">
-                      Orden: {createdOrder.id}
-                    </p>
-
-                    <Link
-                      href="/orders"
-                      className="mt-4 inline-flex font-black text-green-200 underline"
-                    >
-                      Ver en Mis pedidos
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {errorMessage && (
-              <div className="mt-6 rounded-2xl border border-red-400/25 bg-red-400/10 p-4 text-sm font-semibold leading-6 text-red-100">
-                {errorMessage}
-
-                {!auth.currentUser && (
-                  <Link
-                    href="/account"
-                    className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-[#F5ACB1] px-5 py-3 font-black text-[#120704]"
-                  >
-                    <LogIn size={18} />
-                    Iniciar sesión
-                  </Link>
-                )}
-              </div>
-            )}
-
-            <div className="mt-6 space-y-4">
-              <input
-                value={customerName}
-                onChange={(event) => {
-                  setCustomerName(
-                    event.target.value
-                  );
-                  clearMessages();
-                }}
-                placeholder="Nombre del cliente"
-                className="input"
-              />
-
-              <input
-                type="tel"
-                value={customerPhone}
-                onChange={(event) => {
-                  setCustomerPhone(
-                    event.target.value
-                  );
-                  clearMessages();
-                }}
-                placeholder="Número de teléfono"
-                className="input"
-              />
-
-              {delivery === "delivery" && (
-                <textarea
-                  value={address}
-                  onChange={(event) => {
-                    setAddress(
-                      event.target.value
-                    );
-                    clearMessages();
-                  }}
-                  placeholder="Dirección completa para delivery"
-                  className="input min-h-24 resize-none"
-                />
-              )}
-
-              <textarea
-                value={note}
-                onChange={(event) => {
-                  setNote(event.target.value);
-                  clearMessages();
-                }}
-                placeholder="Nota especial..."
-                className="input min-h-28 resize-none"
-              />
-
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDelivery("pickup");
-                    setAddress("");
-                    clearMessages();
-                  }}
-                  className={`rounded-2xl px-4 py-4 font-black ${
-                    delivery === "pickup"
-                      ? "bg-[#F5ACB1] text-[#120704]"
-                      : "border border-[#F5ACB1]/20 bg-[#120704]/60"
-                  }`}
-                >
-                  Recogido
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDelivery("delivery");
-                    clearMessages();
-                  }}
-                  className={`rounded-2xl px-4 py-4 font-black ${
-                    delivery === "delivery"
-                      ? "bg-[#F5ACB1] text-[#120704]"
-                      : "border border-[#F5ACB1]/20 bg-[#120704]/60"
-                  }`}
-                >
-                  Delivery
-                </button>
-              </div>
-
-              <input
-                value={coupon}
-                onChange={(event) => {
-                  setCoupon(event.target.value);
-                  clearMessages();
-                }}
-                placeholder="CUPÓN: IANIS10"
-                className="input uppercase"
-              />
-
-              <div className="space-y-3 rounded-2xl border border-[#F5ACB1]/15 bg-[#120704]/75 p-5">
-                <Row
-                  label="Subtotal"
-                  value={`$${subtotal.toFixed(2)}`}
-                />
-
-                <Row
-                  label="Descuento"
-                  value={`-$${discount.toFixed(2)}`}
-                />
-
-                <Row
-                  label="Delivery"
-                  value={`$${deliveryFee.toFixed(2)}`}
-                />
-
-                <div className="border-t border-[#F5ACB1]/15 pt-3">
-                  <Row
-                    label="Total"
-                    value={`$${total.toFixed(2)}`}
-                    highlight
-                  />
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={createOrder}
-                disabled={
-                  loading || items.length === 0
-                }
-                className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704] disabled:cursor-not-allowed disabled:opacity-45"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="animate-spin" />
-                    Creando pedido...
-                  </>
-                ) : (
-                  <>
-                    <PackageCheck />
-                    Confirmar pedido
-                  </>
-                )}
-              </button>
-
-              {createdOrder && (
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-8 py-5 text-center text-lg font-black text-white"
-                >
-                  <Truck />
-                  Enviar a WhatsApp
-                </a>
-              )}
-
-              <button
-                type="button"
-                disabled
-                className="flex w-full items-center justify-center gap-3 rounded-2xl border border-[#F5ACB1]/25 bg-[#120704]/75 px-8 py-5 font-black text-[#FFF6EF]/50"
-              >
-                <CreditCard />
-                Pago online próximamente
-              </button>
-            </div>
-          </aside>
-        </section>
+        <div className="mt-8 flex justify-center">
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/20 bg-[#210D08]/75 px-5 py-3 font-black text-[#F5ACB1]"
+          >
+            <RefreshCcw size={18} />
+            Actualizar pedidos
+          </button>
+        </div>
       </div>
+    </PageShell>
+  );
+}
 
-      <style jsx>{`
-        .input {
-          width: 100%;
-          border-radius: 18px;
-          border: 1px solid
-            rgba(245, 172, 177, 0.2);
-          background: rgba(18, 7, 4, 0.75);
-          padding: 15px 16px;
-          color: #fff6ef;
-          outline: none;
-        }
+function PageShell({ children }: { children: React.ReactNode }) {
+  return (
+    <main className="min-h-screen bg-[#120704] px-5 py-8 text-[#FFF6EF] md:px-10 lg:px-20">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,172,177,0.18),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(217,155,85,0.14),transparent_38%)]" />
 
-        .input:focus {
-          border-color: rgba(
-            245,
-            172,
-            177,
-            0.65
-          );
-        }
-
-        .input::placeholder {
-          color: rgba(255, 246, 239, 0.35);
-        }
-      `}</style>
+      {children}
     </main>
   );
 }
 
-function SafeProductImage({
-  src,
-  fallbackSrc,
-  alt,
-  className,
-  width,
-  height,
-  priority = false,
-}: {
-  src: string;
-  fallbackSrc: string;
-  alt: string;
-  className: string;
-  width: number;
-  height: number;
-  priority?: boolean;
-}) {
-  const [currentSource, setCurrentSource] =
-    useState(src);
-
+function LoadingState({ message }: { message: string }) {
   return (
-    <Image
-      src={currentSource}
-      alt={alt}
-      width={width}
-      height={height}
-      priority={priority}
-      className={className}
-      onError={() => {
-        if (currentSource !== fallbackSrc) {
-          setCurrentSource(fallbackSrc);
-        }
-      }}
-    />
-  );
-}
+    <div className="flex min-h-[50vh] items-center justify-center">
+      <div className="text-center">
+        <Loader2
+          size={46}
+          className="mx-auto animate-spin text-[#F5ACB1]"
+        />
 
-function HeaderStat({
-  value,
-  label,
-}: {
-  value: string;
-  label: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-[#F5ACB1]/15 bg-[#210D08]/70 p-4">
-      <p className="truncate text-xl font-black text-[#F5ACB1]">
-        {value}
-      </p>
-
-      <p className="mt-1 text-xs text-[#FFF6EF]/45">
-        {label}
-      </p>
+        <p className="mt-4 font-black text-[#F5ACB1]">{message}</p>
+      </div>
     </div>
   );
 }
 
-function Row({
+function StatCard({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-[1.7rem] border border-[#F5ACB1]/15 bg-[#120704]/65 p-5">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F5ACB1] text-[#120704]">
+        {icon}
+      </div>
+
+      <p className="mt-4 text-3xl font-black text-[#F5ACB1]">{value}</p>
+
+      <p className="mt-1 text-sm text-[#FFF6EF]/50">{label}</p>
+    </div>
+  );
+}
+
+function OrderCard({ order }: { order: Order }) {
+  const items = Array.isArray(order.items) ? order.items : [];
+  const status = order.status || "Pendiente";
+  const paymentStatus = order.paymentStatus || "Pendiente";
+  const deliveryLabel =
+    order.delivery === "delivery" ? "Delivery" : "Recogido";
+
+  return (
+    <article className="overflow-hidden rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/90 shadow-2xl shadow-black/25">
+      <div className="border-b border-[#F5ACB1]/12 p-6 md:p-7">
+        <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.28em] text-[#D99B55]">
+              Orden
+            </p>
+
+            <h2 className="mt-2 break-all text-xl font-black text-[#F5ACB1]">
+              #{order.id}
+            </h2>
+
+            <div className="mt-4 flex flex-wrap gap-3 text-sm text-[#FFF6EF]/55">
+              <span className="inline-flex items-center gap-2">
+                <CalendarDays size={16} />
+                {formatDate(order.createdAt)}
+              </span>
+
+              <span className="inline-flex items-center gap-2">
+                <Truck size={16} />
+                {deliveryLabel}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <StatusBadge value={status} />
+            <PaymentBadge value={paymentStatus} />
+          </div>
+        </div>
+      </div>
+
+      <div className="p-6 md:p-7">
+        {items.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-[#F5ACB1]/20 p-5 text-center text-[#FFF6EF]/50">
+            Este pedido no contiene productos visibles.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {items.map((item, index) => {
+              const quantity = Number(item.qty || 0);
+              const price = Number(item.price || 0);
+              const lineTotal =
+                typeof item.lineTotal === "number"
+                  ? item.lineTotal
+                  : quantity * price;
+
+              return (
+                <div
+                  key={`${item.id || item.name || "item"}-${index}`}
+                  className="flex items-center gap-4 rounded-[1.7rem] border border-[#F5ACB1]/12 bg-[#120704]/60 p-4"
+                >
+                  <SafeOrderImage
+                    src={normalizeImage(item.image, item.name)}
+                    alt={item.name || "Cookie Ianis Bakery"}
+                  />
+
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-black text-[#F5ACB1]">
+                      {item.name || "Cookie Ianis Bakery"}
+                    </h3>
+
+                    <p className="mt-1 text-sm text-[#FFF6EF]/50">
+                      {quantity} × ${price.toFixed(2)}
+                    </p>
+                  </div>
+
+                  <p className="font-black text-[#D99B55]">
+                    ${lineTotal.toFixed(2)}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_320px]">
+          <div className="rounded-[1.7rem] border border-[#F5ACB1]/12 bg-[#120704]/50 p-5">
+            <p className="font-black text-[#F5ACB1]">Información del pedido</p>
+
+            <div className="mt-4 space-y-3 text-sm leading-6 text-[#FFF6EF]/60">
+              <p>
+                <strong className="text-[#FFF6EF]">Cliente:</strong>{" "}
+                {order.customerName || "No disponible"}
+              </p>
+
+              <p>
+                <strong className="text-[#FFF6EF]">Teléfono:</strong>{" "}
+                {order.customerPhone || "No disponible"}
+              </p>
+
+              {order.delivery === "delivery" && (
+                <p>
+                  <strong className="text-[#FFF6EF]">Dirección:</strong>{" "}
+                  {order.address || "No disponible"}
+                </p>
+              )}
+
+              <p>
+                <strong className="text-[#FFF6EF]">Nota:</strong>{" "}
+                {order.note || "Sin nota especial"}
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3 rounded-[1.7rem] border border-[#F5ACB1]/12 bg-[#120704]/70 p-5">
+            <PriceRow
+              label="Subtotal"
+              value={`$${Number(order.subtotal || 0).toFixed(2)}`}
+            />
+
+            <PriceRow
+              label="Descuento"
+              value={`-$${Number(order.discount || 0).toFixed(2)}`}
+            />
+
+            <PriceRow
+              label="Delivery"
+              value={`$${Number(order.deliveryFee || 0).toFixed(2)}`}
+            />
+
+            <div className="border-t border-[#F5ACB1]/15 pt-3">
+              <PriceRow
+                label="Total"
+                value={`$${Number(order.total || 0).toFixed(2)}`}
+                highlight
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function StatusBadge({ value }: { value: string }) {
+  const normalized = normalizeText(value);
+
+  const completed = [
+    "completado",
+    "completada",
+    "completed",
+    "entregado",
+    "entregada",
+  ].includes(normalized);
+
+  const cancelled = [
+    "cancelado",
+    "cancelada",
+    "cancelled",
+    "rechazado",
+    "rechazada",
+  ].includes(normalized);
+
+  const styles = completed
+    ? "border-green-500/25 bg-green-500/10 text-green-200"
+    : cancelled
+      ? "border-red-400/25 bg-red-400/10 text-red-200"
+      : "border-[#D99B55]/25 bg-[#D99B55]/10 text-[#F1C581]";
+
+  return (
+    <span
+      className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-black ${styles}`}
+    >
+      {completed ? (
+        <CheckCircle2 size={15} />
+      ) : (
+        <Clock3 size={15} />
+      )}
+
+      {value}
+    </span>
+  );
+}
+
+function PaymentBadge({ value }: { value: string }) {
+  const paid = ["pagado", "paid", "completado", "completed"].includes(
+    normalizeText(value)
+  );
+
+  return (
+    <span
+      className={`rounded-full border px-4 py-2 text-xs font-black ${
+        paid
+          ? "border-green-500/25 bg-green-500/10 text-green-200"
+          : "border-[#F5ACB1]/20 bg-[#F5ACB1]/10 text-[#F5ACB1]"
+      }`}
+    >
+      Pago: {value}
+    </span>
+  );
+}
+
+function PriceRow({
   label,
   value,
   highlight = false,
@@ -1012,8 +614,8 @@ function Row({
       <span
         className={
           highlight
-            ? "text-xl font-black text-[#F5ACB1]"
-            : "text-[#FFF6EF]/60"
+            ? "text-lg font-black text-[#F5ACB1]"
+            : "text-sm text-[#FFF6EF]/55"
         }
       >
         {label}
@@ -1030,4 +632,146 @@ function Row({
       </span>
     </div>
   );
-          }
+}
+
+function SafeOrderImage({ src, alt }: { src: string; alt: string }) {
+  const [currentSource, setCurrentSource] = useState(src);
+
+  return (
+    <Image
+      src={currentSource}
+      alt={alt}
+      width={74}
+      height={74}
+      className="h-16 w-16 shrink-0 rounded-2xl object-cover"
+      onError={() => {
+        if (currentSource !== "/logo-ianis.png") {
+          setCurrentSource("/logo-ianis.png");
+        }
+      }}
+    />
+  );
+}
+
+function mapOrderDocument(
+  document: QueryDocumentSnapshot<DocumentData>
+): Order {
+  const data = document.data();
+
+  return {
+    id: document.id,
+    customerId:
+      typeof data.customerId === "string" ? data.customerId : "",
+    customerEmail:
+      typeof data.customerEmail === "string" ? data.customerEmail : "",
+    customerName:
+      typeof data.customerName === "string" ? data.customerName : "",
+    customerPhone:
+      typeof data.customerPhone === "string" ? data.customerPhone : "",
+    address: typeof data.address === "string" ? data.address : "",
+    note: typeof data.note === "string" ? data.note : "",
+    delivery:
+      typeof data.delivery === "string" ? data.delivery : "pickup",
+    coupon: typeof data.coupon === "string" ? data.coupon : "",
+    items: Array.isArray(data.items) ? data.items : [],
+    itemCount:
+      typeof data.itemCount === "number" ? data.itemCount : undefined,
+    subtotal: Number(data.subtotal || 0),
+    discount: Number(data.discount || 0),
+    deliveryFee: Number(data.deliveryFee || 0),
+    total: Number(data.total || 0),
+    status: typeof data.status === "string" ? data.status : "Pendiente",
+    paymentStatus:
+      typeof data.paymentStatus === "string"
+        ? data.paymentStatus
+        : "Pendiente",
+    source: typeof data.source === "string" ? data.source : "",
+    createdAt: data.createdAt || null,
+    updatedAt: data.updatedAt || null,
+  };
+}
+
+function normalizeImage(image?: string, name?: string) {
+  const productName = (name || "").toLowerCase();
+
+  if (productName.includes("nutella")) return "/nutella.png";
+  if (productName.includes("peanut")) return "/peanut-butter.png";
+
+  if (
+    productName.includes("double") ||
+    productName.includes("doble")
+  ) {
+    return "/double-chocolate.png";
+  }
+
+  if (productName.includes("dulce")) return "/dulce-leche.png";
+
+  if (
+    productName.includes("marshmallow") ||
+    productName.includes("malvavisco")
+  ) {
+    return "/marshmallow.png";
+  }
+
+  if (
+    productName.includes("coconut") ||
+    productName.includes("coco")
+  ) {
+    return "/coconut.png";
+  }
+
+  if (!image) return "/logo-ianis.png";
+
+  let normalized = image.trim();
+
+  normalized = normalized.replace(/^https?:\/\/[^/]+/, "");
+  normalized = normalized.replace("/cookies/", "/");
+
+  if (!normalized.startsWith("/")) {
+    normalized = `/${normalized}`;
+  }
+
+  return normalized;
+}
+
+function formatDate(value: Order["createdAt"]) {
+  const timestamp = getTimestamp(value);
+
+  if (!timestamp) {
+    return "Fecha no disponible";
+  }
+
+  return new Intl.DateTimeFormat("es-PR", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(timestamp));
+}
+
+function getTimestamp(value: Order["createdAt"]) {
+  if (!value) {
+    return 0;
+  }
+
+  if (value instanceof Timestamp) {
+    return value.toMillis();
+  }
+
+  if (value instanceof Date) {
+    return value.getTime();
+  }
+
+  if (typeof value === "number") {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const parsed = new Date(value).getTime();
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }
+
+  return 0;
+}
+
+function normalizeText(value?: string) {
+  return (value || "").trim().toLowerCase();
+            }
