@@ -13,7 +13,6 @@ import {
 import {
   doc,
   getDoc,
-  onSnapshot,
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
@@ -21,6 +20,7 @@ import {
   AlertCircle,
   ArrowLeft,
   CheckCircle2,
+  ChevronRight,
   Gift,
   Heart,
   Loader2,
@@ -31,7 +31,7 @@ import {
   Sparkles,
   UserCircle,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { auth, db } from "@/lib/firebase";
 
 type AccountMode = "login" | "register";
@@ -47,24 +47,10 @@ type Notice = {
   message: string;
 } | null;
 
-type CustomerProfile = {
-  uid?: string;
-  name?: string;
-  email?: string;
-  phone?: string;
-  points?: number;
-  favorites?: string[];
-  role?: string;
-  active?: boolean;
-};
-
 export default function AccountPage() {
   const [mode, setMode] = useState<AccountMode>("login");
   const [user, setUser] = useState<User | null>(null);
-  const [customer, setCustomer] = useState<CustomerProfile | null>(null);
-
   const [checkingSession, setCheckingSession] = useState(true);
-  const [loadingCustomer, setLoadingCustomer] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [notice, setNotice] = useState<Notice>(null);
 
@@ -78,110 +64,10 @@ export default function AccountPage() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setCheckingSession(false);
-
-      if (!currentUser) {
-        setCustomer(null);
-        setLoadingCustomer(false);
-      }
     });
 
     return unsubscribe;
   }, []);
-
-  useEffect(() => {
-    if (!user) {
-      setCustomer(null);
-      setLoadingCustomer(false);
-      return;
-    }
-
-    setLoadingCustomer(true);
-
-    const customerReference = doc(db, "customers", user.uid);
-
-    const unsubscribe = onSnapshot(
-      customerReference,
-      async (snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.data() as CustomerProfile;
-
-          setCustomer({
-            ...data,
-            favorites: Array.isArray(data.favorites)
-              ? data.favorites.filter(
-                  (favorite): favorite is string =>
-                    typeof favorite === "string"
-                )
-              : [],
-            points:
-              typeof data.points === "number"
-                ? data.points
-                : 0,
-          });
-
-          setLoadingCustomer(false);
-          return;
-        }
-
-        try {
-          const initialCustomer: CustomerProfile = {
-            uid: user.uid,
-            name: user.displayName || "",
-            email: user.email || "",
-            phone: "",
-            points: 0,
-            favorites: [],
-            role: "customer",
-            active: true,
-          };
-
-          await setDoc(
-            customerReference,
-            {
-              ...initialCustomer,
-              createdAt: serverTimestamp(),
-              updatedAt: serverTimestamp(),
-            },
-            { merge: true }
-          );
-
-          setCustomer(initialCustomer);
-        } catch (error) {
-          console.error(
-            "Error creando el perfil del cliente:",
-            error
-          );
-
-          setNotice({
-            type: "error",
-            message:
-              "No se pudo cargar completamente el perfil del cliente.",
-          });
-        } finally {
-          setLoadingCustomer(false);
-        }
-      },
-      (error) => {
-        console.error(
-          "Error escuchando el perfil del cliente:",
-          error
-        );
-
-        setLoadingCustomer(false);
-
-        setNotice({
-          type: "error",
-          message:
-            "No se pudo actualizar la información de tu cuenta.",
-        });
-      }
-    );
-
-    return unsubscribe;
-  }, [user]);
-
-  const favoritesCount = customer?.favorites?.length ?? 0;
-  const points = customer?.points ?? 0;
 
   const updateField = (
     field: keyof FormState,
@@ -299,8 +185,9 @@ export default function AccountPage() {
           credential.user.uid
         );
 
-        const customerSnapshot =
-          await getDoc(customerReference);
+        const customerSnapshot = await getDoc(
+          customerReference
+        );
 
         if (!customerSnapshot.exists()) {
           await setDoc(
@@ -310,7 +197,8 @@ export default function AccountPage() {
               name:
                 credential.user.displayName || "",
               email:
-                credential.user.email || cleanEmail,
+                credential.user.email ||
+                cleanEmail,
               phone: "",
               points: 0,
               favorites: [],
@@ -318,25 +206,14 @@ export default function AccountPage() {
               active: true,
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp(),
+              lastLoginAt: serverTimestamp(),
             },
             { merge: true }
           );
         } else {
-          const currentData =
-            customerSnapshot.data();
-
           await setDoc(
             customerReference,
             {
-              favorites: Array.isArray(
-                currentData.favorites
-              )
-                ? currentData.favorites
-                : [],
-              points:
-                typeof currentData.points === "number"
-                  ? currentData.points
-                  : 0,
               updatedAt: serverTimestamp(),
               lastLoginAt: serverTimestamp(),
             },
@@ -374,10 +251,9 @@ export default function AccountPage() {
   const handleLogout = async () => {
     try {
       setProcessing(true);
+      setNotice(null);
 
       await signOut(auth);
-
-      setCustomer(null);
 
       setNotice({
         type: "success",
@@ -399,7 +275,7 @@ export default function AccountPage() {
 
   if (checkingSession) {
     return (
-      <main className="flex min-h-[80vh] items-center justify-center bg-[#120704] px-5 text-[#FFF6EF]">
+      <main className="flex min-h-screen items-center justify-center bg-[#120704] px-5 text-[#FFF6EF]">
         <div className="text-center">
           <Loader2
             size={44}
@@ -415,13 +291,10 @@ export default function AccountPage() {
   }
 
   if (user) {
-    const displayName =
-      customer?.name ||
-      user.displayName ||
-      "";
-
     return (
       <main className="min-h-screen bg-[#120704] px-5 py-10 text-[#FFF6EF] md:px-10 lg:px-20">
+        <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,172,177,0.18),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(217,155,85,0.13),transparent_38%)]" />
+
         <div className="mx-auto max-w-5xl">
           <Link
             href="/"
@@ -447,13 +320,13 @@ export default function AccountPage() {
 
             <h1 className="mt-3 text-center text-4xl font-black md:text-5xl">
               ¡Bienvenido
-              {displayName
-                ? `, ${displayName}`
+              {user.displayName
+                ? `, ${user.displayName}`
                 : ""}
               !
             </h1>
 
-            <p className="mt-3 text-center text-[#FFF6EF]/60">
+            <p className="mt-3 break-all text-center text-[#FFF6EF]/60">
               {user.email}
             </p>
 
@@ -464,82 +337,34 @@ export default function AccountPage() {
               />
             )}
 
-            {loadingCustomer && (
-              <div className="mt-6 flex items-center justify-center gap-3 rounded-2xl border border-[#F5ACB1]/15 bg-[#120704]/60 px-5 py-4 text-[#F5ACB1]">
-                <Loader2
-                  size={18}
-                  className="animate-spin"
-                />
-                <span className="font-black">
-                  Actualizando perfil...
-                </span>
-              </div>
-            )}
-
             <div className="mt-8 grid gap-5 md:grid-cols-3">
               <AccountCard
+                href="/orders"
                 icon={<Package />}
                 title="Mis pedidos"
-                description="Consulta tus pedidos y su estado."
-                href="/orders"
+                description="Consulta tus pedidos, productos, total y estado."
+                active
               />
 
               <AccountCard
                 icon={<Heart />}
                 title="Favoritos"
-                description={
-                  favoritesCount === 0
-                    ? "Todavía no has guardado cookies favoritas."
-                    : favoritesCount === 1
-                    ? "Tienes 1 cookie guardada."
-                    : `Tienes ${favoritesCount} cookies guardadas.`
-                }
-                count={favoritesCount}
-                href="/shop"
+                description="Guarda las cookies que más te gustan."
+                badge="Próximamente"
               />
 
               <AccountCard
                 icon={<Gift />}
                 title="Recompensas"
-                description={
-                  points === 1
-                    ? "Tienes 1 punto acumulado."
-                    : `Tienes ${points} puntos acumulados.`
-                }
-                count={points}
+                description="Comienza a acumular puntos con tus compras."
+                badge="Próximamente"
               />
-            </div>
-
-            <div className="mt-8 rounded-[2rem] border border-[#F5ACB1]/15 bg-[#120704]/60 p-5">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm font-black uppercase tracking-[0.28em] text-[#D99B55]">
-                    Resumen de tu cuenta
-                  </p>
-
-                  <h2 className="mt-2 text-2xl font-black">
-                    Tus beneficios Ianis Bakery
-                  </h2>
-                </div>
-
-                <div className="flex gap-3">
-                  <SummaryBadge
-                    label="Favoritos"
-                    value={favoritesCount}
-                  />
-
-                  <SummaryBadge
-                    label="Puntos"
-                    value={points}
-                  />
-                </div>
-              </div>
             </div>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <Link
                 href="/shop"
-                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 font-black text-[#120704]"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 font-black text-[#120704] transition hover:bg-[#FFF6EF]"
               >
                 <ShoppingBag size={20} />
                 Ir a la tienda
@@ -549,7 +374,7 @@ export default function AccountPage() {
                 type="button"
                 onClick={handleLogout}
                 disabled={processing}
-                className="rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-8 py-5 font-black text-[#FFF6EF] disabled:opacity-50"
+                className="rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-8 py-5 font-black text-[#FFF6EF] transition hover:border-[#F5ACB1]/45 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {processing
                   ? "Cerrando sesión..."
@@ -564,10 +389,12 @@ export default function AccountPage() {
 
   return (
     <main className="min-h-screen bg-[#120704] px-5 py-10 text-[#FFF6EF]">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,172,177,0.18),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(217,155,85,0.13),transparent_38%)]" />
+
       <div className="mx-auto flex min-h-[78vh] max-w-md items-center justify-center">
         <form
           onSubmit={handleSubmit}
-          className="w-full rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/92 p-7 shadow-2xl shadow-black/45"
+          className="w-full rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/95 p-7 shadow-2xl shadow-black/45"
         >
           <Image
             src="/logo-ianis.png"
@@ -604,9 +431,7 @@ export default function AccountPage() {
             {mode === "register" && (
               <FormField
                 label="Nombre"
-                icon={
-                  <UserCircle size={21} />
-                }
+                icon={<UserCircle size={21} />}
               >
                 <input
                   type="text"
@@ -674,7 +499,7 @@ export default function AccountPage() {
           <button
             type="submit"
             disabled={processing}
-            className="mt-7 flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704] disabled:cursor-not-allowed disabled:opacity-55"
+            className="mt-7 flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704] transition hover:bg-[#FFF6EF] disabled:cursor-not-allowed disabled:opacity-55"
           >
             {processing ? (
               <>
@@ -717,8 +542,8 @@ function FormField({
   children,
 }: {
   label: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
+  icon: ReactNode;
+  children: ReactNode;
 }) {
   return (
     <label className="block">
@@ -726,7 +551,7 @@ function FormField({
         {label}
       </span>
 
-      <div className="mt-2 flex items-center gap-3 rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/72 px-4 py-4 focus-within:border-[#F5ACB1]/60">
+      <div className="mt-2 flex items-center gap-3 rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-4 py-4 focus-within:border-[#F5ACB1]/60">
         <span className="shrink-0 text-[#F5ACB1]">
           {icon}
         </span>
@@ -770,68 +595,66 @@ function NoticeBox({
 }
 
 function AccountCard({
+  href,
   icon,
   title,
   description,
-  count,
-  href,
+  active = false,
+  badge,
 }: {
-  icon: React.ReactNode;
+  href?: string;
+  icon: ReactNode;
   title: string;
   description: string;
-  count?: number;
-  href?: string;
+  active?: boolean;
+  badge?: string;
 }) {
   const content = (
-    <article className="relative h-full rounded-[2rem] border border-[#F5ACB1]/15 bg-[#120704]/70 p-5 transition hover:border-[#F5ACB1]/35 hover:bg-[#180A06]">
-      {typeof count === "number" && (
-        <div className="absolute right-5 top-5 flex min-h-9 min-w-9 items-center justify-center rounded-full bg-[#F5ACB1] px-3 text-sm font-black text-[#120704] shadow-lg">
-          {count}
+    <>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F5ACB1] text-[#120704]">
+          {icon}
         </div>
-      )}
 
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F5ACB1] text-[#120704]">
-        {icon}
+        {active && (
+          <ChevronRight
+            size={24}
+            className="text-[#F5ACB1]"
+          />
+        )}
+
+        {badge && (
+          <span className="rounded-full border border-[#F5ACB1]/20 bg-[#F5ACB1]/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-[#F5ACB1]">
+            {badge}
+          </span>
+        )}
       </div>
 
-      <h3 className="mt-4 pr-12 text-xl font-black text-[#F5ACB1]">
+      <h3 className="mt-5 text-2xl font-black text-[#F5ACB1]">
         {title}
       </h3>
 
-      <p className="mt-2 text-sm leading-6 text-[#FFF6EF]/60">
+      <p className="mt-3 text-sm leading-6 text-[#FFF6EF]/60">
         {description}
       </p>
-    </article>
+    </>
   );
 
   if (href) {
     return (
-      <Link href={href} className="block h-full">
+      <Link
+        href={href}
+        className="block rounded-[2rem] border border-[#F5ACB1]/18 bg-[#120704]/70 p-6 transition duration-200 hover:-translate-y-1 hover:border-[#F5ACB1]/50 hover:bg-[#190A07]"
+      >
         {content}
       </Link>
     );
   }
 
-  return content;
-}
-
-function SummaryBadge({
-  label,
-  value,
-}: {
-  label: string;
-  value: number;
-}) {
   return (
-    <div className="min-w-24 rounded-2xl border border-[#F5ACB1]/15 bg-[#210D08] px-4 py-3 text-center">
-      <p className="text-2xl font-black text-[#F5ACB1]">
-        {value}
-      </p>
-
-      <p className="mt-1 text-xs font-bold text-[#FFF6EF]/50">
-        {label}
-      </p>
-    </div>
+    <article className="rounded-[2rem] border border-[#F5ACB1]/12 bg-[#120704]/45 p-6 opacity-75">
+      {content}
+    </article>
   );
 }
 
@@ -880,4 +703,4 @@ function getFirebaseErrorMessage(error: unknown) {
         ? `No se pudo completar la acción. Código: ${code}`
         : "No se pudo completar la acción. Intenta nuevamente.";
   }
-            }
+        }
