@@ -58,7 +58,7 @@ type CustomerOrder = {
   updatedAt?: Timestamp | Date | string | null;
 };
 
-type PageNotice = {
+type Notice = {
   type: "error" | "info";
   message: string;
 } | null;
@@ -68,7 +68,7 @@ export default function OrdersPage() {
   const [checkingSession, setCheckingSession] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
-  const [notice, setNotice] = useState<PageNotice>(null);
+  const [notice, setNotice] = useState<Notice>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -94,28 +94,29 @@ export default function OrdersPage() {
     setLoadingOrders(true);
     setNotice(null);
 
-    const ordersReference = collection(db, "orders");
-
     const customerOrdersQuery = query(
-      ordersReference,
+      collection(db, "orders"),
       where("customerId", "==", user.uid)
     );
 
     const unsubscribe = onSnapshot(
       customerOrdersQuery,
       (snapshot) => {
-        const customerOrders = snapshot.docs.map((document) => ({
-          id: document.id,
-          ...document.data(),
-        })) as CustomerOrder[];
+        const loadedOrders = snapshot.docs.map((orderDocument) => {
+          return {
+            id: orderDocument.id,
+            ...orderDocument.data(),
+          } as CustomerOrder;
+        });
 
-        customerOrders.sort(
-          (firstOrder, secondOrder) =>
+        loadedOrders.sort((firstOrder, secondOrder) => {
+          return (
             getOrderTimestamp(secondOrder.createdAt) -
             getOrderTimestamp(firstOrder.createdAt)
-        );
+          );
+        });
 
-        setOrders(customerOrders);
+        setOrders(loadedOrders);
         setLoadingOrders(false);
       },
       (error) => {
@@ -127,7 +128,7 @@ export default function OrdersPage() {
         setNotice({
           type: "error",
           message:
-            "No se pudieron cargar tus pedidos. Verifica las reglas de Firestore y vuelve a intentarlo.",
+            "No se pudieron cargar tus pedidos. Revisa las reglas de Firestore.",
         });
       }
     );
@@ -136,15 +137,14 @@ export default function OrdersPage() {
   }, [user]);
 
   const totalSpent = useMemo(() => {
-    return orders.reduce(
-      (total, order) => total + Number(order.total || 0),
-      0
-    );
+    return orders.reduce((totalAmount, order) => {
+      return totalAmount + Number(order.total || 0);
+    }, 0);
   }, [orders]);
 
   const pendingOrders = useMemo(() => {
     return orders.filter((order) => {
-      const normalizedStatus = normalizeStatus(order.status);
+      const status = normalizeStatus(order.status);
 
       return [
         "pendiente",
@@ -153,7 +153,8 @@ export default function OrdersPage() {
         "confirmed",
         "preparando",
         "processing",
-      ].includes(normalizedStatus);
+        "en preparación",
+      ].includes(status);
     }).length;
   }, [orders]);
 
@@ -178,7 +179,7 @@ export default function OrdersPage() {
     return (
       <main className="min-h-screen bg-[#120704] px-5 py-10 text-[#FFF6EF]">
         <div className="mx-auto flex min-h-[78vh] max-w-lg items-center justify-center">
-          <section className="w-full rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/92 p-7 text-center shadow-2xl shadow-black/45 md:p-9">
+          <section className="w-full rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/95 p-7 text-center shadow-2xl shadow-black/45 md:p-9">
             <Image
               src="/logo-ianis.png"
               alt="Ianis Bakery"
@@ -202,7 +203,7 @@ export default function OrdersPage() {
 
             <Link
               href="/account"
-              className="mt-8 inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 font-black text-[#120704]"
+              className="mt-8 inline-flex w-full items-center justify-center rounded-2xl bg-[#F5ACB1] px-8 py-5 font-black text-[#120704]"
             >
               Ir a mi cuenta
             </Link>
@@ -245,8 +246,8 @@ export default function OrdersPage() {
               </h1>
 
               <p className="mt-4 max-w-2xl leading-7 text-[#FFF6EF]/60">
-                Consulta tus órdenes, productos seleccionados, totales y estado
-                de preparación.
+                Consulta tus órdenes, productos, totales y estado de
+                preparación.
               </p>
             </div>
 
@@ -286,8 +287,14 @@ export default function OrdersPage() {
                 : "border-[#F5ACB1]/20 bg-[#F5ACB1]/10 text-[#FFF6EF]"
             }`}
           >
-            <AlertCircle className="mt-0.5 shrink-0" size={22} />
-            <p className="font-semibold leading-6">{notice.message}</p>
+            <AlertCircle
+              className="mt-0.5 shrink-0"
+              size={22}
+            />
+
+            <p className="font-semibold leading-6">
+              {notice.message}
+            </p>
           </div>
         )}
 
@@ -314,8 +321,8 @@ export default function OrdersPage() {
               </h2>
 
               <p className="mx-auto mt-4 max-w-xl leading-7 text-[#FFF6EF]/55">
-                Los nuevos pedidos creados con tu sesión iniciada aparecerán
-                aquí automáticamente.
+                Los pedidos creados con tu sesión iniciada aparecerán aquí
+                automáticamente.
               </p>
 
               <Link
@@ -329,7 +336,10 @@ export default function OrdersPage() {
           ) : (
             <div className="space-y-6">
               {orders.map((order) => (
-                <OrderCard key={order.id} order={order} />
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                />
               ))}
             </div>
           )}
@@ -339,10 +349,16 @@ export default function OrdersPage() {
   );
 }
 
-function OrderCard({ order }: { order: CustomerOrder }) {
-  const orderItems = Array.isArray(order.items) ? order.items : [];
-  const orderStatus = getStatusDetails(order.status);
-  const paymentStatus = order.paymentStatus || "Pendiente";
+function OrderCard({
+  order,
+}: {
+  order: CustomerOrder;
+}) {
+  const orderItems = Array.isArray(order.items)
+    ? order.items
+    : [];
+
+  const statusDetails = getStatusDetails(order.status);
 
   return (
     <article className="overflow-hidden rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/90 shadow-2xl shadow-black/25">
@@ -363,10 +379,10 @@ function OrderCard({ order }: { order: CustomerOrder }) {
           </div>
 
           <div
-            className={`inline-flex w-fit items-center gap-2 rounded-full border px-4 py-2 text-sm font-black ${orderStatus.className}`}
+            className={`inline-flex w-fit items-center gap-2 rounded-full border px-4 py-2 text-sm font-black ${statusDetails.className}`}
           >
-            {orderStatus.icon}
-            {orderStatus.label}
+            {statusDetails.icon}
+            {statusDetails.label}
           </div>
         </div>
       </div>
@@ -402,12 +418,16 @@ function OrderCard({ order }: { order: CustomerOrder }) {
                   >
                     <SafeOrderImage
                       src={item.image}
-                      alt={item.name || "Cookie Ianis Bakery"}
+                      alt={
+                        item.name ||
+                        "Cookie Ianis Bakery"
+                      }
                     />
 
                     <div className="min-w-0 flex-1">
                       <p className="font-black text-[#F5ACB1]">
-                        {item.name || "Producto Ianis Bakery"}
+                        {item.name ||
+                          "Producto Ianis Bakery"}
                       </p>
 
                       <p className="mt-1 text-sm text-[#FFF6EF]/50">
@@ -433,29 +453,45 @@ function OrderCard({ order }: { order: CustomerOrder }) {
           <div className="mt-5 space-y-3">
             <OrderRow
               label="Subtotal"
-              value={`$${Number(order.subtotal || 0).toFixed(2)}`}
+              value={`$${Number(
+                order.subtotal || 0
+              ).toFixed(2)}`}
             />
 
             <OrderRow
               label="Descuento"
-              value={`-$${Number(order.discount || 0).toFixed(2)}`}
+              value={`-$${Number(
+                order.discount || 0
+              ).toFixed(2)}`}
             />
 
             <OrderRow
               label="Delivery"
-              value={`$${Number(order.deliveryFee || 0).toFixed(2)}`}
+              value={`$${Number(
+                order.deliveryFee || 0
+              ).toFixed(2)}`}
             />
 
             <div className="border-t border-[#F5ACB1]/15 pt-3">
               <OrderRow
                 label="Total"
-                value={`$${Number(order.total || 0).toFixed(2)}`}
+                value={`$${Number(
+                  order.total || 0
+                ).toFixed(2)}`}
                 highlight
               />
             </div>
           </div>
 
           <div className="mt-5 space-y-3 border-t border-[#F5ACB1]/15 pt-5 text-sm">
+            <InformationRow
+              label="Cliente"
+              value={
+                order.customerName ||
+                "No disponible"
+              }
+            />
+
             <InformationRow
               label="Entrega"
               value={
@@ -467,13 +503,17 @@ function OrderCard({ order }: { order: CustomerOrder }) {
 
             <InformationRow
               label="Pago"
-              value={paymentStatus}
+              value={
+                order.paymentStatus || "Pendiente"
+              }
             />
 
             {order.delivery === "delivery" && (
               <InformationRow
                 label="Dirección"
-                value={order.address || "Sin dirección"}
+                value={
+                  order.address || "Sin dirección"
+                }
               />
             )}
 
@@ -571,14 +611,14 @@ function SafeOrderImage({
   src?: string;
   alt: string;
 }) {
-  const safeSource =
+  const imageSource =
     typeof src === "string" && src.trim()
       ? src
       : "/logo-ianis.png";
 
   return (
     <Image
-      src={safeSource}
+      src={imageSource}
       alt={alt}
       width={72}
       height={72}
@@ -591,9 +631,12 @@ function getStatusDetails(status?: string) {
   const normalizedStatus = normalizeStatus(status);
 
   if (
-    ["completado", "completed", "entregado", "delivered"].includes(
-      normalizedStatus
-    )
+    [
+      "completado",
+      "completed",
+      "entregado",
+      "delivered",
+    ].includes(normalizedStatus)
   ) {
     return {
       label: "Completado",
@@ -604,9 +647,12 @@ function getStatusDetails(status?: string) {
   }
 
   if (
-    ["cancelado", "cancelled", "rechazado", "rejected"].includes(
-      normalizedStatus
-    )
+    [
+      "cancelado",
+      "cancelled",
+      "rechazado",
+      "rejected",
+    ].includes(normalizedStatus)
   ) {
     return {
       label: "Cancelado",
@@ -617,9 +663,13 @@ function getStatusDetails(status?: string) {
   }
 
   if (
-    ["preparando", "processing", "confirmado", "confirmed"].includes(
-      normalizedStatus
-    )
+    [
+      "preparando",
+      "processing",
+      "confirmado",
+      "confirmed",
+      "en preparación",
+    ].includes(normalizedStatus)
   ) {
     return {
       label: "En preparación",
@@ -630,9 +680,12 @@ function getStatusDetails(status?: string) {
   }
 
   if (
-    ["en camino", "on the way", "shipping", "delivery"].includes(
-      normalizedStatus
-    )
+    [
+      "en camino",
+      "on the way",
+      "shipping",
+      "delivery",
+    ].includes(normalizedStatus)
   ) {
     return {
       label: "En camino",
@@ -650,7 +703,7 @@ function getStatusDetails(status?: string) {
   };
 }
 
-function normalizeStatus(status?: string) {
+function normalizeStatus(status?: string): string {
   return (status || "pendiente")
     .trim()
     .toLowerCase();
@@ -658,8 +711,10 @@ function normalizeStatus(status?: string) {
 
 function getOrderTimestamp(
   value?: Timestamp | Date | string | null
-) {
-  if (!value) return 0;
+): number {
+  if (!value) {
+    return 0;
+  }
 
   if (value instanceof Timestamp) {
     return value.toMillis();
@@ -669,24 +724,22 @@ function getOrderTimestamp(
     return value.getTime();
   }
 
-  if (
-    typeof value === "object" &&
-    "toDate" in value &&
-    typeof value.toDate === "function"
-  ) {
-    return value.toDate().getTime();
+  if (typeof value === "string") {
+    const parsedDate = new Date(value);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return 0;
+    }
+
+    return parsedDate.getTime();
   }
 
-  const parsedDate = new Date(value);
-
-  return Number.isNaN(parsedDate.getTime())
-    ? 0
-    : parsedDate.getTime();
+  return 0;
 }
 
 function formatOrderDate(
   value?: Timestamp | Date | string | null
-) {
+): string {
   const timestamp = getOrderTimestamp(value);
 
   if (!timestamp) {
@@ -697,4 +750,4 @@ function formatOrderDate(
     dateStyle: "long",
     timeStyle: "short",
   }).format(new Date(timestamp));
-}
+        }
