@@ -15,7 +15,7 @@ import {
   Trash2,
   Truck,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { db } from "@/lib/firebase";
 
 type Product = {
@@ -33,25 +33,14 @@ type CartItem = Product & {
 type DeliveryType = "pickup" | "delivery";
 
 const BUSINESS_WHATSAPP_NUMBER = "17274039118";
+const CART_STORAGE_KEY = "ianis-bakery-cart";
 
 const products: Product[] = [
   {
     id: "nutella",
     name: "Nutella Supreme",
     price: 4.99,
-
-    /*
-      Cuando renombres el archivo en GitHub a:
-      public/nutella.png
-
-      esta será la ruta principal correcta.
-    */
     image: "/nutella.png",
-
-    /*
-      Esta ruta de respaldo coincide con el archivo
-      que aparece actualmente en tu carpeta public.
-    */
     fallbackImage: "/Nutella%20Supreme.png",
   },
   {
@@ -88,6 +77,8 @@ const products: Product[] = [
 
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [cartLoaded, setCartLoaded] = useState(false);
+
   const [delivery, setDelivery] =
     useState<DeliveryType>("pickup");
 
@@ -101,28 +92,92 @@ export default function CartPage() {
   const [orderId, setOrderId] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const subtotal = useMemo(() => {
-    return items.reduce(
-      (sum, item) => sum + item.price * item.qty,
-      0
-    );
-  }, [items]);
+  useEffect(() => {
+    try {
+      const savedCart = window.localStorage.getItem(
+        CART_STORAGE_KEY
+      );
+
+      if (savedCart) {
+        const parsedCart = JSON.parse(savedCart);
+
+        if (Array.isArray(parsedCart)) {
+          const validItems = parsedCart.filter(
+            (item): item is CartItem =>
+              item &&
+              typeof item.id === "string" &&
+              typeof item.name === "string" &&
+              typeof item.price === "number" &&
+              typeof item.qty === "number" &&
+              item.qty > 0
+          );
+
+          setItems(validItems);
+        }
+      }
+    } catch (error) {
+      console.error("Error cargando el carrito:", error);
+    } finally {
+      setCartLoaded(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!cartLoaded) return;
+
+    try {
+      window.localStorage.setItem(
+        CART_STORAGE_KEY,
+        JSON.stringify(items)
+      );
+    } catch (error) {
+      console.error("Error guardando el carrito:", error);
+    }
+  }, [items, cartLoaded]);
+
+  const subtotal = useMemo(
+    () =>
+      items.reduce(
+        (sum, item) => sum + item.price * item.qty,
+        0
+      ),
+    [items]
+  );
+
+  const totalItems = useMemo(
+    () =>
+      items.reduce(
+        (sum, item) => sum + item.qty,
+        0
+      ),
+    [items]
+  );
 
   const normalizedCoupon = coupon.trim().toUpperCase();
 
   const discount =
-    normalizedCoupon === "IANIS10" ? subtotal * 0.1 : 0;
+    normalizedCoupon === "IANIS10"
+      ? subtotal * 0.1
+      : 0;
 
-  const deliveryFee = delivery === "delivery" ? 3 : 0;
+  const deliveryFee =
+    delivery === "delivery" ? 3 : 0;
 
   const total = Math.max(
     subtotal - discount + deliveryFee,
     0
   );
 
-  const totalItems = useMemo(() => {
-    return items.reduce((sum, item) => sum + item.qty, 0);
-  }, [items]);
+  const getProductQuantity = (productId: string) => {
+    return (
+      items.find((item) => item.id === productId)?.qty ?? 0
+    );
+  };
+
+  const clearOrderConfirmation = () => {
+    setOrderId("");
+    setErrorMessage("");
+  };
 
   const addProduct = (product: Product) => {
     setItems((currentItems) => {
@@ -150,38 +205,45 @@ export default function CartPage() {
       ];
     });
 
-    setOrderId("");
-    setErrorMessage("");
+    clearOrderConfirmation();
   };
 
-  const updateQty = (id: string, amount: number) => {
+  const removeOneProduct = (productId: string) => {
     setItems((currentItems) =>
       currentItems
         .map((item) =>
-          item.id === id
+          item.id === productId
             ? {
                 ...item,
-                qty: item.qty + amount,
+                qty: item.qty - 1,
               }
             : item
         )
         .filter((item) => item.qty > 0)
     );
 
-    setOrderId("");
+    clearOrderConfirmation();
   };
 
-  const removeItem = (id: string) => {
+  const removeItem = (productId: string) => {
     setItems((currentItems) =>
-      currentItems.filter((item) => item.id !== id)
+      currentItems.filter(
+        (item) => item.id !== productId
+      )
     );
 
-    setOrderId("");
+    clearOrderConfirmation();
   };
 
-  const clearOrderConfirmation = () => {
-    setOrderId("");
-    setErrorMessage("");
+  const clearCart = () => {
+    setItems([]);
+    clearOrderConfirmation();
+
+    try {
+      window.localStorage.removeItem(CART_STORAGE_KEY);
+    } catch (error) {
+      console.error("Error vaciando el carrito:", error);
+    }
   };
 
   const createOrder = async () => {
@@ -193,7 +255,9 @@ export default function CartPage() {
     const cleanNote = note.trim();
 
     if (!cleanCustomerName) {
-      setErrorMessage("Escribe el nombre del cliente.");
+      setErrorMessage(
+        "Escribe el nombre del cliente."
+      );
       return;
     }
 
@@ -204,7 +268,10 @@ export default function CartPage() {
       return;
     }
 
-    if (delivery === "delivery" && !cleanAddress) {
+    if (
+      delivery === "delivery" &&
+      !cleanAddress
+    ) {
       setErrorMessage(
         "Escribe la dirección completa para el delivery."
       );
@@ -238,7 +305,9 @@ export default function CartPage() {
           customerName: cleanCustomerName,
           customerPhone: cleanCustomerPhone,
           address:
-            delivery === "delivery" ? cleanAddress : "",
+            delivery === "delivery"
+              ? cleanAddress
+              : "",
           note: cleanNote,
           delivery,
           coupon: normalizedCoupon,
@@ -246,7 +315,9 @@ export default function CartPage() {
           itemCount: totalItems,
           subtotal: Number(subtotal.toFixed(2)),
           discount: Number(discount.toFixed(2)),
-          deliveryFee: Number(deliveryFee.toFixed(2)),
+          deliveryFee: Number(
+            deliveryFee.toFixed(2)
+          ),
           total: Number(total.toFixed(2)),
           status: "Pendiente",
           paymentStatus: "Pendiente",
@@ -258,10 +329,13 @@ export default function CartPage() {
 
       setOrderId(orderReference.id);
     } catch (error) {
-      console.error("Error creando el pedido:", error);
+      console.error(
+        "Error creando el pedido:",
+        error
+      );
 
       setErrorMessage(
-        "No se pudo crear el pedido. Revisa la conexión con Firebase e inténtalo nuevamente."
+        "No se pudo crear el pedido. Revisa la conexión con Firebase."
       );
     } finally {
       setLoading(false);
@@ -273,7 +347,7 @@ export default function CartPage() {
       .map(
         (item) =>
           `• ${item.qty} × ${item.name} — $${(
-            item.qty * item.price
+            item.price * item.qty
           ).toFixed(2)}`
       )
       .join("\n");
@@ -282,10 +356,12 @@ export default function CartPage() {
       [
         "Hola Ianis Bakery 🍪",
         "",
-        "Se creó un nuevo pedido desde la página web.",
+        "Nuevo pedido desde la página web.",
         "",
         `Orden: ${orderId || "Pendiente"}`,
-        `Cliente: ${customerName.trim() || "Sin nombre"}`,
+        `Cliente: ${
+          customerName.trim() || "Sin nombre"
+        }`,
         `Teléfono: ${
           customerPhone.trim() || "Sin teléfono"
         }`,
@@ -309,7 +385,9 @@ export default function CartPage() {
         `Delivery: $${deliveryFee.toFixed(2)}`,
         `TOTAL: $${total.toFixed(2)}`,
         "",
-        `Nota: ${note.trim() || "Sin nota especial"}`,
+        `Nota: ${
+          note.trim() || "Sin nota especial"
+        }`,
       ].join("\n")
     );
   }, [
@@ -373,17 +451,21 @@ export default function CartPage() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-[#FFF6EF]/70">
-              Selecciona tus sabores, completa los datos y
-              guarda el pedido en Firebase para administrarlo
-              en tiempo real.
+              Selecciona tus sabores, completa los datos
+              y guarda el pedido en Firebase.
             </p>
 
             <div className="mt-8 grid max-w-lg grid-cols-3 gap-3">
-              <HeaderStat value="6" label="Sabores" />
+              <HeaderStat
+                value={String(products.length)}
+                label="Sabores"
+              />
+
               <HeaderStat
                 value={String(totalItems)}
                 label="Cookies"
               />
+
               <HeaderStat
                 value={`$${total.toFixed(2)}`}
                 label="Total"
@@ -395,7 +477,7 @@ export default function CartPage() {
             <SafeProductImage
               src="/cookie-boxes.png"
               fallbackSrc="/logo-ianis.png"
-              alt="Cajas de cookies Ianis Bakery"
+              alt="Cajas Ianis Bakery"
               width={1200}
               height={800}
               priority
@@ -407,60 +489,121 @@ export default function CartPage() {
         <section className="mt-12 grid gap-8 lg:grid-cols-[1fr_420px]">
           <div className="space-y-8">
             <section className="rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/85 p-5 shadow-2xl shadow-black/30 md:p-6">
-              <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.3em] text-[#D99B55]">
-                    Catálogo
-                  </p>
+              <div className="mb-6">
+                <p className="text-xs font-black uppercase tracking-[0.3em] text-[#D99B55]">
+                  Catálogo
+                </p>
 
-                  <h2 className="mt-2 text-3xl font-black">
-                    Sabores disponibles
-                  </h2>
-                </div>
+                <h2 className="mt-2 text-3xl font-black">
+                  Sabores disponibles
+                </h2>
 
-                <p className="text-sm font-semibold text-[#FFF6EF]/50">
-                  Toca “Agregar” para comenzar.
+                <p className="mt-2 text-sm text-[#FFF6EF]/50">
+                  Pulsa Agregar y usa los controles para
+                  cambiar la cantidad.
                 </p>
               </div>
 
               <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                {products.map((product) => (
-                  <article
-                    key={product.id}
-                    className="overflow-hidden rounded-[2rem] border border-[#E6B47C]/25 bg-[#FFF6EF] text-[#2A120B] shadow-xl"
-                  >
-                    <SafeProductImage
-                      src={product.image}
-                      fallbackSrc={
-                        product.fallbackImage ||
-                        "/logo-ianis.png"
-                      }
-                      alt={product.name}
-                      width={700}
-                      height={700}
-                      className="aspect-square w-full object-cover"
-                    />
+                {products.map((product) => {
+                  const quantity =
+                    getProductQuantity(product.id);
 
-                    <div className="p-5">
-                      <h3 className="min-h-14 text-xl font-black leading-tight">
-                        {product.name}
-                      </h3>
+                  return (
+                    <article
+                      key={product.id}
+                      className={`overflow-hidden rounded-[2rem] border bg-[#FFF6EF] text-[#2A120B] shadow-xl transition ${
+                        quantity > 0
+                          ? "border-[#C95867] ring-4 ring-[#C95867]/15"
+                          : "border-[#E6B47C]/25"
+                      }`}
+                    >
+                      <div className="relative">
+                        <SafeProductImage
+                          src={product.image}
+                          fallbackSrc={
+                            product.fallbackImage ||
+                            "/logo-ianis.png"
+                          }
+                          alt={product.name}
+                          width={700}
+                          height={700}
+                          className="aspect-square w-full object-cover"
+                        />
 
-                      <p className="mt-2 text-2xl font-black text-[#C95867]">
-                        ${product.price.toFixed(2)}
-                      </p>
+                        {quantity > 0 && (
+                          <span className="absolute right-4 top-4 flex h-12 min-w-12 items-center justify-center rounded-full border-4 border-white bg-[#C95867] px-3 text-xl font-black text-white shadow-xl">
+                            {quantity}
+                          </span>
+                        )}
+                      </div>
 
-                      <button
-                        type="button"
-                        onClick={() => addProduct(product)}
-                        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#C95867] px-5 py-3 font-black text-white transition hover:bg-[#A84251]"
-                      >
-                        <Plus size={18} />
-                        Agregar
-                      </button>
-                    </div>
-                  </article>
-                ))}
+                      <div className="p-5">
+                        <h3 className="min-h-14 text-xl font-black leading-tight">
+                          {product.name}
+                        </h3>
+
+                        <p className="mt-2 text-2xl font-black text-[#C95867]">
+                          ${product.price.toFixed(2)}
+                        </p>
+
+                        {quantity === 0 ? (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              addProduct(product)
+                            }
+                            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#C95867] px-5 py-3 font-black text-white transition active:scale-[0.98]"
+                          >
+                            <Plus size={18} />
+                            Agregar
+                          </button>
+                        ) : (
+                          <>
+                            <div className="mt-4 grid grid-cols-[48px_1fr_48px] items-center gap-3">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  removeOneProduct(
+                                    product.id
+                                  )
+                                }
+                                className="flex h-12 w-12 items-center justify-center rounded-full border border-[#C95867]/25 text-[#C95867] active:scale-95"
+                              >
+                                <Minus size={20} />
+                              </button>
+
+                              <div className="flex h-12 items-center justify-center rounded-full bg-[#F8DDE0] text-xl font-black text-[#C95867]">
+                                {quantity}
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  addProduct(product)
+                                }
+                                className="flex h-12 w-12 items-center justify-center rounded-full bg-[#C95867] text-white active:scale-95"
+                              >
+                                <Plus size={20} />
+                              </button>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                removeItem(product.id)
+                              }
+                              className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-[#C95867]/20 px-4 py-3 text-sm font-black text-[#C95867]"
+                            >
+                              <Trash2 size={16} />
+                              Quitar del pedido
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             </section>
 
@@ -491,21 +634,16 @@ export default function CartPage() {
                   <h3 className="mt-4 text-2xl font-black text-[#F5ACB1]">
                     Tu carrito está vacío
                   </h3>
-
-                  <p className="mx-auto mt-3 max-w-sm leading-7 text-[#FFF6EF]/50">
-                    Agrega uno o más sabores para preparar tu
-                    pedido.
-                  </p>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {items.map((item) => (
-                    <article
-                      key={item.id}
-                      className="rounded-[2rem] border border-[#F5ACB1]/15 bg-[#120704]/55 p-4"
-                    >
-                      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="flex min-w-0 items-center gap-4">
+                <>
+                  <div className="space-y-4">
+                    {items.map((item) => (
+                      <article
+                        key={item.id}
+                        className="rounded-[2rem] border border-[#F5ACB1]/15 bg-[#120704]/55 p-4"
+                      >
+                        <div className="flex items-center gap-4">
                           <SafeProductImage
                             src={item.image}
                             fallbackSrc={
@@ -513,71 +651,52 @@ export default function CartPage() {
                               "/logo-ianis.png"
                             }
                             alt={item.name}
-                            width={100}
-                            height={100}
-                            className="h-24 w-24 shrink-0 rounded-[1.4rem] object-cover"
+                            width={90}
+                            height={90}
+                            className="h-20 w-20 shrink-0 rounded-2xl object-cover"
                           />
 
-                          <div className="min-w-0">
-                            <h3 className="text-xl font-black leading-tight text-[#F5ACB1]">
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-black text-[#F5ACB1]">
                               {item.name}
                             </h3>
 
-                            <p className="mt-2 text-sm text-[#FFF6EF]/55">
-                              ${item.price.toFixed(2)} cada una
+                            <p className="mt-1 text-sm text-[#FFF6EF]/50">
+                              {item.qty} × $
+                              {item.price.toFixed(2)}
                             </p>
 
                             <p className="mt-1 font-black text-[#D99B55]">
                               $
                               {(
-                                item.price * item.qty
+                                item.qty * item.price
                               ).toFixed(2)}
                             </p>
                           </div>
-                        </div>
-
-                        <div className="flex items-center justify-between gap-3">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              updateQty(item.id, -1)
-                            }
-                            aria-label={`Quitar una ${item.name}`}
-                            className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#210D08] text-[#F5ACB1]"
-                          >
-                            <Minus size={19} />
-                          </button>
-
-                          <span className="min-w-8 text-center text-xl font-black">
-                            {item.qty}
-                          </span>
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              updateQty(item.id, 1)
-                            }
-                            aria-label={`Agregar una ${item.name}`}
-                            className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F5ACB1] text-[#120704]"
-                          >
-                            <Plus size={19} />
-                          </button>
 
                           <button
                             type="button"
                             onClick={() =>
                               removeItem(item.id)
                             }
-                            aria-label={`Eliminar ${item.name}`}
-                            className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#F5ACB1]/20 text-[#F5ACB1]"
+                            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#F5ACB1]/20 text-[#F5ACB1]"
                           >
-                            <Trash2 size={19} />
+                            <Trash2 size={18} />
                           </button>
                         </div>
-                      </div>
-                    </article>
-                  ))}
-                </div>
+                      </article>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={clearCart}
+                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl border border-[#F5ACB1]/20 px-5 py-4 font-black text-[#F5ACB1]"
+                  >
+                    <Trash2 size={18} />
+                    Vaciar carrito
+                  </button>
+                </>
               )}
             </section>
           </div>
@@ -593,18 +712,15 @@ export default function CartPage() {
 
             {orderId && (
               <div className="mt-6 rounded-2xl border border-green-500/25 bg-green-500/10 p-5 text-green-100">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2
-                    size={24}
-                    className="mt-0.5 shrink-0"
-                  />
+                <div className="flex gap-3">
+                  <CheckCircle2 size={24} />
 
                   <div>
                     <p className="font-black">
                       ¡Tu orden fue recibida exitosamente!
                     </p>
 
-                    <p className="mt-2 break-all text-sm text-green-100/70">
+                    <p className="mt-2 break-all text-xs opacity-70">
                       Orden: {orderId}
                     </p>
                   </div>
@@ -613,7 +729,7 @@ export default function CartPage() {
             )}
 
             {errorMessage && (
-              <div className="mt-6 rounded-2xl border border-red-400/25 bg-red-400/10 p-4 text-sm font-semibold leading-6 text-red-100">
+              <div className="mt-6 rounded-2xl border border-red-400/25 bg-red-400/10 p-4 text-sm font-semibold text-red-100">
                 {errorMessage}
               </div>
             )}
@@ -640,28 +756,6 @@ export default function CartPage() {
                 className="input"
               />
 
-              {delivery === "delivery" && (
-                <textarea
-                  value={address}
-                  onChange={(event) => {
-                    setAddress(event.target.value);
-                    clearOrderConfirmation();
-                  }}
-                  placeholder="Dirección completa para delivery"
-                  className="input min-h-24 resize-none"
-                />
-              )}
-
-              <textarea
-                value={note}
-                onChange={(event) => {
-                  setNote(event.target.value);
-                  clearOrderConfirmation();
-                }}
-                placeholder="Nota especial o instrucciones..."
-                className="input min-h-28 resize-none"
-              />
-
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
@@ -670,10 +764,10 @@ export default function CartPage() {
                     setAddress("");
                     clearOrderConfirmation();
                   }}
-                  className={`rounded-2xl px-4 py-4 font-black transition ${
+                  className={`rounded-2xl px-4 py-4 font-black ${
                     delivery === "pickup"
                       ? "bg-[#F5ACB1] text-[#120704]"
-                      : "border border-[#F5ACB1]/20 bg-[#120704]/60 text-[#FFF6EF]"
+                      : "border border-[#F5ACB1]/20 bg-[#120704]/60"
                   }`}
                 >
                   Recogido
@@ -685,15 +779,37 @@ export default function CartPage() {
                     setDelivery("delivery");
                     clearOrderConfirmation();
                   }}
-                  className={`rounded-2xl px-4 py-4 font-black transition ${
+                  className={`rounded-2xl px-4 py-4 font-black ${
                     delivery === "delivery"
                       ? "bg-[#F5ACB1] text-[#120704]"
-                      : "border border-[#F5ACB1]/20 bg-[#120704]/60 text-[#FFF6EF]"
+                      : "border border-[#F5ACB1]/20 bg-[#120704]/60"
                   }`}
                 >
                   Delivery
                 </button>
               </div>
+
+              {delivery === "delivery" && (
+                <textarea
+                  value={address}
+                  onChange={(event) => {
+                    setAddress(event.target.value);
+                    clearOrderConfirmation();
+                  }}
+                  placeholder="Dirección completa"
+                  className="input min-h-24 resize-none"
+                />
+              )}
+
+              <textarea
+                value={note}
+                onChange={(event) => {
+                  setNote(event.target.value);
+                  clearOrderConfirmation();
+                }}
+                placeholder="Nota especial..."
+                className="input min-h-24 resize-none"
+              />
 
               <input
                 value={coupon}
@@ -704,12 +820,6 @@ export default function CartPage() {
                 placeholder="Cupón: IANIS10"
                 className="input uppercase"
               />
-
-              {normalizedCoupon === "IANIS10" && (
-                <p className="rounded-xl bg-green-500/10 px-4 py-3 text-sm font-black text-green-200">
-                  Cupón IANIS10 aplicado: 10% de descuento.
-                </p>
-              )}
 
               <div className="space-y-3 rounded-2xl border border-[#F5ACB1]/15 bg-[#120704]/75 p-5">
                 <Row
@@ -740,7 +850,7 @@ export default function CartPage() {
                 type="button"
                 onClick={createOrder}
                 disabled={loading || items.length === 0}
-                className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704] disabled:cursor-not-allowed disabled:opacity-45"
+                className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704] disabled:opacity-45"
               >
                 {loading ? (
                   <>
@@ -763,7 +873,7 @@ export default function CartPage() {
                   className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-8 py-5 text-center text-lg font-black text-white"
                 >
                   <Truck />
-                  Enviar pedido a WhatsApp
+                  Enviar a WhatsApp
                 </a>
               )}
 
@@ -789,14 +899,10 @@ export default function CartPage() {
           padding: 15px 16px;
           color: #fff6ef;
           outline: none;
-          transition:
-            border-color 160ms ease,
-            background-color 160ms ease;
         }
 
         .input:focus {
           border-color: rgba(245, 172, 177, 0.65);
-          background: rgba(18, 7, 4, 0.9);
         }
 
         .input::placeholder {
@@ -826,6 +932,10 @@ function SafeProductImage({
 }) {
   const [currentSource, setCurrentSource] =
     useState(src);
+
+  useEffect(() => {
+    setCurrentSource(src);
+  }, [src]);
 
   return (
     <Image
@@ -896,4 +1006,4 @@ function Row({
       </span>
     </div>
   );
-                }
+                                  }
