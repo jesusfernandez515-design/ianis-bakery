@@ -154,7 +154,7 @@ export default function PremiumAppChrome({
             </a>
 
             <a
-              href={`https://wa.me/?text=${encodeURIComponent(
+              href={`https://wa.me/17274039118?text=${encodeURIComponent(
                 "Hola Ianis Bakery, quiero hacer un pedido."
               )}`}
               target="_blank"

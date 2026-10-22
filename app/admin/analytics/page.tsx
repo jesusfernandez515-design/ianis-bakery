@@ -55,6 +55,13 @@ const ranges = ["Todo", "Hoy", "7 días", "30 días"];
 export default function AnalyticsPage() {
   const [feedback, setFeedback] = useState<Feedback[]>([]);
   const [range, setRange] = useState("Todo");
+  const [now, setNow] = useState(0);
+  useEffect(() => {
+    const update = () => setNow(Date.now());
+    const initial = setTimeout(update, 0);
+    const timer = setInterval(update, 60000);
+    return () => { clearTimeout(initial); clearInterval(timer); };
+  }, []);
 
   useEffect(() => {
     const q = query(
@@ -77,7 +84,6 @@ export default function AnalyticsPage() {
   const filtered = useMemo(() => {
     if (range === "Todo") return feedback;
 
-    const now = Date.now();
     const day = 24 * 60 * 60 * 1000;
 
     const limit =
@@ -90,7 +96,7 @@ export default function AnalyticsPage() {
 
       return time >= limit;
     });
-  }, [feedback, range]);
+  }, [feedback, range, now]);
 
   const average = (field: keyof Feedback) => {
     const values = filtered

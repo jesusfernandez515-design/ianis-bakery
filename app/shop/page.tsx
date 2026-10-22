@@ -7,10 +7,8 @@ import { onAuthStateChanged, type User } from "firebase/auth";
 import {
   arrayRemove,
   arrayUnion,
-  collection,
   doc,
   onSnapshot,
-  query,
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
@@ -25,6 +23,7 @@ import {
   Star,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useCatalog } from "@/lib/use-catalog";
 import { auth, db } from "@/lib/firebase";
 
 type Product = {
@@ -37,74 +36,12 @@ type Product = {
   active?: boolean;
 };
 
-const fallbackProducts: Product[] = [
-  {
-    id: "nutella",
-    name: "Nutella Supreme",
-    price: 4.99,
-    tag: "Nueva",
-    description:
-      "Cookie rellena de Nutella cremosa con chispas de chocolate.",
-    image: "/nutella.png",
-    active: true,
-  },
-  {
-    id: "peanut-butter",
-    name: "Peanut Butter Explosion",
-    price: 4.99,
-    tag: "Especial",
-    description:
-      "Mantequilla de maní cremosa con chispas de chocolate.",
-    image: "/peanut-butter.png",
-    active: true,
-  },
-  {
-    id: "double-chocolate",
-    name: "Double Chocolate Lava",
-    price: 4.99,
-    tag: "Favorita",
-    description:
-      "Chocolate intenso con un irresistible centro fundido.",
-    image: "/double-chocolate.png",
-    active: true,
-  },
-  {
-    id: "dulce-leche",
-    name: "Dulce de Leche Dream",
-    price: 4.99,
-    tag: "Premium",
-    description:
-      "Cookie artesanal rellena de dulce de leche cremoso.",
-    image: "/dulce-leche.png",
-    active: true,
-  },
-  {
-    id: "marshmallow",
-    name: "Marshmallow Chocolate",
-    price: 5.49,
-    tag: "Especial",
-    description:
-      "Malvavisco suave con chocolate irresistible.",
-    image: "/marshmallow.png",
-    active: true,
-  },
-  {
-    id: "coconut",
-    name: "Coconut Paradise",
-    price: 5.49,
-    tag: "Tropical",
-    description:
-      "Chocolate relleno de coco cremoso y coco rallado.",
-    image: "/coconut.png",
-    active: true,
-  },
-];
+
 
 export default function ShopPage() {
   const router = useRouter();
 
-  const [firebaseProducts, setFirebaseProducts] = useState<Product[]>([]);
-  const [loadingProducts, setLoadingProducts] = useState(true);
+  const { products, loading: loadingProducts } = useCatalog();
 
   const [user, setUser] = useState<User | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
@@ -121,6 +58,8 @@ export default function ShopPage() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoadingUser(false);
+      setFavoriteIds([]);
+      setLoadingFavorites(Boolean(currentUser));
 
       if (!currentUser) {
         setFavoriteIds([]);
@@ -131,46 +70,9 @@ export default function ShopPage() {
     return unsubscribe;
   }, []);
 
-  useEffect(() => {
-    const productsQuery = query(collection(db, "products"));
-
-    const unsubscribe = onSnapshot(
-      productsQuery,
-      (snapshot) => {
-        const products = snapshot.docs.map((item) => ({
-          id: item.id,
-          ...item.data(),
-        })) as Product[];
-
-        setFirebaseProducts(
-          products
-            .filter((product) => product.active !== false)
-            .map((product) => ({
-              ...product,
-              image: normalizeImagePath(product.image, product.name),
-            }))
-        );
-
-        setLoadingProducts(false);
-      },
-      (error) => {
-        console.error("Error cargando productos:", error);
-        setFirebaseProducts([]);
-        setLoadingProducts(false);
-      }
-    );
-
-    return unsubscribe;
-  }, []);
 
   useEffect(() => {
-    if (!user) {
-      setFavoriteIds([]);
-      setLoadingFavorites(false);
-      return;
-    }
-
-    setLoadingFavorites(true);
+    if (!user) return;
 
     const customerReference = doc(db, "customers", user.uid);
 
@@ -200,8 +102,6 @@ export default function ShopPage() {
     return unsubscribe;
   }, [user]);
 
-  const products =
-    firebaseProducts.length > 0 ? firebaseProducts : fallbackProducts;
 
   const tags = useMemo(() => {
     return [
@@ -494,6 +394,19 @@ export default function ShopPage() {
 
                         <Link
                           href="/cart"
+                          onClick={(event) => {
+                            try {
+                              const raw = JSON.parse(localStorage.getItem("ianis-bakery-cart") || "[]");
+                              const cart = Array.isArray(raw) ? raw : [];
+                              const existing = cart.find(item => item.id === product.id);
+                              if (existing) existing.qty = Math.min(Number(existing.qty || 0) + 1, 100);
+                              else cart.push({ id: product.id, name: product.name, price: product.price, image: normalizeImagePath(product.image, product.name), qty: 1 });
+                              localStorage.setItem("ianis-bakery-cart", JSON.stringify(cart));
+                            } catch {
+                              event.preventDefault();
+                              setMessage("No se pudo agregar el producto. Verifica que el navegador permita guardar el carrito.");
+                            }
+                          }}
                           className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C95867] px-4 py-3 font-black text-white"
                         >
                           <ShoppingBag size={17} />

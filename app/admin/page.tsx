@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   BarChart3,
   Cookie,
-  DollarSign,
   Heart,
   Home,
   QrCode,
@@ -49,7 +48,6 @@ type Feedback = {
   comments?: string;
 };
 
-const surveyUrl = "https://ianis-bakery.vercel.app/taste";
 
 export default function AdminDashboardPage() {
   const [feedback, setFeedback] = useState<Feedback[]>([]);

@@ -6,6 +6,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { Lock, Loader2, Mail } from "lucide-react";
 import { useState } from "react";
 import { auth } from "@/lib/firebase";
+import { isAdministrator } from "@/lib/admin-access";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,8 +19,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push("/admin");
+      const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
+      if (!(await isAdministrator(credential.user))) {
+        alert("Esta cuenta no tiene permisos de administrador.");
+        return;
+      }
+      router.replace("/admin");
     } catch {
       alert("Email o contraseña incorrectos.");
     } finally {

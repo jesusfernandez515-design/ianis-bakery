@@ -40,7 +40,7 @@ const emptyForm = {
   price: "",
   tag: "",
   description: "",
-  image: "/cookies/double-chocolate.png",
+  image: "/double-chocolate.png",
   active: true,
 };
 
@@ -121,7 +121,7 @@ export default function AdminCatalogPage() {
       price: String(product.price || ""),
       tag: product.tag || "",
       description: product.description || "",
-      image: product.image || "/cookies/double-chocolate.png",
+      image: product.image || "/double-chocolate.png",
       active: product.active ?? true,
     });
 
@@ -239,16 +239,16 @@ export default function AdminCatalogPage() {
                   }
                   className="input"
                 >
-                  <option value="/cookies/menu-board.png">Nutella Supreme</option>
-                  <option value="/cookies/peanut-butter.png">
+                  <option value="/menu-board.png">Nutella Supreme</option>
+                  <option value="/peanut-butter.png">
                     Peanut Butter
                   </option>
-                  <option value="/cookies/double-chocolate.png">
+                  <option value="/double-chocolate.png">
                     Double Chocolate
                   </option>
-                  <option value="/cookies/dulce-leche.png">Dulce de Leche</option>
-                  <option value="/cookies/marshmallow.png">Marshmallow</option>
-                  <option value="/cookies/coconut.png">Coconut</option>
+                  <option value="/dulce-leche.png">Dulce de Leche</option>
+                  <option value="/marshmallow.png">Marshmallow</option>
+                  <option value="/coconut.png">Coconut</option>
                 </select>
               </Field>
 
@@ -332,7 +332,7 @@ export default function AdminCatalogPage() {
                   >
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <Image
-                        src={product.image || "/cookies/double-chocolate.png"}
+                        src={product.image || "/double-chocolate.png"}
                         alt={product.name}
                         width={700}
                         height={600}

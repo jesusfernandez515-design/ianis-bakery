@@ -15,8 +15,10 @@ import {
   Trash2,
   Truck,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { db } from "@/lib/firebase";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useCatalog } from "@/lib/use-catalog";
+import { auth, db } from "@/lib/firebase";
+import { onAuthStateChanged, type User } from "firebase/auth";
 
 type Product = {
   id: string;
@@ -28,6 +30,7 @@ type Product = {
 
 type CartItem = Product & {
   qty: number;
+  cookieCount?: number;
 };
 
 type DeliveryType = "pickup" | "delivery";
@@ -35,47 +38,13 @@ type DeliveryType = "pickup" | "delivery";
 const BUSINESS_WHATSAPP_NUMBER = "17274039118";
 const CART_STORAGE_KEY = "ianis-bakery-cart";
 
-const products: Product[] = [
-  {
-    id: "nutella",
-    name: "Nutella Supreme",
-    price: 4.99,
-    image: "/nutella.png",
-    fallbackImage: "/Nutella%20Supreme.png",
-  },
-  {
-    id: "peanut-butter",
-    name: "Peanut Butter Explosion",
-    price: 4.99,
-    image: "/peanut-butter.png",
-  },
-  {
-    id: "double-chocolate",
-    name: "Double Chocolate Lava",
-    price: 4.99,
-    image: "/double-chocolate.png",
-  },
-  {
-    id: "dulce-leche",
-    name: "Dulce de Leche Dream",
-    price: 4.99,
-    image: "/dulce-leche.png",
-  },
-  {
-    id: "marshmallow",
-    name: "Marshmallow Chocolate",
-    price: 5.49,
-    image: "/marshmallow.png",
-  },
-  {
-    id: "coconut",
-    name: "Coconut Paradise",
-    price: 5.49,
-    image: "/coconut.png",
-  },
-];
+
 
 export default function CartPage() {
+  const { products, loading: loadingProducts } = useCatalog();
+  const submitting = useRef(false);
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => onAuthStateChanged(auth, setUser), []);
   const [items, setItems] = useState<CartItem[]>([]);
   const [cartLoaded, setCartLoaded] = useState(false);
 
@@ -93,6 +62,7 @@ export default function CartPage() {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
+    const timer = window.setTimeout(() => {
     try {
       const savedCart = window.localStorage.getItem(
         CART_STORAGE_KEY
@@ -107,9 +77,10 @@ export default function CartPage() {
               item &&
               typeof item.id === "string" &&
               typeof item.name === "string" &&
-              typeof item.price === "number" &&
-              typeof item.qty === "number" &&
-              item.qty > 0
+              typeof item.price === "number" && Number.isFinite(item.price) && item.price >= 0 &&
+              (item.cookieCount === undefined || [4, 6, 12].includes(item.cookieCount)) &&
+              Number.isInteger(item.qty) &&
+              item.qty > 0 && item.qty <= 100
           );
 
           setItems(validItems);
@@ -120,6 +91,8 @@ export default function CartPage() {
     } finally {
       setCartLoaded(true);
     }
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -147,7 +120,7 @@ export default function CartPage() {
   const totalItems = useMemo(
     () =>
       items.reduce(
-        (sum, item) => sum + item.qty,
+        (sum, item) => sum + item.qty * (item.cookieCount || 1),
         0
       ),
     [items]
@@ -161,7 +134,7 @@ export default function CartPage() {
       : 0;
 
   const deliveryFee =
-    delivery === "delivery" ? 3 : 0;
+    delivery === "delivery" && items.length > 0 ? 3 : 0;
 
   const total = Math.max(
     subtotal - discount + deliveryFee,
@@ -247,7 +220,12 @@ export default function CartPage() {
   };
 
   const createOrder = async () => {
+    if (submitting.current || orderId) return;
     clearOrderConfirmation();
+    if (!navigator.onLine) {
+      setErrorMessage("No tienes conexión. Conéctate antes de confirmar el pedido.");
+      return;
+    }
 
     const cleanCustomerName = customerName.trim();
     const cleanCustomerPhone = customerPhone.trim();
@@ -261,9 +239,9 @@ export default function CartPage() {
       return;
     }
 
-    if (!cleanCustomerPhone) {
+    if (cleanCustomerPhone.replace(/\D/g, "").length < 10) {
       setErrorMessage(
-        "Escribe el número de teléfono del cliente."
+        "Escribe un teléfono válido con código de área."
       );
       return;
     }
@@ -285,6 +263,17 @@ export default function CartPage() {
       return;
     }
 
+    const checkedItems = items.map(item => {
+      if (item.id.startsWith("box-")) return item;
+      const product = products.find(product => product.id === item.id);
+      return product ? { ...product, qty: item.qty } : null;
+    });
+    if (loadingProducts || checkedItems.some(item => !item) || checkedItems.some((item, index) => item?.price !== items[index].price)) {
+      setItems(checkedItems.filter((item): item is CartItem => item !== null));
+      setErrorMessage("Actualizamos tu carrito con el catálogo actual. Revisa el total y confirma nuevamente.");
+      return;
+    }
+    submitting.current = true;
     setLoading(true);
 
     try {
@@ -293,6 +282,7 @@ export default function CartPage() {
         name: item.name,
         price: item.price,
         qty: item.qty,
+        cookieCount: item.cookieCount || 1,
         image: item.image,
         lineTotal: Number(
           (item.price * item.qty).toFixed(2)
@@ -302,6 +292,8 @@ export default function CartPage() {
       const orderReference = await addDoc(
         collection(db, "orders"),
         {
+          customerId: user?.uid || "",
+          customerEmail: user?.email || "",
           customerName: cleanCustomerName,
           customerPhone: cleanCustomerPhone,
           address:
@@ -338,6 +330,7 @@ export default function CartPage() {
         "No se pudo crear el pedido. Revisa la conexión con Firebase."
       );
     } finally {
+      submitting.current = false;
       setLoading(false);
     }
   };
@@ -451,8 +444,8 @@ export default function CartPage() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-[#FFF6EF]/70">
-              Selecciona tus sabores, completa los datos
-              y guarda el pedido en Firebase.
+              Selecciona tus sabores, completa tus datos
+              y confirma tu pedido. El pago se coordina con la panadería.
             </p>
 
             <div className="mt-8 grid max-w-lg grid-cols-3 gap-3">
@@ -849,7 +842,7 @@ export default function CartPage() {
               <button
                 type="button"
                 onClick={createOrder}
-                disabled={loading || items.length === 0}
+                disabled={loading || items.length === 0 || Boolean(orderId)}
                 className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704] disabled:opacity-45"
               >
                 {loading ? (
@@ -930,12 +923,8 @@ function SafeProductImage({
   height: number;
   priority?: boolean;
 }) {
-  const [currentSource, setCurrentSource] =
-    useState(src);
-
-  useEffect(() => {
-    setCurrentSource(src);
-  }, [src]);
+  const [failedSource, setFailedSource] = useState<string | null>(null);
+  const currentSource = failedSource === src ? fallbackSrc : src;
 
   return (
     <Image
@@ -947,7 +936,7 @@ function SafeProductImage({
       className={className}
       onError={() => {
         if (currentSource !== fallbackSrc) {
-          setCurrentSource(fallbackSrc);
+          setFailedSource(src);
         }
       }}
     />

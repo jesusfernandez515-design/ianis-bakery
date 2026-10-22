@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
   Cookie,
@@ -12,7 +13,7 @@ import {
   Sparkles,
   Trash2,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 type CookieProduct = {
   id: string;
@@ -100,39 +101,31 @@ const boxOptions: BoxOption[] = [
 ];
 
 export default function BoxBuilderPage() {
+  const router = useRouter();
+  const [cartError, setCartError] = useState("");
+  function continueToCart() {
+    if (!boxComplete) return;
+    try {
+      const raw = JSON.parse(localStorage.getItem("ianis-bakery-cart") || "[]");
+      const cart = Array.isArray(raw) ? raw : [];
+      cart.push({ id: `box-${crypto.randomUUID()}`, name: `${selectedBox.name}: ${selectedCookies.map(cookie => `${cookie.quantity} ${cookie.shortName}`).join(", ")}`, price: total, qty: 1, cookieCount: boxSize, image: "/cookie-boxes.png" });
+      localStorage.setItem("ianis-bakery-cart", JSON.stringify(cart));
+      router.push("/cart");
+    } catch { setCartError("No se pudo guardar la caja. Verifica que tu navegador permita guardar el carrito."); }
+  }
   const [boxSize, setBoxSize] = useState(4);
   const [selectedCookies, setSelectedCookies] = useState<SelectedCookie[]>([]);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [note, setNote] = useState("");
 
-  const selectedBox = useMemo(
-    () =>
-      boxOptions.find((option) => option.size === boxSize) ?? boxOptions[0],
-    [boxSize]
-  );
+  const selectedBox = boxOptions.find(option => option.size === boxSize) ?? boxOptions[0];
 
-  const selectedCount = useMemo(
-    () =>
-      selectedCookies.reduce(
-        (total, selectedCookie) => total + selectedCookie.quantity,
-        0
-      ),
-    [selectedCookies]
-  );
+  const selectedCount = selectedCookies.reduce((total, cookie) => total + cookie.quantity, 0);
 
   const spacesLeft = Math.max(boxSize - selectedCount, 0);
 
-  const premiumExtras = useMemo(
-    () =>
-      selectedCookies.reduce(
-        (total, selectedCookie) =>
-          total +
-          selectedCookie.premiumExtra * selectedCookie.quantity,
-        0
-      ),
-    [selectedCookies]
-  );
+  const premiumExtras = selectedCookies.reduce((total, cookie) => total + cookie.premiumExtra * cookie.quantity, 0);
 
   const total = selectedBox.price + premiumExtras;
   const boxComplete = selectedCount === boxSize;
@@ -665,6 +658,11 @@ export default function BoxBuilderPage() {
                 Vaciar caja
               </button>
 
+              {cartError && <p role="alert">{cartError}</p>}
+              <button type="button" onClick={continueToCart} disabled={!boxComplete}
+                className="w-full rounded-2xl bg-[#F5ACB1] px-7 py-5 font-black text-[#120704] disabled:opacity-40">
+                Continuar al carrito
+              </button>
               <a
                 href={
                   boxComplete

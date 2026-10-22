@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   Cookie,
   Download,
-  Heart,
   Search,
   Star,
   ThumbsUp,

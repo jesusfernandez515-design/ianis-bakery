@@ -179,7 +179,9 @@ export default function AdminOrdersPage() {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
 
-    printWindow.document.write(`<pre>${content}</pre>`);
+    const pre = printWindow.document.createElement("pre");
+    pre.textContent = content;
+    printWindow.document.body.appendChild(pre);
     printWindow.document.close();
     printWindow.print();
   };

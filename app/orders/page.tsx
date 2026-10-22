@@ -34,6 +34,7 @@ type OrderItem = {
   name?: string;
   price?: number;
   qty?: number;
+  cookieCount?: number;
   image?: string;
   lineTotal?: number;
 };
@@ -72,6 +73,9 @@ export default function OrdersPage() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setCheckingSession(false);
+      setOrders([]);
+      setErrorMessage("");
+      setLoadingOrders(Boolean(currentUser));
 
       if (!currentUser) {
         setOrders([]);
@@ -86,9 +90,6 @@ export default function OrdersPage() {
     if (!user) {
       return;
     }
-
-    setLoadingOrders(true);
-    setErrorMessage("");
 
     const ordersQuery = query(
       collection(db, "orders"),
@@ -113,7 +114,7 @@ export default function OrdersPage() {
         console.error("Error cargando pedidos:", error);
 
         setErrorMessage(
-          "No se pudieron cargar tus pedidos. Verifica que los pedidos tengan el campo customerId y que las reglas de Firestore permitan leerlos."
+          "No pudimos cargar tus pedidos. Intenta nuevamente o comunícate con la panadería."
         );
 
         setOrders([]);
@@ -140,7 +141,7 @@ export default function OrdersPage() {
       return (
         total +
         (order.items || []).reduce(
-          (itemTotal, item) => itemTotal + Number(item.qty || 0),
+          (itemTotal, item) => itemTotal + Number(item.qty || 0) * Number(item.cookieCount || 1),
           0
         )
       );
@@ -152,6 +153,9 @@ export default function OrdersPage() {
       const status = normalizeText(order.status);
 
       return ![
+        "entregado",
+        "entregada",
+        "delivered",
         "completado",
         "completada",
         "completed",
@@ -546,7 +550,10 @@ function StatusBadge({ value }: { value: string }) {
   const normalized = normalizeText(value);
 
   const completed = [
-    "completado",
+    "entregado",
+        "entregada",
+        "delivered",
+        "completado",
     "completada",
     "completed",
     "entregado",
@@ -583,7 +590,10 @@ function StatusBadge({ value }: { value: string }) {
 }
 
 function PaymentBadge({ value }: { value: string }) {
-  const paid = ["pagado", "paid", "completado", "completed"].includes(
+  const paid = ["pagado", "paid", "entregado",
+        "entregada",
+        "delivered",
+        "completado", "completed"].includes(
     normalizeText(value)
   );
 

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Download, QrCode, Smartphone } from "lucide-react";
 
-const surveyUrl = "https://ianis-bakery.vercel.app/taste";
+const surveyUrl = "https://www.ianisbakery.com/taste";
 const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=24&data=${encodeURIComponent(
   surveyUrl
 )}`;
