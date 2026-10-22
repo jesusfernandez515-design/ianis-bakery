@@ -1,13 +1,11 @@
 # Firebase release requirements
 
-The admin UI now requires the trusted Firebase Authentication custom claim
-`admin: true`. Customer-editable documents never grant administrator access.
-Set this claim for the existing verified owner UID using a trusted Firebase
-Admin environment, then refresh the owner's session. Do not grant it based
-on a submitted email or a customer profile's `role` field.
+The admin UI and firestore.rules grant access only to the owner UID
+verified in Firebase Authentication: cFUbzmlXsvVUDMWPzNiCuOpKjTx1.
+Keep both files synchronized. Customer-editable documents never grant access.
 
-The UI gate does not replace Firestore rules. Existing production rules could
-not be inspected or deployed from the connected GitHub/Vercel tools. Before
+The UI gate does not replace Firestore rules. The existing rules were inspected in the Firebase console. Replacement rules
+passed 23 local emulator checks and were published with owner confirmation on 2026-10-22. Before
 calling the shop fully verified:
 
 - restrict catalog writes and order updates/reads to trusted admin claims;

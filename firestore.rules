@@ -1,0 +1,92 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function admin() {
+      return signedIn() && request.auth.uid == 'cFUbzmlXsvVUDMWPzNiCuOpKjTx1';
+    }
+    function owner(uid) { return signedIn() && request.auth.uid == uid; }
+    match /ianisFeedback/{feedbackId} {
+      allow create: if request.resource.data.brand == 'Ianis Bakery'
+        && request.resource.data.flavor is string
+        && request.resource.data.flavor.size() > 0
+        && request.resource.data.flavor.size() <= 150
+        && request.resource.data.taste is number
+        && request.resource.data.taste >= 1 && request.resource.data.taste <= 10
+        && request.resource.data.texture is number
+        && request.resource.data.texture >= 1 && request.resource.data.texture <= 10
+        && request.resource.data.wouldBuy is string
+        && request.resource.data.wouldBuy.size() > 0
+        && request.resource.data.createdAt == request.time;
+      allow read: if admin();
+      allow update, delete: if false;
+    }
+    match /orders/{orderId} {
+      allow create: if request.resource.data.keys().hasOnly([
+          'customerId', 'customerEmail', 'customerName', 'customerPhone', 'address',
+          'note', 'delivery', 'coupon', 'items', 'itemCount', 'subtotal', 'discount',
+          'deliveryFee', 'total', 'status', 'paymentStatus', 'source', 'createdAt', 'updatedAt'])
+        && request.resource.data.customerId is string
+        && ((signedIn() && request.resource.data.customerId == request.auth.uid)
+          || (!signedIn() && request.resource.data.customerId == ''))
+        && request.resource.data.customerName is string
+        && request.resource.data.customerName.size() > 0
+        && request.resource.data.customerName.size() <= 150
+        && request.resource.data.customerPhone is string
+        && request.resource.data.customerPhone.size() >= 10
+        && request.resource.data.customerPhone.size() <= 30
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0 && request.resource.data.items.size() <= 100
+        && request.resource.data.itemCount is int && request.resource.data.itemCount > 0
+        && request.resource.data.subtotal is number && request.resource.data.subtotal >= 0
+        && request.resource.data.discount is number && request.resource.data.discount >= 0
+        && request.resource.data.discount <= request.resource.data.subtotal
+        && request.resource.data.total is number && request.resource.data.total >= 0
+        && request.resource.data.delivery in ['pickup', 'delivery']
+        && request.resource.data.deliveryFee == (request.resource.data.delivery == 'delivery' ? 3 : 0)
+        && request.resource.data.status == 'Pendiente'
+        && request.resource.data.paymentStatus == 'Pendiente'
+        && request.resource.data.source == 'website'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+      allow read: if admin() || (signedIn() && resource.data.customerId == request.auth.uid);
+      allow update: if admin() && request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['status', 'updatedAt'])
+        && request.resource.data.status in ['Pendiente', 'Confirmado', 'En preparación',
+          'Horneando', 'Listo para recoger', 'En ruta', 'Entregado', 'Cancelado']
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+    match /customers/{customerId} {
+      allow read: if admin() || owner(customerId);
+      allow create: if owner(customerId)
+        && request.resource.data.keys().hasOnly(['uid','name','email','phone','points',
+          'favorites','role','active','createdAt','updatedAt','lastLoginAt'])
+        && request.resource.data.uid == customerId
+        && request.resource.data.role == 'customer'
+        && request.resource.data.points == 0
+        && request.resource.data.active == true;
+      allow update: if owner(customerId)
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['name', 'phone', 'favorites', 'updatedAt', 'lastLoginAt']);
+      allow delete: if false;
+    }
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update: if admin()
+        && request.resource.data.name is string && request.resource.data.name.size() > 0
+        && request.resource.data.price is number && request.resource.data.price >= 0
+        && request.resource.data.active is bool;
+      allow delete: if admin();
+    }
+    match /pushSubscriptions/{subscriptionId} {
+      allow create: if signedIn() && request.resource.data.customerId == request.auth.uid
+        && request.resource.data.token is string && request.resource.data.token.size() > 0;
+      allow update: if signedIn() && resource.data.customerId == request.auth.uid
+        && request.resource.data.customerId == resource.data.customerId;
+      allow read: if admin();
+      allow delete: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

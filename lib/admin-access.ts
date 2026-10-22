@@ -1,8 +1,8 @@
 import { type User } from "firebase/auth";
 
-// Only trusted Firebase custom claims grant administrative access.
-// Never trust the customer-editable profile document for authorization.
+// Verified against Firebase Authentication in project ianis-bakery.
+// Keep this owner UID synchronized with firestore.rules. Profile roles never grant access.
+export const OWNER_UID = "cFUbzmlXsvVUDMWPzNiCuOpKjTx1";
 export async function isAdministrator(user: User): Promise<boolean> {
-  const { claims } = await user.getIdTokenResult();
-  return claims.admin === true;
+  return user.uid === OWNER_UID;
 }
