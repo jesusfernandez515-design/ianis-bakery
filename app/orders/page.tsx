@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { auth, db } from "@/lib/firebase";
+import { isCancelledOrder } from "@/lib/order-summary";
 
 type OrderItem = {
   id?: string;
@@ -126,14 +127,14 @@ export default function OrdersPage() {
   }, [user]);
 
   const totalPurchased = useMemo(() => {
-    return orders.reduce(
+    return orders.filter(order => !isCancelledOrder(order)).reduce(
       (total, order) => total + Number(order.total || 0),
       0
     );
   }, [orders]);
 
   const totalCookies = useMemo(() => {
-    return orders.reduce((total, order) => {
+    return orders.filter(order => !isCancelledOrder(order)).reduce((total, order) => {
       if (typeof order.itemCount === "number") {
         return total + order.itemCount;
       }
@@ -274,13 +275,13 @@ export default function OrdersPage() {
             />
 
             <StatCard
-              label="Cookies compradas"
+              label="Cookies en pedidos"
               value={String(totalCookies)}
               icon={<ShoppingBag size={22} />}
             />
 
             <StatCard
-              label="Total comprado"
+              label="Total en pedidos"
               value={`$${totalPurchased.toFixed(2)}`}
               icon={<ReceiptText size={22} />}
             />

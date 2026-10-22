@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { db } from "@/lib/firebase";
+import { collectedTotal } from "@/lib/order-summary";
 
 type OrderItem = {
   id?: string;
@@ -114,10 +115,7 @@ export default function AdminOrdersPage() {
     });
   }, [orders]);
 
-  const todayRevenue = todayOrders.reduce(
-    (sum, order) => sum + Number(order.total || 0),
-    0
-  );
+  const todayRevenue = collectedTotal(todayOrders);
 
   const pendingCount = orders.filter(
     (order) =>
