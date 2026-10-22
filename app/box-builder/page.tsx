@@ -108,7 +108,7 @@ export default function BoxBuilderPage() {
     try {
       const raw = JSON.parse(localStorage.getItem("ianis-bakery-cart") || "[]");
       const cart = Array.isArray(raw) ? raw : [];
-      cart.push({ id: `box-${crypto.randomUUID()}`, name: `${selectedBox.name}: ${selectedCookies.map(cookie => `${cookie.quantity} ${cookie.shortName}`).join(", ")}`, price: total, qty: 1, cookieCount: boxSize, image: "/cookie-boxes.png" });
+      cart.push({ id: `box-${crypto.randomUUID()}`, name: `${selectedBox.name}: ${selectedCookies.map(cookie => `${cookie.quantity} ${cookie.shortName}`).join(", ")}`, price: total, qty: 1, cookieCount: boxSize, image: "/cookie-boxes.png", box: { size: boxSize, selections: selectedCookies.map(cookie => ({ id: cookie.id, qty: cookie.quantity })) } });
       localStorage.setItem("ianis-bakery-cart", JSON.stringify(cart));
       router.push("/cart");
     } catch { setCartError("No se pudo guardar la caja. Verifica que tu navegador permita guardar el carrito."); }

@@ -19,6 +19,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useCatalog } from "@/lib/use-catalog";
 import { auth, db } from "@/lib/firebase";
 import { onAuthStateChanged, type User } from "firebase/auth";
+import type { CheckoutItem } from "@/lib/checkout-quote";
 
 type Product = {
   id: string;
@@ -31,6 +32,7 @@ type Product = {
 type CartItem = Product & {
   qty: number;
   cookieCount?: number;
+  box?: CheckoutItem["box"];
 };
 
 type DeliveryType = "pickup" | "delivery";
@@ -60,6 +62,15 @@ export default function CartPage() {
   const [loading, setLoading] = useState(false);
   const [orderId, setOrderId] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [testPaymentsEnabled, setTestPaymentsEnabled] = useState(false);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/checkout", { signal: controller.signal, cache: "no-store" })
+      .then(response => response.json())
+      .then(result => setTestPaymentsEnabled(result.enabled === true))
+      .catch(() => {});
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -128,10 +139,8 @@ export default function CartPage() {
 
   const normalizedCoupon = coupon.trim().toUpperCase();
 
-  const discount =
-    normalizedCoupon === "IANIS10"
-      ? subtotal * 0.1
-      : 0;
+  const discount = normalizedCoupon === "IANIS10"
+    ? Math.round(Math.round(subtotal * 100) / 10) / 100 : 0;
 
   const deliveryFee =
     delivery === "delivery" && items.length > 0 ? 3 : 0;
@@ -333,6 +342,34 @@ export default function CartPage() {
       submitting.current = false;
       setLoading(false);
     }
+  };
+
+  const startTestPayment = async () => {
+    if (submitting.current || orderId || !testPaymentsEnabled) return;
+    setErrorMessage("");
+    if (!user) { setErrorMessage("Inicia sesión para probar el pago online."); return; }
+    if (!navigator.onLine) { setErrorMessage("Conéctate antes de iniciar el pago."); return; }
+    submitting.current = true;
+    setLoading(true);
+    try {
+      const payload = JSON.stringify({ customerName, customerPhone, address, note, delivery, coupon: normalizedCoupon,
+        expectedTotalCents: Math.round(total * 100), items: items.map(item => ({ id: item.id, qty: item.qty, ...(item.box ? { box: item.box } : {}) })) });
+      // Reuse the same attempt across double clicks, network retries and back navigation.
+      const saved = JSON.parse(sessionStorage.getItem("ianis-checkout-attempt") || "null");
+      const attempt = saved?.payload === payload && Date.now() - saved.startedAt < 29 * 60 * 1000
+        ? saved : { payload, key: crypto.randomUUID(), startedAt: Date.now() };
+      sessionStorage.setItem("ianis-checkout-attempt", JSON.stringify(attempt));
+      const response = await fetch("/api/checkout", { method: "POST", headers: {
+        "Content-Type": "application/json", "Idempotency-Key": attempt.key, "Authorization": `Bearer ${await user.getIdToken()}`,
+      }, body: payload });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "No se pudo iniciar el pago.");
+      const destination = new URL(result.url);
+      if (destination.protocol !== "https:" || destination.hostname !== "checkout.stripe.com") throw new Error("Enlace de pago no válido.");
+      window.location.assign(destination.href);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "No se pudo iniciar el pago.");
+    } finally { submitting.current = false; setLoading(false); }
   };
 
   const whatsappMessage = useMemo(() => {
@@ -872,12 +909,14 @@ export default function CartPage() {
 
               <button
                 type="button"
-                disabled
+                onClick={startTestPayment}
+                disabled={!testPaymentsEnabled || loading || items.length === 0 || Boolean(orderId)}
                 className="flex w-full items-center justify-center gap-3 rounded-2xl border border-[#F5ACB1]/25 bg-[#120704]/75 px-8 py-5 font-black text-[#FFF6EF]/50"
               >
                 <CreditCard />
-                Pago online próximamente
+                {testPaymentsEnabled ? "Probar pago — sin cobro real" : "Pago online próximamente"}
               </button>
+              {testPaymentsEnabled && <p className="text-sm text-[#FFF6EF]/70">Modo de prueba: no cobra dinero ni envía el pedido a preparación. {user ? "" : "Inicia sesión para continuar."}</p>}
             </div>
           </aside>
         </section>

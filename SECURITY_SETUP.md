@@ -12,10 +12,15 @@ calling the shop fully verified:
 - allow customers to read only orders whose `customerId` matches their UID;
 - permit guest order creation only with validated fields and pending status;
 - keep customer profile fields such as role/points protected;
-- validate prices and coupons on a trusted backend before collecting payments;
+- the new sandbox Checkout endpoint validates prices/coupons on the server;
+  manual pending orders still originate in the browser and must never be charged
+  by trusting their client-supplied totals;
 - verify survey submission and order acknowledgement against the real database.
 
-Payments remain unconfigured and disabled. No card charge has been introduced.
+Payments remain unconfigured and disabled. The sandbox-only Stripe integration
+is prepared; see PAYMENTS_SETUP.md for secure configuration and launch gaps.
+No live charge capability has been enabled. New checkoutAttempts/checkoutLimits
+collections are server-only under the existing catch-all deny rule.
 Local build verification uses isolated Firebase fixture values, never production
 credentials. Customer order history only links new orders made while signed in;
 legacy guest orders cannot safely be assigned from a phone/name match.
