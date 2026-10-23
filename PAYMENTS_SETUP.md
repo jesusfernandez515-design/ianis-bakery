@@ -18,11 +18,17 @@ only for enabled payment operations, not the public availability check.
 - Private checkoutAttempts documents bind server-quoted amount, order and session.
   Existing Firestore catch-all denies all client access to these and checkoutLimits.
 - Raw-body signed webhook handles checkout.session.completed and
-  checkout.session.async_payment_succeeded, gated on paid status, exact amount,
+  checkout.session.async_payment_succeeded, plus checkout.session.expired and
+  checkout.session.async_payment_failed, gated on status, exact amount,
   currency, session and environment. Transaction makes repeated events harmless.
 - Test orders are clearly prefixed NO PREPARAR, status Cancelado, paymentStatus
   Prueba pendiente/Prueba pagada. They do not count as sales or active preparation.
-  The return page never marks payment successful by trusting a URL parameter.
+  The return page subscribes to the customer's protected order record and shows
+  verified pending/paid/failed/expired state. Cached data cannot confirm a payment.
+  URL parameters never mark an order paid. Already-paid attempts cannot be reused;
+  expired/failed attempts offer a fresh idempotent attempt on the next click.
+  Admin preparation controls are disabled for sandbox orders; revenue/customer
+  metrics exclude them independently of their delivery or payment labels.
 
 ## Connect the owner's sandbox later
 
@@ -48,7 +54,7 @@ on the public production shop (VERCEL_ENV=production is explicitly blocked). Wit
 disabled and the checkout/webhook routes return 503. Live keys are rejected even
 if PAYMENTS_MODE is changed to live.
 
-Webhook URL: https://YOUR-PREVIEW-HOST/api/stripe/webhook. Subscribe to both events
+Webhook URL: https://YOUR-PREVIEW-HOST/api/stripe/webhook. Subscribe to all four events
 above using the SDK API version (stripe-node 23.0.1: 2026-09-30.endive).
 Verify valid/declined test cards, duplicate requests/events, delayed success,
 expired sessions, changed catalog prices, cancellation and cross-user access.
@@ -58,8 +64,8 @@ Never use real card details for sandbox tests.
 
 This is not a live-payments launch. The owner must finish identity/bank verification,
 confirm eligible home-bakery products, labeling, service area and tax obligations.
-Then implement explicit live-mode order lifecycle, refunds/disputes and expired/
-failed payment handling; separate real sales from unpaid checkout attempts.
+Then implement explicit live-mode order lifecycle and refunds/disputes;
+separate real sales from unpaid checkout attempts.
 Review transfer of the current site admin UID to the actual owner separately.
 Configure and verify live webhook delivery and alerting, and perform the full
 payment-to-order test in the owner's sandbox before approving live activation.

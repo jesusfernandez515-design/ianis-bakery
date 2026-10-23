@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import Stripe from 'stripe';
 import { spawnSync } from 'node:child_process';
 import { quoteCheckout } from '../lib/checkout-quote.ts';
-import { confirmsPayment } from '../lib/payment-confirmation.ts';
+import { confirmsPayment, paymentTransition, testPaymentLabel } from '../lib/payment-confirmation.ts';
 import { fallbackProducts } from '../lib/catalog.ts';
 import { paymentsConfigured } from '../lib/server/stripe.ts';
 
@@ -61,6 +61,30 @@ test('only a matching paid sandbox session can confirm an order', () => {
   assert.equal(confirmsPayment(session,attempt),true);
   for(const patch of [{payment_status:'unpaid'},{payment_status:'no_payment_required'},{livemode:true},{currency:'eur'},{amount_total:1},{id:'other'},{client_reference_id:'other'},{metadata:{orderId:'other'}}]) assert.equal(confirmsPayment({...session,...patch},attempt),false);
   assert.equal(confirmsPayment(session,{...attempt,mode:'live'}),false);
+});
+test('failed and expired checkout events get distinct results without inventing a payment', () => {
+  const unpaid={...session,payment_status:'unpaid'};
+  assert.equal(paymentTransition('checkout.session.async_payment_failed',unpaid,attempt),'failed');
+  assert.equal(paymentTransition('checkout.session.expired',unpaid,attempt),'expired');
+  assert.equal(paymentTransition('checkout.session.completed',unpaid,attempt),null);
+  assert.equal(testPaymentLabel('expired'),'Prueba vencida');
+  assert.equal(testPaymentLabel('failed'),'Prueba fallida');
+});
+test('repeated or out-of-order events never revert a verified payment', () => {
+  const paid={...attempt,paid:true,state:'paid'};
+  for(const type of ['checkout.session.completed','checkout.session.async_payment_succeeded','checkout.session.async_payment_failed','checkout.session.expired']) {
+    assert.equal(paymentTransition(type,session,paid),null);
+    assert.equal(paymentTransition(type,{...session,payment_status:'unpaid'},paid),null);
+  }
+  assert.equal(paymentTransition('checkout.session.expired',{...session,payment_status:'unpaid'},{...attempt,state:'expired'}),null);
+  assert.equal(paymentTransition('checkout.session.completed',{...session,payment_status:'unpaid'},{...attempt,state:'failed'}),null);
+  assert.equal(paymentTransition('checkout.session.async_payment_succeeded',session,{...attempt,state:'failed'}),'paid');
+});
+test('every handled event must match the private amount, session and environment', () => {
+  for(const type of ['checkout.session.completed','checkout.session.async_payment_succeeded','checkout.session.async_payment_failed','checkout.session.expired']) {
+    for(const patch of [{id:'wrong'},{amount_total:1},{currency:'eur'},{livemode:true}]) assert.throws(()=>paymentTransition(type,{...session,...patch},attempt));
+  }
+  assert.equal(paymentTransition('unrelated.event',session,attempt),null);
 });
 test('Stripe signature verification rejects modified payloads and wrong signing secrets', () => {
   const stripe=new Stripe('sk_test_offline_fixture');

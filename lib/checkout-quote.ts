@@ -6,7 +6,8 @@ export type CheckoutItem = {
 };
 export class CheckoutError extends Error {
   status: number;
-  constructor(message: string, status = 400) { super(message); this.status = status; }
+  code?: string;
+  constructor(message: string, status = 400, code?: string) { super(message); this.status = status; this.code = code; }
 }
 const boxPrices: Record<number, number> = { 4: 1800, 6: 2600, 12: 4200 };
 const premiumIds = new Set(["marshmallow", "coconut"]);

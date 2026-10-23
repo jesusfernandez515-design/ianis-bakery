@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { db } from "@/lib/firebase";
-import { collectedTotal } from "@/lib/order-summary";
+import { collectedTotal, isTestOrder } from "@/lib/order-summary";
 
 type OrderItem = {
   id?: string;
@@ -51,6 +51,7 @@ type Order = {
   total?: number;
   status?: string;
   paymentStatus?: string;
+  paymentMode?: string;
   source?: string;
   createdAt?: {
     seconds?: number;
@@ -119,18 +120,19 @@ export default function AdminOrdersPage() {
 
   const pendingCount = orders.filter(
     (order) =>
-      order.status === "Pendiente" ||
+      !isTestOrder(order) && (order.status === "Pendiente" ||
       order.status === "Confirmado" ||
       order.status === "En preparación" ||
-      order.status === "Horneando"
+      order.status === "Horneando")
   ).length;
 
   const readyCount = orders.filter(
     (order) =>
-      order.status === "Listo para recoger" || order.status === "En ruta"
+      !isTestOrder(order) && (order.status === "Listo para recoger" || order.status === "En ruta")
   ).length;
 
   const updateStatus = async (orderId: string, status: string) => {
+    if (isTestOrder(orders.find(order => order.id === orderId) || {})) return;
     setUpdatingId(orderId);
 
     try {
@@ -345,10 +347,13 @@ export default function AdminOrdersPage() {
 
                     <div className="flex flex-col gap-3 lg:items-end">
                       <Status status={order.status || "Pendiente"} />
+                      <p className="text-sm font-semibold text-[#FFF6EF]/75">Pago: {order.paymentStatus || "Pendiente"}</p>
+                      {isTestOrder(order) && <p className="text-sm font-bold text-amber-200">PRUEBA · No preparar · Sin cobro real</p>}
 
                       <select
                         value={order.status || "Pendiente"}
-                        disabled={updatingId === order.id}
+                        disabled={updatingId === order.id || isTestOrder(order)}
+                        aria-label={`Estado del pedido ${order.id.slice(0, 8)}`}
                         onChange={(e) => updateStatus(order.id, e.target.value)}
                         className="rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/80 px-4 py-3 text-sm font-black text-[#FFF6EF] outline-none"
                       >

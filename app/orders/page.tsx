@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { auth, db } from "@/lib/firebase";
-import { isCancelledOrder } from "@/lib/order-summary";
+import { isCancelledOrder, isTestOrder } from "@/lib/order-summary";
 
 type OrderItem = {
   id?: string;
@@ -58,6 +58,7 @@ type Order = {
   total?: number;
   status?: string;
   paymentStatus?: string;
+  paymentMode?: string;
   source?: string;
   createdAt?: Timestamp | Date | string | number | null;
   updatedAt?: Timestamp | Date | string | number | null;
@@ -127,14 +128,14 @@ export default function OrdersPage() {
   }, [user]);
 
   const totalPurchased = useMemo(() => {
-    return orders.filter(order => !isCancelledOrder(order)).reduce(
+    return orders.filter(order => !isCancelledOrder(order) && !isTestOrder(order)).reduce(
       (total, order) => total + Number(order.total || 0),
       0
     );
   }, [orders]);
 
   const totalCookies = useMemo(() => {
-    return orders.filter(order => !isCancelledOrder(order)).reduce((total, order) => {
+    return orders.filter(order => !isCancelledOrder(order) && !isTestOrder(order)).reduce((total, order) => {
       if (typeof order.itemCount === "number") {
         return total + order.itemCount;
       }
@@ -151,6 +152,7 @@ export default function OrdersPage() {
 
   const activeOrders = useMemo(() => {
     return orders.filter((order) => {
+      if (isTestOrder(order)) return false;
       const status = normalizeText(order.status);
 
       return ![
@@ -697,6 +699,7 @@ function mapOrderDocument(
         ? data.paymentStatus
         : "Pendiente",
     source: typeof data.source === "string" ? data.source : "",
+    paymentMode: typeof data.paymentMode === "string" ? data.paymentMode : "",
     createdAt: data.createdAt || null,
     updatedAt: data.updatedAt || null,
   };

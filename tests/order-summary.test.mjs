@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { collectedTotal, isCancelledOrder } from '../lib/order-summary.ts';
+import { collectedTotal, isCancelledOrder, isTestOrder } from '../lib/order-summary.ts';
 test('unpaid, cancelled and refunded orders are not revenue', () => {
   assert.equal(collectedTotal([
     {status:'Pendiente',paymentStatus:'Pendiente',total:4.99},
@@ -15,4 +15,11 @@ test('payment aggregation uses cents and ignores invalid amounts', () => {
 test('cancelled or rejected orders are excluded regardless of language', () => {
   for (const status of [' Cancelado ','Cancelada','cancelled','canceled','Rechazado','rejected']) assert.equal(isCancelledOrder({status}),true);
   assert.equal(isCancelledOrder({status:'Confirmado'}),false);
+});
+test('sandbox orders cannot count as revenue even if their status is changed', () => {
+  const order={status:'Entregado',paymentStatus:'Pagado',total:499,paymentMode:'test'};
+  assert.equal(isTestOrder(order),true);
+  assert.equal(collectedTotal([order]),0);
+  assert.equal(collectedTotal([{...order,paymentMode:undefined,source:'website-stripe-test'}]),0);
+  assert.equal(isTestOrder({source:'website'}),false);
 });

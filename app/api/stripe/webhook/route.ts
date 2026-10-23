@@ -1,6 +1,6 @@
 import type Stripe from "stripe";
 import { paymentsConfigured, stripeClient } from "@/lib/server/stripe";
-import { confirmsPayment, type PaymentAttempt } from "@/lib/payment-confirmation";
+import { paymentEvents, paymentTransition, testPaymentLabel, type PaymentAttempt } from "@/lib/payment-confirmation";
 
 export const runtime = "nodejs";
 export async function POST(request: Request) {
@@ -12,9 +12,8 @@ export async function POST(request: Request) {
     event = stripeClient().webhooks.constructEvent(await request.text(), signature, process.env.STRIPE_WEBHOOK_SECRET!);
   } catch { return new Response("Invalid signature", { status: 400 }); }
   if (event.livemode) return new Response("Wrong environment", { status: 400 });
-  if (!["checkout.session.completed", "checkout.session.async_payment_succeeded"].includes(event.type)) return new Response("Ignored");
+  if (!paymentEvents.includes(event.type)) return new Response("Ignored");
   const session = event.data.object as Stripe.Checkout.Session;
-  if (session.payment_status !== "paid") return new Response("Awaiting payment");
   const attemptId = session.metadata?.attemptId;
   if (!attemptId || !/^[a-f\d]{64}$/.test(attemptId)) return new Response("Unrelated session");
   try {
@@ -25,14 +24,15 @@ export async function POST(request: Request) {
     const attemptRef = db.collection("checkoutAttempts").doc(attemptId);
     await db.runTransaction(async transaction => {
       const attempt = await transaction.get(attemptRef);
-      if (!attempt.exists || !confirmsPayment(session, attempt.data() as PaymentAttempt)) throw new Error("Payment mismatch");
-      if (attempt.get("paid")) return;
+      if (!attempt.exists) throw new Error("Missing attempt");
+      const state = paymentTransition(event.type, session, attempt.data() as PaymentAttempt);
+      if (!state) return;
       const orderRef = db.collection("orders").doc(attempt.get("orderId"));
       const order = await transaction.get(orderRef);
       if (!order.exists || order.get("customerId") !== attempt.get("customerId")) throw new Error("Order mismatch");
-      transaction.update(attemptRef, { paid: true, eventId: event.id, paidAt: FieldValue.serverTimestamp() });
+      transaction.update(attemptRef, { paid: state === "paid", state, eventId: event.id, updatedAt: FieldValue.serverTimestamp(), ...(state === "paid" ? { paidAt: FieldValue.serverTimestamp() } : {}) });
       // Test payments must never count as real revenue or start food preparation.
-      transaction.update(orderRef, { paymentStatus: "Prueba pagada", stripeSessionId: session.id, updatedAt: FieldValue.serverTimestamp() });
+      transaction.update(orderRef, { paymentStatus: testPaymentLabel(state), stripeSessionId: session.id, updatedAt: FieldValue.serverTimestamp() });
     });
     return new Response("Received");
   } catch {

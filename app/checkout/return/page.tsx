@@ -1,11 +1,10 @@
-import Link from "next/link";
+import PaymentResult from "./payment-result";
 
-export default function CheckoutReturn() {
-  // A redirect is not evidence of payment. Only the verified webhook updates it.
-  return <main className="min-h-screen bg-[#120704] px-6 py-24 text-[#FFF6EF]"><div className="mx-auto max-w-xl space-y-6">
-    <h1 className="text-4xl font-black">Verifica el estado de tu pedido</h1>
-    <p>Estamos esperando la confirmación del proveedor de pagos. Volver a esta página no confirma un cobro.</p>
-    <p>Los pagos de prueba no cobran dinero ni representan pedidos para preparar.</p>
-    <Link href="/orders" className="inline-block rounded-xl bg-[#F5ACB1] p-4 font-bold text-[#120704]">Ver mis pedidos</Link>
-  </div></main>;
+export default async function CheckoutReturn({ searchParams }: {
+  searchParams: Promise<{ order?: string | string[]; session_id?: string | string[] }>;
+}) {
+  const params = await searchParams;
+  const orderId = typeof params.order === "string" && /^online-[a-f\d]{64}$/.test(params.order) ? params.order : null;
+  const sessionId = typeof params.session_id === "string" && /^cs_test_[A-Za-z0-9]{1,200}$/.test(params.session_id) ? params.session_id : null;
+  return <PaymentResult orderId={orderId} sessionId={sessionId} />;
 }

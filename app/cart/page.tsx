@@ -363,6 +363,7 @@ export default function CartPage() {
         "Content-Type": "application/json", "Idempotency-Key": attempt.key, "Authorization": `Bearer ${await user.getIdToken()}`,
       }, body: payload });
       const result = await response.json();
+      if (result.resetAttempt === true) sessionStorage.removeItem("ianis-checkout-attempt");
       if (!response.ok) throw new Error(result.error || "No se pudo iniciar el pago.");
       const destination = new URL(result.url);
       if (destination.protocol !== "https:" || destination.hostname !== "checkout.stripe.com") throw new Error("Enlace de pago no válido.");
