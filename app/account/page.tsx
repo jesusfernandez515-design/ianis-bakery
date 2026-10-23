@@ -496,6 +496,8 @@ export default function AccountPage() {
             </FormField>
           </div>
 
+          {mode === "login" && <Link href="/forgot-password" className="mt-5 block text-right text-sm font-bold text-[#F5ACB1]">¿Olvidaste tu contraseña?</Link>}
+
           <button
             type="submit"
             disabled={processing}

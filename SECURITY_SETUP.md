@@ -24,3 +24,22 @@ collections are server-only under the existing catch-all deny rule.
 Local build verification uses isolated Firebase fixture values, never production
 credentials. Customer order history only links new orders made while signed in;
 legacy guest orders cannot safely be assigned from a phone/name match.
+
+# Password recovery
+
+Customers and administrators can request a Firebase-hosted password reset from
+/forgot-password. Existing and unknown addresses receive the same generic notice.
+The form never collects passwords and does not log addresses or recovery links.
+There is a duplicate-request guard and a 60-second resend cooldown in the UI;
+Firebase's server-side quotas remain responsible for abuse protection.
+
+Local Auth emulator verification (no real email or production account changed):
+
+```
+firebase emulators:exec --only auth --project demo-ianis-auth --config tests/firebase-auth-emulator.json "node --experimental-strip-types --test tests/password-recovery.emulator.mjs"
+```
+
+The test creates a fixture user, requests a reset, checks that a missing address
+gets the same notice, applies the emulator-only code, and verifies the old
+password fails and the new one works. Real inbox delivery/template appearance
+still require a separately authorized check with the business owner's account.

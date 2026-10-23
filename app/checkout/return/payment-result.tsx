@@ -50,7 +50,7 @@ export default function PaymentResult({ orderId, sessionId }: { orderId: string 
     </div>
     <p className="rounded-xl border border-[#F5ACB1]/30 p-4">Los pedidos de prueba no se preparan ni representan una compra real.</p>
     <div className="flex flex-wrap gap-4">
-      <Link href={result.state === "signed-out" ? "/login" : "/orders"} className="rounded-xl bg-[#F5ACB1] p-4 font-bold text-[#120704]">{result.state === "signed-out" ? "Iniciar sesión" : "Ver mis pedidos"}</Link>
+      <Link href={result.state === "signed-out" ? "/account" : "/orders"} className="rounded-xl bg-[#F5ACB1] p-4 font-bold text-[#120704]">{result.state === "signed-out" ? "Iniciar sesión" : "Ver mis pedidos"}</Link>
       <Link href="/cart" className="rounded-xl border border-[#F5ACB1]/40 p-4 font-bold">Volver al carrito</Link>
     </div>
   </div></main>;

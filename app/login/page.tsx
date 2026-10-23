@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { Lock, Loader2, Mail } from "lucide-react";
@@ -107,6 +108,8 @@ export default function LoginPage() {
               "Entrar al panel"
             )}
           </button>
+          <Link href="/forgot-password" className="mt-5 block text-center text-sm font-bold text-[#F2B6AD]">¿Olvidaste tu contraseña?</Link>
+          <Link href="/account" className="mt-4 block text-center text-sm text-[#FFF3EE]/65">Acceso para clientes</Link>
         </form>
       </div>
     </main>
