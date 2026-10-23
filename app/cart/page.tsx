@@ -411,14 +411,14 @@ export default function CartPage() {
     `?text=${whatsappMessage}`;
 
   return (
-    <main className="min-h-screen bg-[#120704] px-5 py-7 text-[#FFF6EF]">
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,172,177,0.24),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(210,142,71,0.20),transparent_38%)]" />
+    <main className="min-h-screen bg-[#0C0C0C] px-5 py-7 text-[#F1E2DC]">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(217,132,120,0.24),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(210,142,71,0.20),transparent_38%)]" />
 
       <div className="mx-auto max-w-7xl">
-        <nav className="mb-8 flex items-center justify-between rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/80 px-4 py-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
+        <nav className="mb-8 flex items-center justify-between rounded-full border border-[#D98478]/25 bg-[#171313]/80 px-4 py-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
           <Link
             href="/menu"
-            className="flex items-center gap-2 font-black text-[#F5ACB1]"
+            className="flex items-center gap-2 font-black text-[#D98478]"
           >
             <ArrowLeft size={18} />
             Menú
@@ -429,13 +429,13 @@ export default function CartPage() {
             alt="Ianis Bakery"
             width={56}
             height={56}
-            className="h-14 w-14 rounded-full border border-[#FFF6EF]/70 object-cover"
+            className="h-14 w-14 rounded-full border border-[#F1E2DC]/70 object-cover"
             priority
           />
 
           <Link
             href="/shop"
-            className="rounded-full bg-[#F5ACB1] px-5 py-3 text-sm font-black text-[#120704]"
+            className="rounded-full bg-[#D98478] px-5 py-3 text-sm font-black text-[#0C0C0C]"
           >
             Tienda
           </Link>
@@ -443,7 +443,7 @@ export default function CartPage() {
 
         <header className="grid gap-10 lg:grid-cols-[1fr_460px] lg:items-center">
           <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/80 px-5 py-3 text-sm font-black text-[#F5ACB1]">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#D98478]/25 bg-[#171313]/80 px-5 py-3 text-sm font-black text-[#D98478]">
               <ShoppingBag size={17} />
               Checkout premium
             </div>
@@ -452,7 +452,7 @@ export default function CartPage() {
               Crea un pedido real.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#FFF6EF]/70">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#F1E2DC]/70">
               Selecciona tus sabores, completa tus datos
               y confirma tu pedido. El pago se coordina con la panadería.
             </p>
@@ -475,7 +475,7 @@ export default function CartPage() {
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-[2.7rem] border border-[#F5ACB1]/20 bg-[#210D08] p-3 shadow-2xl shadow-black/45">
+          <div className="overflow-hidden rounded-[2.7rem] border border-[#D98478]/20 bg-[#171313] p-3 shadow-2xl shadow-black/45">
             <SafeProductImage
               src="/cookie-boxes.png"
               fallbackSrc="/logo-ianis.png"
@@ -490,9 +490,9 @@ export default function CartPage() {
 
         <section className="mt-12 grid gap-8 lg:grid-cols-[1fr_420px]">
           <div className="space-y-8">
-            <section className="rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/85 p-5 shadow-2xl shadow-black/30 md:p-6">
+            <section className="rounded-[2.5rem] border border-[#D98478]/20 bg-[#171313]/85 p-5 shadow-2xl shadow-black/30 md:p-6">
               <div className="mb-6">
-                <p className="text-xs font-black uppercase tracking-[0.3em] text-[#D99B55]">
+                <p className="text-xs font-black uppercase tracking-[0.3em] text-[#B88B61]">
                   Catálogo
                 </p>
 
@@ -500,7 +500,7 @@ export default function CartPage() {
                   Sabores disponibles
                 </h2>
 
-                <p className="mt-2 text-sm text-[#FFF6EF]/50">
+                <p className="mt-2 text-sm text-[#F1E2DC]/50">
                   Pulsa Agregar y usa los controles para
                   cambiar la cantidad.
                 </p>
@@ -514,10 +514,10 @@ export default function CartPage() {
                   return (
                     <article
                       key={product.id}
-                      className={`overflow-hidden rounded-[2rem] border bg-[#FFF6EF] text-[#2A120B] shadow-xl transition ${
+                      className={`overflow-hidden rounded-[2rem] border bg-[#F1E2DC] text-[#291E1B] shadow-xl transition ${
                         quantity > 0
-                          ? "border-[#C95867] ring-4 ring-[#C95867]/15"
-                          : "border-[#E6B47C]/25"
+                          ? "border-[#A84355] ring-4 ring-[#A84355]/15"
+                          : "border-[#B88B61]/25"
                       }`}
                     >
                       <div className="relative">
@@ -534,7 +534,7 @@ export default function CartPage() {
                         />
 
                         {quantity > 0 && (
-                          <span className="absolute right-4 top-4 flex h-12 min-w-12 items-center justify-center rounded-full border-4 border-white bg-[#C95867] px-3 text-xl font-black text-white shadow-xl">
+                          <span className="absolute right-4 top-4 flex h-12 min-w-12 items-center justify-center rounded-full border-4 border-white bg-[#A84355] px-3 text-xl font-black text-white shadow-xl">
                             {quantity}
                           </span>
                         )}
@@ -545,7 +545,7 @@ export default function CartPage() {
                           {product.name}
                         </h3>
 
-                        <p className="mt-2 text-2xl font-black text-[#C95867]">
+                        <p className="mt-2 text-2xl font-black text-[#A84355]">
                           ${product.price.toFixed(2)}
                         </p>
 
@@ -555,7 +555,7 @@ export default function CartPage() {
                             onClick={() =>
                               addProduct(product)
                             }
-                            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#C95867] px-5 py-3 font-black text-white transition active:scale-[0.98]"
+                            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#A84355] px-5 py-3 font-black text-white transition active:scale-[0.98]"
                           >
                             <Plus size={18} />
                             Agregar
@@ -570,12 +570,12 @@ export default function CartPage() {
                                     product.id
                                   )
                                 }
-                                className="flex h-12 w-12 items-center justify-center rounded-full border border-[#C95867]/25 text-[#C95867] active:scale-95"
+                                className="flex h-12 w-12 items-center justify-center rounded-full border border-[#A84355]/25 text-[#A84355] active:scale-95"
                               >
                                 <Minus size={20} />
                               </button>
 
-                              <div className="flex h-12 items-center justify-center rounded-full bg-[#F8DDE0] text-xl font-black text-[#C95867]">
+                              <div className="flex h-12 items-center justify-center rounded-full bg-[#EFD2CB] text-xl font-black text-[#A84355]">
                                 {quantity}
                               </div>
 
@@ -584,7 +584,7 @@ export default function CartPage() {
                                 onClick={() =>
                                   addProduct(product)
                                 }
-                                className="flex h-12 w-12 items-center justify-center rounded-full bg-[#C95867] text-white active:scale-95"
+                                className="flex h-12 w-12 items-center justify-center rounded-full bg-[#A84355] text-white active:scale-95"
                               >
                                 <Plus size={20} />
                               </button>
@@ -595,7 +595,7 @@ export default function CartPage() {
                               onClick={() =>
                                 removeItem(product.id)
                               }
-                              className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-[#C95867]/20 px-4 py-3 text-sm font-black text-[#C95867]"
+                              className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-[#A84355]/20 px-4 py-3 text-sm font-black text-[#A84355]"
                             >
                               <Trash2 size={16} />
                               Quitar del pedido
@@ -609,10 +609,10 @@ export default function CartPage() {
               </div>
             </section>
 
-            <section className="rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/85 p-5 shadow-2xl shadow-black/25 md:p-6">
+            <section className="rounded-[2.5rem] border border-[#D98478]/20 bg-[#171313]/85 p-5 shadow-2xl shadow-black/25 md:p-6">
               <div className="mb-6 flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-xs font-black uppercase tracking-[0.3em] text-[#D99B55]">
+                  <p className="text-xs font-black uppercase tracking-[0.3em] text-[#B88B61]">
                     Carrito
                   </p>
 
@@ -621,19 +621,19 @@ export default function CartPage() {
                   </h2>
                 </div>
 
-                <span className="rounded-full bg-[#F5ACB1] px-4 py-2 text-sm font-black text-[#120704]">
+                <span className="rounded-full bg-[#D98478] px-4 py-2 text-sm font-black text-[#0C0C0C]">
                   {totalItems}
                 </span>
               </div>
 
               {items.length === 0 ? (
-                <div className="rounded-[2rem] border border-dashed border-[#F5ACB1]/25 bg-[#120704]/50 px-5 py-12 text-center">
+                <div className="rounded-[2rem] border border-dashed border-[#D98478]/25 bg-[#0C0C0C]/50 px-5 py-12 text-center">
                   <ShoppingBag
                     size={44}
-                    className="mx-auto text-[#F5ACB1]/60"
+                    className="mx-auto text-[#D98478]/60"
                   />
 
-                  <h3 className="mt-4 text-2xl font-black text-[#F5ACB1]">
+                  <h3 className="mt-4 text-2xl font-black text-[#D98478]">
                     Tu carrito está vacío
                   </h3>
                 </div>
@@ -643,7 +643,7 @@ export default function CartPage() {
                     {items.map((item) => (
                       <article
                         key={item.id}
-                        className="rounded-[2rem] border border-[#F5ACB1]/15 bg-[#120704]/55 p-4"
+                        className="rounded-[2rem] border border-[#D98478]/15 bg-[#0C0C0C]/55 p-4"
                       >
                         <div className="flex items-center gap-4">
                           <SafeProductImage
@@ -659,16 +659,16 @@ export default function CartPage() {
                           />
 
                           <div className="min-w-0 flex-1">
-                            <h3 className="font-black text-[#F5ACB1]">
+                            <h3 className="font-black text-[#D98478]">
                               {item.name}
                             </h3>
 
-                            <p className="mt-1 text-sm text-[#FFF6EF]/50">
+                            <p className="mt-1 text-sm text-[#F1E2DC]/50">
                               {item.qty} × $
                               {item.price.toFixed(2)}
                             </p>
 
-                            <p className="mt-1 font-black text-[#D99B55]">
+                            <p className="mt-1 font-black text-[#B88B61]">
                               $
                               {(
                                 item.qty * item.price
@@ -681,7 +681,7 @@ export default function CartPage() {
                             onClick={() =>
                               removeItem(item.id)
                             }
-                            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#F5ACB1]/20 text-[#F5ACB1]"
+                            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#D98478]/20 text-[#D98478]"
                           >
                             <Trash2 size={18} />
                           </button>
@@ -693,7 +693,7 @@ export default function CartPage() {
                   <button
                     type="button"
                     onClick={clearCart}
-                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl border border-[#F5ACB1]/20 px-5 py-4 font-black text-[#F5ACB1]"
+                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl border border-[#D98478]/20 px-5 py-4 font-black text-[#D98478]"
                   >
                     <Trash2 size={18} />
                     Vaciar carrito
@@ -703,8 +703,8 @@ export default function CartPage() {
             </section>
           </div>
 
-          <aside className="h-fit rounded-[2.5rem] border border-[#F5ACB1]/25 bg-[#210D08]/95 p-6 shadow-2xl shadow-black/40 lg:sticky lg:top-24">
-            <p className="text-sm font-black uppercase tracking-[0.35em] text-[#D99B55]">
+          <aside className="h-fit rounded-[2.5rem] border border-[#D98478]/25 bg-[#171313]/95 p-6 shadow-2xl shadow-black/40 lg:sticky lg:top-24">
+            <p className="text-sm font-black uppercase tracking-[0.35em] text-[#B88B61]">
               Resumen
             </p>
 
@@ -758,9 +758,9 @@ export default function CartPage() {
                 className="input"
               />
 
-              <div className="rounded-2xl border border-[#F5ACB1]/25 bg-[#120704]/70 p-4">
-                <p className="font-black text-[#F5ACB1]">Solo recogido · Holiday, Florida</p>
-                <p className="mt-2 text-sm leading-6 text-[#FFF6EF]/70">Consulta el punto y horario de recogido con la panadería. Por el momento no ofrecemos delivery.</p>
+              <div className="rounded-2xl border border-[#D98478]/25 bg-[#0C0C0C]/70 p-4">
+                <p className="font-black text-[#D98478]">Solo recogido · Holiday, Florida</p>
+                <p className="mt-2 text-sm leading-6 text-[#F1E2DC]/70">Consulta el punto y horario de recogido con la panadería. Por el momento no ofrecemos delivery.</p>
               </div>
 
               <textarea
@@ -783,7 +783,7 @@ export default function CartPage() {
                 className="input uppercase"
               />
 
-              <div className="space-y-3 rounded-2xl border border-[#F5ACB1]/15 bg-[#120704]/75 p-5">
+              <div className="space-y-3 rounded-2xl border border-[#D98478]/15 bg-[#0C0C0C]/75 p-5">
                 <Row
                   label="Subtotal"
                   value={`$${subtotal.toFixed(2)}`}
@@ -794,7 +794,7 @@ export default function CartPage() {
                   value={`-$${discount.toFixed(2)}`}
                 />
 
-                <div className="border-t border-[#F5ACB1]/15 pt-3">
+                <div className="border-t border-[#D98478]/15 pt-3">
                   <Row
                     label="Total"
                     value={`$${total.toFixed(2)}`}
@@ -807,7 +807,7 @@ export default function CartPage() {
                 type="button"
                 onClick={createOrder}
                 disabled={loading || items.length === 0 || Boolean(orderId)}
-                className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704] disabled:opacity-45"
+                className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#D98478] px-8 py-5 text-lg font-black text-[#0C0C0C] disabled:opacity-45"
               >
                 {loading ? (
                   <>
@@ -838,12 +838,12 @@ export default function CartPage() {
                 type="button"
                 onClick={startTestPayment}
                 disabled={!testPaymentsEnabled || loading || items.length === 0 || Boolean(orderId)}
-                className="flex w-full items-center justify-center gap-3 rounded-2xl border border-[#F5ACB1]/25 bg-[#120704]/75 px-8 py-5 font-black text-[#FFF6EF]/50"
+                className="flex w-full items-center justify-center gap-3 rounded-2xl border border-[#D98478]/25 bg-[#0C0C0C]/75 px-8 py-5 font-black text-[#F1E2DC]/50"
               >
                 <CreditCard />
                 {testPaymentsEnabled ? "Probar pago — sin cobro real" : "Pago online próximamente"}
               </button>
-              {testPaymentsEnabled && <p className="text-sm text-[#FFF6EF]/70">Modo de prueba: no cobra dinero ni envía el pedido a preparación. {user ? "" : "Inicia sesión para continuar."}</p>}
+              {testPaymentsEnabled && <p className="text-sm text-[#F1E2DC]/70">Modo de prueba: no cobra dinero ni envía el pedido a preparación. {user ? "" : "Inicia sesión para continuar."}</p>}
             </div>
           </aside>
         </section>
@@ -917,12 +917,12 @@ function HeaderStat({
   label: string;
 }) {
   return (
-    <div className="rounded-2xl border border-[#F5ACB1]/15 bg-[#210D08]/70 p-4">
-      <p className="truncate text-xl font-black text-[#F5ACB1]">
+    <div className="rounded-2xl border border-[#D98478]/15 bg-[#171313]/70 p-4">
+      <p className="truncate text-xl font-black text-[#D98478]">
         {value}
       </p>
 
-      <p className="mt-1 text-xs text-[#FFF6EF]/45">
+      <p className="mt-1 text-xs text-[#F1E2DC]/45">
         {label}
       </p>
     </div>
@@ -943,8 +943,8 @@ function Row({
       <span
         className={
           highlight
-            ? "text-xl font-black text-[#F5ACB1]"
-            : "text-[#FFF6EF]/60"
+            ? "text-xl font-black text-[#D98478]"
+            : "text-[#F1E2DC]/60"
         }
       >
         {label}
@@ -953,7 +953,7 @@ function Row({
       <span
         className={
           highlight
-            ? "text-2xl font-black text-[#F5ACB1]"
+            ? "text-2xl font-black text-[#D98478]"
             : "font-black"
         }
       >

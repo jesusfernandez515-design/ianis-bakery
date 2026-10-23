@@ -189,23 +189,23 @@ export default function TasteSurveyPage() {
 
   if (sent) {
     return (
-      <main className="min-h-screen bg-[#0B0706] px-5 py-10 text-[#FFF3EE]">
+      <main className="min-h-screen bg-[#0B0706] px-5 py-10 text-[#F1E2DC]">
         <div className="mx-auto flex min-h-[82vh] max-w-lg items-center justify-center">
-          <section className="w-full rounded-[2.4rem] border border-[#E8A39A]/20 bg-[#1A0D0B]/95 p-7 text-center shadow-2xl shadow-black/50 md:p-9">
+          <section className="w-full rounded-[2.4rem] border border-[#D98478]/20 bg-[#171313]/95 p-7 text-center shadow-2xl shadow-black/50 md:p-9">
             <Image
               src="/logo-ianis.png"
               alt="Ianis Bakery"
               width={120}
               height={120}
-              className="mx-auto h-28 w-28 rounded-full border border-[#E8A39A]/30 object-cover"
+              className="mx-auto h-28 w-28 rounded-full border border-[#D98478]/30 object-cover"
               priority
             />
 
-            <div className="mx-auto mt-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#F2B6AD] text-[#0B0706]">
+            <div className="mx-auto mt-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#D98478] text-[#0B0706]">
               <CheckCircle2 size={44} />
             </div>
 
-            <p className="mt-6 text-sm font-black uppercase tracking-[0.35em] text-[#D8A85B]">
+            <p className="mt-6 text-sm font-black uppercase tracking-[0.35em] text-[#B88B61]">
               Ianis Bakery
             </p>
 
@@ -213,19 +213,19 @@ export default function TasteSurveyPage() {
               ¡Opinión recibida!
             </h1>
 
-            <p className="mt-4 leading-7 text-[#FFF3EE]/70">
+            <p className="mt-4 leading-7 text-[#F1E2DC]/70">
               Gracias por ayudarnos a mejorar nuestras
               cookies gourmet.
             </p>
 
-            <div className="mt-6 rounded-3xl border border-[#E8A39A]/20 bg-[#0B0706]/70 p-5">
-              <p className="font-bold text-[#F2B6AD]">
+            <div className="mt-6 rounded-3xl border border-[#D98478]/20 bg-[#0B0706]/70 p-5">
+              <p className="font-bold text-[#D98478]">
                 Presenta esta pantalla y recibe un
                 detalle especial en tu próxima compra.
               </p>
 
               {feedbackId && (
-                <p className="mt-3 break-all text-xs text-[#FFF3EE]/40">
+                <p className="mt-3 break-all text-xs text-[#F1E2DC]/40">
                   Respuesta: {feedbackId}
                 </p>
               )}
@@ -234,7 +234,7 @@ export default function TasteSurveyPage() {
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               <Link
                 href="/"
-                className="inline-flex items-center justify-center rounded-2xl bg-[#F2B6AD] px-6 py-4 font-black text-[#0B0706]"
+                className="inline-flex items-center justify-center rounded-2xl bg-[#D98478] px-6 py-4 font-black text-[#0B0706]"
               >
                 Volver al inicio
               </Link>
@@ -242,7 +242,7 @@ export default function TasteSurveyPage() {
               <button
                 type="button"
                 onClick={resetSurvey}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#E8A39A]/25 bg-[#0B0706]/70 px-6 py-4 font-black text-[#FFF3EE]"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#D98478]/25 bg-[#0B0706]/70 px-6 py-4 font-black text-[#F1E2DC]"
               >
                 <RotateCcw size={18} />
                 Otra encuesta
@@ -255,13 +255,13 @@ export default function TasteSurveyPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0B0706] px-5 py-8 text-[#FFF3EE]">
+    <main className="min-h-screen bg-[#0B0706] px-5 py-8 text-[#F1E2DC]">
       <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(232,163,154,0.20),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(216,168,91,0.16),transparent_35%)]" />
 
       <div className="mx-auto max-w-3xl">
         <Link
           href="/"
-          className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-[#F2B6AD]"
+          className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-[#D98478]"
         >
           <ArrowLeft size={18} />
           Volver
@@ -273,11 +273,11 @@ export default function TasteSurveyPage() {
             alt="Ianis Bakery"
             width={130}
             height={130}
-            className="mx-auto h-32 w-32 rounded-full border border-[#E8A39A]/30 object-cover shadow-2xl shadow-[#E8A39A]/20"
+            className="mx-auto h-32 w-32 rounded-full border border-[#D98478]/30 object-cover shadow-2xl shadow-[#D98478]/20"
             priority
           />
 
-          <div className="mx-auto mt-5 inline-flex items-center gap-2 rounded-full border border-[#E8A39A]/25 bg-[#1A0D0B]/80 px-4 py-2 text-sm text-[#F2B6AD]">
+          <div className="mx-auto mt-5 inline-flex items-center gap-2 rounded-full border border-[#D98478]/25 bg-[#171313]/80 px-4 py-2 text-sm text-[#D98478]">
             <Sparkles size={16} />
             Cookies gourmet · Rellenas hasta el centro
           </div>
@@ -286,7 +286,7 @@ export default function TasteSurveyPage() {
             Encuesta de degustación
           </h1>
 
-          <p className="mx-auto mt-4 max-w-xl leading-7 text-[#FFF3EE]/70">
+          <p className="mx-auto mt-4 max-w-xl leading-7 text-[#F1E2DC]/70">
             Tu opinión nos ayuda a mejorar el sabor,
             la textura, el precio y la presentación.
           </p>
@@ -294,7 +294,7 @@ export default function TasteSurveyPage() {
 
         <form
           onSubmit={submitSurvey}
-          className="space-y-6 rounded-[2rem] border border-[#E8A39A]/20 bg-[#1A0D0B]/90 p-5 shadow-2xl shadow-black/50 md:p-8"
+          className="space-y-6 rounded-[2rem] border border-[#D98478]/20 bg-[#171313]/90 p-5 shadow-2xl shadow-black/50 md:p-8"
         >
           {errorMessage && (
             <div className="flex items-start gap-3 rounded-2xl border border-red-400/30 bg-red-400/10 p-4 text-sm font-semibold leading-6 text-red-100">
@@ -486,7 +486,7 @@ export default function TasteSurveyPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F2B6AD] px-8 py-5 text-lg font-black text-[#0B0706] transition hover:bg-[#FFF3EE] disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#D98478] px-8 py-5 text-lg font-black text-[#0B0706] transition hover:bg-[#F1E2DC] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? (
               <>
@@ -502,7 +502,7 @@ export default function TasteSurveyPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-[#FFF3EE]/45">
+        <p className="mt-6 text-center text-xs text-[#F1E2DC]/45">
           Ianis Bakery · Cookies gourmet ·
           Instagram @ianis_bakery
         </p>
@@ -549,7 +549,7 @@ function Field({
 }) {
   return (
     <label className="block space-y-2">
-      <span className="font-bold text-[#F2B6AD]">
+      <span className="font-bold text-[#D98478]">
         {label}
       </span>
 
@@ -570,12 +570,12 @@ function Rating({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-4">
-        <p className="font-bold text-[#F2B6AD]">
+        <p className="font-bold text-[#D98478]">
           {label}
         </p>
 
         {value && (
-          <span className="rounded-full bg-[#F2B6AD] px-3 py-1 text-sm font-black text-[#0B0706]">
+          <span className="rounded-full bg-[#D98478] px-3 py-1 text-sm font-black text-[#0B0706]">
             {value}/10
           </span>
         )}
@@ -593,8 +593,8 @@ function Rating({
             aria-pressed={value === number}
             className={`rounded-xl border py-3 font-black transition ${
               value === number
-                ? "border-[#F2B6AD] bg-[#F2B6AD] text-[#0B0706]"
-                : "border-[#E8A39A]/15 bg-[#2A1713] text-[#FFF3EE] hover:bg-[#3A211B]"
+                ? "border-[#D98478] bg-[#D98478] text-[#0B0706]"
+                : "border-[#D98478]/15 bg-[#2A1713] text-[#F1E2DC] hover:bg-[#3A211B]"
             }`}
           >
             {number}

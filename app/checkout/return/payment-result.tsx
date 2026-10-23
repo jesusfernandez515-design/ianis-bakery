@@ -42,16 +42,16 @@ export default function PaymentResult({ orderId, sessionId }: { orderId: string 
     return () => { stopOrder?.(); stopAuth(); };
   }, [orderId, sessionId]);
 
-  return <main className="min-h-screen bg-[#120704] px-6 py-24 text-[#FFF6EF]"><div className="mx-auto max-w-xl space-y-6">
-    <p className="text-sm font-bold uppercase tracking-widest text-[#F5ACB1]">Ianis Bakery · Modo de prueba</p>
+  return <main className="min-h-screen bg-[#0C0C0C] px-6 py-24 text-[#F1E2DC]"><div className="mx-auto max-w-xl space-y-6">
+    <p className="text-sm font-bold uppercase tracking-widest text-[#D98478]">Ianis Bakery · Modo de prueba</p>
     <div role="status" aria-live="polite">
       <h1 className="text-4xl font-black">{valid ? titles[result.state] : "Consulta tu historial de pedidos"}</h1>
       <p className="mt-5 leading-7">{valid ? result.message : "Este enlace no contiene un pedido verificable. Puedes revisar su estado en Mis pedidos."}</p>
     </div>
-    <p className="rounded-xl border border-[#F5ACB1]/30 p-4">Los pedidos de prueba no se preparan ni representan una compra real.</p>
+    <p className="rounded-xl border border-[#D98478]/30 p-4">Los pedidos de prueba no se preparan ni representan una compra real.</p>
     <div className="flex flex-wrap gap-4">
-      <Link href={result.state === "signed-out" ? "/account" : "/orders"} className="rounded-xl bg-[#F5ACB1] p-4 font-bold text-[#120704]">{result.state === "signed-out" ? "Iniciar sesión" : "Ver mis pedidos"}</Link>
-      <Link href="/cart" className="rounded-xl border border-[#F5ACB1]/40 p-4 font-bold">Volver al carrito</Link>
+      <Link href={result.state === "signed-out" ? "/account" : "/orders"} className="rounded-xl bg-[#D98478] p-4 font-bold text-[#0C0C0C]">{result.state === "signed-out" ? "Iniciar sesión" : "Ver mis pedidos"}</Link>
+      <Link href="/cart" className="rounded-xl border border-[#D98478]/40 p-4 font-bold">Volver al carrito</Link>
     </div>
   </div></main>;
 }

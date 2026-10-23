@@ -20,7 +20,6 @@ import {
   Search,
   ShoppingBag,
   Sparkles,
-  Star,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useCatalog } from "@/lib/use-catalog";
@@ -188,11 +187,11 @@ export default function ShopPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#120704] px-5 py-10 text-[#FFF6EF] md:px-10 lg:px-20">
+    <div className="min-h-screen bg-[#0C0C0C] px-5 py-10 text-[#F1E2DC] md:px-10 lg:px-20">
       <div className="mx-auto max-w-7xl">
         <header className="grid gap-10 lg:grid-cols-[1fr_520px] lg:items-center">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/75 px-5 py-3 text-sm font-black text-[#F5ACB1]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#D98478]/25 bg-[#171313]/75 px-5 py-3 text-sm font-black text-[#D98478]">
               <Sparkles size={17} />
               Tienda Ianis Bakery
             </div>
@@ -201,21 +200,21 @@ export default function ShopPage() {
               Ordena tus cookies favoritas.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#FFF6EF]/65">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#F1E2DC]/65">
               Explora nuestros sabores, guarda tus favoritos y crea tu próxima
               caja personalizada.
             </p>
 
             <Link
               href="/box-builder"
-              className="mt-8 inline-flex items-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 font-black text-[#120704]"
+              className="mt-8 inline-flex items-center gap-3 rounded-2xl bg-[#D98478] px-8 py-5 font-black text-[#0C0C0C]"
             >
               Crear caja personalizada
               <Gift size={20} />
             </Link>
           </div>
 
-          <div className="overflow-hidden rounded-[2.7rem] border border-[#F5ACB1]/20 bg-[#210D08] p-3">
+          <div className="overflow-hidden rounded-[2.7rem] border border-[#D98478]/20 bg-[#171313] p-3">
             <Image
               src="/cookie-boxes.png"
               alt="Cajas Ianis Bakery"
@@ -228,14 +227,14 @@ export default function ShopPage() {
         </header>
 
         {message && (
-          <div className="sticky top-28 z-40 mx-auto mt-8 flex max-w-3xl items-center justify-center gap-3 rounded-2xl border border-[#F5ACB1]/25 bg-[#210D08]/95 px-5 py-4 text-center font-bold text-[#F5ACB1] shadow-2xl backdrop-blur-xl">
+          <div className="sticky top-28 z-40 mx-auto mt-8 flex max-w-3xl items-center justify-center gap-3 rounded-2xl border border-[#D98478]/25 bg-[#171313]/95 px-5 py-4 text-center font-bold text-[#D98478] shadow-2xl backdrop-blur-xl">
             <Check size={19} />
             {message}
           </div>
         )}
 
-        <section className="mt-14 rounded-[2.3rem] border border-[#F5ACB1]/20 bg-[#210D08]/85 p-5 md:p-7">
-          <p className="text-sm font-black uppercase tracking-[0.35em] text-[#D99B55]">
+        <section className="mt-14 rounded-[2.3rem] border border-[#D98478]/20 bg-[#171313]/85 p-5 md:p-7">
+          <p className="text-sm font-black uppercase tracking-[0.35em] text-[#B88B61]">
             Catálogo
           </p>
 
@@ -244,7 +243,7 @@ export default function ShopPage() {
               <h2 className="text-4xl font-black">Productos disponibles</h2>
 
               {user && (
-                <p className="mt-2 text-sm text-[#FFF6EF]/55">
+                <p className="mt-2 text-sm text-[#F1E2DC]/55">
                   Tienes {favoriteIds.length}{" "}
                   {favoriteIds.length === 1
                     ? "producto favorito"
@@ -257,7 +256,7 @@ export default function ShopPage() {
             {!loadingUser && !user && (
               <Link
                 href="/account"
-                className="font-black text-[#F5ACB1] underline underline-offset-4"
+                className="font-black text-[#D98478] underline underline-offset-4"
               >
                 Inicia sesión para guardar favoritos
               </Link>
@@ -265,24 +264,24 @@ export default function ShopPage() {
           </div>
 
           <div className="mt-6 flex flex-col gap-4 md:flex-row">
-            <div className="flex flex-1 items-center gap-3 rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-5 py-4">
-              <Search size={19} className="text-[#F5ACB1]" />
+            <div className="flex flex-1 items-center gap-3 rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/70 px-5 py-4">
+              <Search size={19} className="text-[#D98478]" />
 
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Buscar sabor..."
-                className="w-full bg-transparent outline-none placeholder:text-[#FFF6EF]/30"
+                className="w-full bg-transparent outline-none placeholder:text-[#F1E2DC]/30"
               />
             </div>
 
             <select
               value={selectedTag}
               onChange={(event) => setSelectedTag(event.target.value)}
-              className="rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-5 py-4 font-black outline-none"
+              className="rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/70 px-5 py-4 font-black outline-none"
             >
               {tags.map((tag) => (
-                <option key={tag} value={tag} className="bg-[#120704]">
+                <option key={tag} value={tag} className="bg-[#0C0C0C]">
                   {tag}
                 </option>
               ))}
@@ -292,18 +291,18 @@ export default function ShopPage() {
 
         <section className="mt-10">
           {loadingProducts ? (
-            <div className="rounded-[2rem] border border-[#F5ACB1]/20 bg-[#210D08]/70 p-10 text-center">
-              <Loader2 className="mx-auto animate-spin text-[#F5ACB1]" />
+            <div className="rounded-[2rem] border border-[#D98478]/20 bg-[#171313]/70 p-10 text-center">
+              <Loader2 className="mx-auto animate-spin text-[#D98478]" />
 
-              <p className="mt-4 font-black text-[#F5ACB1]">
+              <p className="mt-4 font-black text-[#D98478]">
                 Cargando productos...
               </p>
             </div>
           ) : filteredProducts.length === 0 ? (
-            <div className="rounded-[2rem] border border-dashed border-[#F5ACB1]/25 p-10 text-center">
+            <div className="rounded-[2rem] border border-dashed border-[#D98478]/25 p-10 text-center">
               <h2 className="text-3xl font-black">No encontramos productos</h2>
 
-              <p className="mt-3 text-[#FFF6EF]/55">
+              <p className="mt-3 text-[#F1E2DC]/55">
                 Prueba con otro nombre o categoría.
               </p>
             </div>
@@ -316,9 +315,9 @@ export default function ShopPage() {
                 return (
                   <article
                     key={product.id}
-                    className="overflow-hidden rounded-[2.3rem] border border-[#E6B47C]/30 bg-[#FFF6EF] text-[#2A120B] shadow-2xl shadow-black/25"
+                    className="overflow-hidden rounded-[2.3rem] border border-[#B88B61]/30 bg-[#F1E2DC] text-[#291E1B] shadow-2xl shadow-black/25"
                   >
-                    <div className="relative aspect-[3/4] bg-[#EEDAC8]">
+                    <div className="relative aspect-[3/4] bg-[#E5CFC4]">
                       <Image
                         src={normalizeImagePath(
                           product.image,
@@ -333,11 +332,11 @@ export default function ShopPage() {
 
                     <div className="p-5 md:p-6">
                       <div className="flex items-center justify-between gap-3">
-                        <span className="rounded-full bg-[#C95867] px-4 py-2 text-xs font-black text-white">
+                        <span className="rounded-full bg-[#A84355] px-4 py-2 text-xs font-black text-white">
                           {product.tag || "Premium"}
                         </span>
 
-                        <span className="rounded-full bg-[#120704] px-4 py-2 text-sm font-black text-[#F5ACB1]">
+                        <span className="rounded-full bg-[#0C0C0C] px-4 py-2 text-sm font-black text-[#D98478]">
                           ${Number(product.price || 0).toFixed(2)}
                         </span>
                       </div>
@@ -346,17 +345,9 @@ export default function ShopPage() {
                         {product.name || "Producto Ianis Bakery"}
                       </h3>
 
-                      <div className="mt-3 flex gap-1 text-[#D99B55]">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star
-                            key={star}
-                            size={15}
-                            fill="currentColor"
-                          />
-                        ))}
-                      </div>
 
-                      <p className="mt-4 min-h-[48px] text-sm leading-6 text-[#2A120B]/70">
+
+                      <p className="mt-4 min-h-[48px] text-sm leading-6 text-[#291E1B]/70">
                         {product.description ||
                           "Cookie gourmet rellena hasta el centro."}
                       </p>
@@ -373,8 +364,8 @@ export default function ShopPage() {
                           aria-pressed={isFavorite}
                           className={`inline-flex items-center justify-center gap-2 rounded-full border px-4 py-3 font-black transition disabled:cursor-not-allowed disabled:opacity-60 ${
                             isFavorite
-                              ? "border-[#C95867] bg-[#C95867] text-white"
-                              : "border-[#C95867]/30 bg-transparent text-[#C95867]"
+                              ? "border-[#A84355] bg-[#A84355] text-white"
+                              : "border-[#A84355]/30 bg-transparent text-[#A84355]"
                           }`}
                         >
                           {isUpdating ? (
@@ -407,7 +398,7 @@ export default function ShopPage() {
                               setMessage("No se pudo agregar el producto. Verifica que el navegador permita guardar el carrito.");
                             }
                           }}
-                          className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C95867] px-4 py-3 font-black text-white"
+                          className="inline-flex items-center justify-center gap-2 rounded-full bg-[#A84355] px-4 py-3 font-black text-white"
                         >
                           <ShoppingBag size={17} />
                           Ordenar

@@ -54,8 +54,8 @@ export default function PremiumAppChrome({
   }
 
   return (
-    <div className="min-h-screen bg-[#120704]">
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-[#F5ACB1]/10 bg-[#120704]/95 shadow-lg shadow-black/20 backdrop-blur-xl">
+    <div className="min-h-screen bg-[#0C0C0C]">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-[#B88B61]/25 bg-[#0C0C0C]/95 backdrop-blur-xl">
         <div className="mx-auto flex h-[78px] max-w-7xl items-center justify-between gap-3 px-4 md:h-[86px] md:px-8">
           <Link href="/" className="flex min-w-0 items-center gap-3">
             <Image
@@ -63,16 +63,16 @@ export default function PremiumAppChrome({
               alt="Ianis Bakery"
               width={56}
               height={56}
-              className="h-12 w-12 shrink-0 rounded-full border border-[#FFF6EF]/60 object-cover shadow-[0_0_22px_rgba(245,172,177,0.28)] md:h-14 md:w-14"
+              className="h-12 w-12 shrink-0 rounded-full border border-[#F1E2DC]/60 object-cover shadow-[0_0_22px_rgba(217,132,120,0.28)] md:h-14 md:w-14"
               priority
             />
 
             <div className="min-w-0">
-              <p className="truncate text-base font-black leading-none text-[#F5ACB1] md:text-lg">
+              <p className="brand-display truncate text-lg font-bold leading-none text-[#D98478] md:text-xl">
                 Ianis Bakery
               </p>
 
-              <p className="mt-1 truncate text-xs font-semibold text-[#D99B55]">
+              <p className="mt-1 truncate text-xs font-semibold text-[#B88B61]">
                 Cookies gourmet
               </p>
             </div>
@@ -96,18 +96,18 @@ export default function PremiumAppChrome({
 
           <Link
             href="/cart"
-            className="shrink-0 rounded-full bg-[#F5ACB1] px-5 py-3 text-sm font-black text-[#120704] shadow-lg shadow-[#F5ACB1]/20 transition hover:bg-[#FFF6EF]"
+            className="shrink-0 rounded-full bg-[#D98478] px-5 py-3 text-sm font-black text-[#0C0C0C] shadow-lg shadow-[#D98478]/20 transition hover:bg-[#F1E2DC]"
           >
             Ordenar
           </Link>
         </div>
       </header>
 
-      <main className="min-h-screen pb-28 pt-[78px] md:pb-0 md:pt-[86px]">
+      <main className="min-h-screen pb-28 pt-[78px] md:pt-[86px] lg:pb-0">
         {children}
       </main>
 
-      <nav className="fixed bottom-3 left-1/2 z-50 flex w-[calc(100%-24px)] max-w-md -translate-x-1/2 items-center justify-around rounded-[1.7rem] border border-[#F5ACB1]/20 bg-[#210D08]/96 px-2 py-2 shadow-2xl shadow-black/60 backdrop-blur-xl lg:hidden">
+      <nav className="fixed bottom-3 left-1/2 z-50 flex w-[calc(100%-24px)] max-w-md -translate-x-1/2 items-center justify-around rounded-[1.7rem] border border-[#D98478]/20 bg-[#171313]/96 px-2 py-2 shadow-2xl shadow-black/60 backdrop-blur-xl lg:hidden">
         {navigationItems.map((item) => {
           const Icon = item.icon;
 
@@ -123,23 +123,24 @@ export default function PremiumAppChrome({
         })}
       </nav>
 
-      <footer className="border-t border-[#F5ACB1]/10 bg-[#0C0403] px-5 py-10 text-[#FFF6EF]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 pb-20 md:flex-row md:items-center md:justify-between md:pb-0">
+      <footer className="border-t border-[#D98478]/10 bg-[#080808] px-5 py-10 text-[#F1E2DC]">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 pb-20 md:flex-row md:items-center md:justify-between lg:pb-0">
           <div className="flex items-center gap-3">
             <Image
               src="/logo-ianis.png"
               alt="Ianis Bakery"
               width={56}
               height={56}
-              className="h-14 w-14 rounded-full border border-[#FFF6EF]/60 object-cover"
+              className="h-14 w-14 rounded-full border border-[#F1E2DC]/60 object-cover"
             />
 
             <div>
-              <p className="font-black text-[#F5ACB1]">Ianis Bakery</p>
+              <p className="font-black text-[#D98478]">Ianis Bakery</p>
 
-              <p className="mt-1 text-sm text-[#FFF6EF]/55">
+              <p className="mt-1 text-sm text-[#F1E2DC]/55">
                 Cookies gourmet · Rellenas hasta el centro
               </p>
+              <p className="mt-2 text-sm text-[#B88B61]">Solo recogido · Holiday, Florida</p>
             </div>
           </div>
 
@@ -148,7 +149,7 @@ export default function PremiumAppChrome({
               href="https://www.instagram.com/ianis_bakery"
               target="_blank"
               rel="noreferrer"
-              className="block font-bold text-[#F5ACB1] transition hover:text-[#FFF6EF]"
+              className="block font-bold text-[#D98478] transition hover:text-[#F1E2DC]"
             >
               Instagram @ianis_bakery
             </a>
@@ -166,7 +167,7 @@ export default function PremiumAppChrome({
 
             <Link
               href="/login"
-              className="block text-sm font-semibold text-[#FFF6EF]/40 transition hover:text-[#F5ACB1]"
+              className="block text-sm font-semibold text-[#F1E2DC]/40 transition hover:text-[#D98478]"
             >
               Acceso administrativo
             </Link>
@@ -199,10 +200,11 @@ function DesktopNavItem({
   return (
     <Link
       href={href}
-      className={`inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-black transition ${
+      aria-current={active ? "page" : undefined}
+      className={`inline-flex items-center gap-2 border-b px-3 py-3 text-sm font-semibold transition ${
         active
-          ? "bg-[#F5ACB1] text-[#120704]"
-          : "text-[#FFF6EF]/70 hover:bg-[#F5ACB1]/10 hover:text-[#F5ACB1]"
+          ? "border-[#D98478] text-[#D98478]"
+          : "border-transparent text-[#F1E2DC]/80 hover:text-[#D98478]"
       }`}
     >
       {icon}
@@ -226,10 +228,11 @@ function MobileNavItem({
     <Link
       href={href}
       aria-label={label}
+      aria-current={active ? "page" : undefined}
       className={`flex min-w-[58px] flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-[10px] font-black transition ${
         active
-          ? "bg-[#F5ACB1] text-[#120704]"
-          : "text-[#F5ACB1] hover:bg-[#F5ACB1]/10"
+          ? "bg-[#D98478] text-[#0C0C0C]"
+          : "text-[#D98478] hover:bg-[#D98478]/10"
       }`}
     >
       {icon}

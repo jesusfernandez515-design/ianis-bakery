@@ -6,7 +6,6 @@ import {
   Heart,
   ShoppingBag,
   Sparkles,
-  Star,
 } from "lucide-react";
 
 const cookies = [
@@ -68,11 +67,11 @@ const cookies = [
 
 export default function MenuPage() {
   return (
-    <div className="min-h-screen bg-[#120704] px-5 py-10 text-[#FFF6EF] md:px-10 lg:px-20">
+    <div className="min-h-screen bg-[#0C0C0C] px-5 py-10 text-[#F1E2DC] md:px-10 lg:px-20">
       <div className="mx-auto max-w-7xl">
         <header className="grid gap-10 lg:grid-cols-[1fr_500px] lg:items-center">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/75 px-5 py-3 text-sm font-black text-[#F5ACB1]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#D98478]/25 bg-[#171313]/75 px-5 py-3 text-sm font-black text-[#D98478]">
               <Sparkles size={17} />
               Menú gourmet premium
             </div>
@@ -81,7 +80,7 @@ export default function MenuPage() {
               Elige tu cookie favorita.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#FFF6EF]/65">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#F1E2DC]/65">
               Seis sabores artesanales, rellenos cremosos y una experiencia
               preparada para enamorar desde la primera mordida.
             </p>
@@ -89,7 +88,7 @@ export default function MenuPage() {
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <Link
                 href="/box-builder"
-                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 font-black text-[#120704]"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#D98478] px-8 py-5 font-black text-[#0C0C0C]"
               >
                 Crear caja personalizada
                 <Gift size={20} />
@@ -97,14 +96,14 @@ export default function MenuPage() {
 
               <Link
                 href="/taste"
-                className="inline-flex items-center justify-center rounded-2xl border border-[#F5ACB1]/25 px-8 py-5 font-black"
+                className="inline-flex items-center justify-center rounded-2xl border border-[#D98478]/25 px-8 py-5 font-black"
               >
                 Dejar opinión
               </Link>
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-[2.7rem] border border-[#F5ACB1]/20 bg-[#210D08] p-3">
+          <div className="overflow-hidden rounded-[2.7rem] border border-[#D98478]/20 bg-[#171313] p-3">
             <Image
               src="/cookie-boxes.png"
               alt="Cajas de cookies Ianis Bakery"
@@ -118,7 +117,7 @@ export default function MenuPage() {
 
         <section className="mt-16">
           <div className="text-center">
-            <p className="text-sm font-black uppercase tracking-[0.4em] text-[#D99B55]">
+            <p className="text-sm font-black uppercase tracking-[0.4em] text-[#B88B61]">
               Sabores
             </p>
 
@@ -131,9 +130,9 @@ export default function MenuPage() {
             {cookies.map((cookie) => (
               <article
                 key={cookie.id}
-                className="overflow-hidden rounded-[2.3rem] border border-[#E6B47C]/30 bg-[#FFF6EF] text-[#2A120B] shadow-2xl shadow-black/25"
+                className="overflow-hidden rounded-[2.3rem] border border-[#B88B61]/30 bg-[#F1E2DC] text-[#291E1B] shadow-2xl shadow-black/25"
               >
-                <div className="relative aspect-[3/4] bg-[#EEDAC8]">
+                <div className="relative aspect-[3/4] bg-[#E5CFC4]">
                   <Image
                     src={cookie.image}
                     alt={cookie.name}
@@ -145,11 +144,11 @@ export default function MenuPage() {
 
                 <div className="p-5 md:p-6">
                   <div className="flex items-center justify-between gap-3">
-                    <span className="rounded-full bg-[#C95867] px-4 py-2 text-xs font-black text-white">
+                    <span className="rounded-full bg-[#A84355] px-4 py-2 text-xs font-black text-white">
                       {cookie.tag}
                     </span>
 
-                    <span className="rounded-full bg-[#120704] px-4 py-2 text-sm font-black text-[#F5ACB1]">
+                    <span className="rounded-full bg-[#0C0C0C] px-4 py-2 text-sm font-black text-[#D98478]">
                       {cookie.price}
                     </span>
                   </div>
@@ -158,20 +157,16 @@ export default function MenuPage() {
                     {cookie.name}
                   </h3>
 
-                  <div className="mt-3 flex gap-1 text-[#D99B55]">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} size={15} fill="currentColor" />
-                    ))}
-                  </div>
 
-                  <p className="mt-4 text-sm leading-6 text-[#2A120B]/70">
+
+                  <p className="mt-4 text-sm leading-6 text-[#291E1B]/70">
                     {cookie.description}
                   </p>
 
                   <div className="mt-5 grid grid-cols-2 gap-3">
                     <button
                       type="button"
-                      className="inline-flex items-center justify-center gap-2 rounded-full border border-[#C95867]/25 px-4 py-3 font-black text-[#C95867]"
+                      className="inline-flex items-center justify-center gap-2 rounded-full border border-[#A84355]/25 px-4 py-3 font-black text-[#A84355]"
                     >
                       <Heart size={17} />
                       Favorito
@@ -179,7 +174,7 @@ export default function MenuPage() {
 
                     <Link
                       href="/cart"
-                      className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C95867] px-4 py-3 font-black text-white"
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-[#A84355] px-4 py-3 font-black text-white"
                     >
                       <ShoppingBag size={17} />
                       Ordenar
@@ -191,19 +186,19 @@ export default function MenuPage() {
           </div>
         </section>
 
-        <section className="mt-16 rounded-[2.7rem] bg-gradient-to-br from-[#F5ACB1] to-[#D99B55] p-8 text-[#120704] md:p-12">
+        <section className="mt-16 rounded-[2.7rem] bg-gradient-to-br from-[#D98478] to-[#B88B61] p-8 text-[#0C0C0C] md:p-12">
           <h2 className="text-4xl font-black md:text-6xl">
             Prueba los seis sabores en una caja premium.
           </h2>
 
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-[#120704]/70">
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-[#0C0C0C]/70">
             Combina tus cookies favoritas en una caja de cuatro, seis o doce
             unidades.
           </p>
 
           <Link
             href="/box-builder"
-            className="mt-8 inline-flex items-center gap-3 rounded-2xl bg-[#120704] px-8 py-5 font-black text-[#FFF6EF]"
+            className="mt-8 inline-flex items-center gap-3 rounded-2xl bg-[#0C0C0C] px-8 py-5 font-black text-[#F1E2DC]"
           >
             Crear mi caja
             <ArrowRight />

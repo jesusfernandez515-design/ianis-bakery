@@ -160,20 +160,20 @@ export default function AdminResponsesPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#050202] px-5 py-8 text-[#FFF3EE]">
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(242,182,173,0.22),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(216,168,91,0.14),transparent_38%)]" />
+    <main className="min-h-screen bg-[#0C0C0C] px-5 py-8 text-[#F1E2DC]">
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(217,132,120,0.22),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(216,168,91,0.14),transparent_38%)]" />
 
       <div className="mx-auto max-w-7xl">
         <header className="mb-8">
           <Link
             href="/admin"
-            className="mb-6 inline-flex items-center gap-2 text-sm font-black text-[#F2B6AD]"
+            className="mb-6 inline-flex items-center gap-2 text-sm font-black text-[#D98478]"
           >
             <ArrowLeft size={18} />
             Volver al dashboard
           </Link>
 
-          <div className="rounded-[2.5rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/40">
+          <div className="rounded-[2.5rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/40">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-4">
                 <Image
@@ -181,18 +181,18 @@ export default function AdminResponsesPage() {
                   alt="Ianis Bakery"
                   width={84}
                   height={84}
-                  className="rounded-full border border-[#FFF3EE]/60 object-contain"
+                  className="rounded-full border border-[#F1E2DC]/60 object-contain"
                   priority
                 />
 
                 <div>
-                  <p className="text-sm uppercase tracking-[0.35em] text-[#D8A85B]">
+                  <p className="text-sm uppercase tracking-[0.35em] text-[#B88B61]">
                     Respuestas
                   </p>
                   <h1 className="mt-2 text-4xl font-black md:text-5xl">
                     Encuestas recibidas
                   </h1>
-                  <p className="mt-2 text-sm text-[#FFF3EE]/55">
+                  <p className="mt-2 text-sm text-[#F1E2DC]/55">
                     Revisa cada opinión, filtra respuestas y descarga los datos.
                   </p>
                 </div>
@@ -200,7 +200,7 @@ export default function AdminResponsesPage() {
 
               <button
                 onClick={exportCSV}
-                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F2B6AD] px-6 py-4 font-black text-[#050202]"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#D98478] px-6 py-4 font-black text-[#0C0C0C]"
               >
                 <Download />
                 Exportar CSV
@@ -227,10 +227,10 @@ export default function AdminResponsesPage() {
           />
         </section>
 
-        <section className="mt-8 rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-5 shadow-2xl shadow-black/30">
+        <section className="mt-8 rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-5 shadow-2xl shadow-black/30">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-[#D8A85B]">
+              <p className="text-sm uppercase tracking-[0.25em] text-[#B88B61]">
                 Filtros
               </p>
               <h2 className="mt-2 text-2xl font-black">
@@ -239,23 +239,23 @@ export default function AdminResponsesPage() {
             </div>
 
             <div className="flex flex-col gap-3 md:flex-row">
-              <div className="flex items-center gap-2 rounded-2xl border border-[#E8A39A]/15 bg-[#050202]/70 px-4 py-3">
-                <Search size={18} className="text-[#F2B6AD]" />
+              <div className="flex items-center gap-2 rounded-2xl border border-[#D98478]/15 bg-[#0C0C0C]/70 px-4 py-3">
+                <Search size={18} className="text-[#D98478]" />
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Nombre, sabor, comentario..."
-                  className="w-full bg-transparent text-sm outline-none placeholder:text-[#FFF3EE]/35 md:w-72"
+                  className="w-full bg-transparent text-sm outline-none placeholder:text-[#F1E2DC]/35 md:w-72"
                 />
               </div>
 
               <select
                 value={buyFilter}
                 onChange={(e) => setBuyFilter(e.target.value)}
-                className="rounded-2xl border border-[#E8A39A]/15 bg-[#050202]/70 px-4 py-3 text-sm font-bold text-[#FFF3EE] outline-none"
+                className="rounded-2xl border border-[#D98478]/15 bg-[#0C0C0C]/70 px-4 py-3 text-sm font-bold text-[#F1E2DC] outline-none"
               >
                 {buyOptions.map((option) => (
-                  <option key={option} value={option} className="bg-[#050202]">
+                  <option key={option} value={option} className="bg-[#0C0C0C]">
                     {option}
                   </option>
                 ))}
@@ -266,10 +266,10 @@ export default function AdminResponsesPage() {
 
         <section className="mt-8 space-y-5">
           {filtered.length === 0 ? (
-            <div className="rounded-[2rem] border border-dashed border-[#E8A39A]/20 bg-[#1A0D0B]/70 p-10 text-center">
-              <Cookie className="mx-auto mb-4 text-[#F2B6AD]" size={44} />
+            <div className="rounded-[2rem] border border-dashed border-[#D98478]/20 bg-[#171313]/70 p-10 text-center">
+              <Cookie className="mx-auto mb-4 text-[#D98478]" size={44} />
               <h3 className="text-2xl font-black">No hay respuestas</h3>
-              <p className="mt-2 text-[#FFF3EE]/55">
+              <p className="mt-2 text-[#F1E2DC]/55">
                 Cambia los filtros o espera nuevas encuestas.
               </p>
             </div>
@@ -277,19 +277,19 @@ export default function AdminResponsesPage() {
             filtered.map((item) => (
               <article
                 key={item.id}
-                className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-5 shadow-2xl shadow-black/25"
+                className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-5 shadow-2xl shadow-black/25"
               >
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div>
-                    <p className="text-sm uppercase tracking-[0.25em] text-[#D8A85B]">
+                    <p className="text-sm uppercase tracking-[0.25em] text-[#B88B61]">
                       {item.name || "Cliente anónimo"}
                     </p>
 
-                    <h2 className="mt-2 text-3xl font-black text-[#F2B6AD]">
+                    <h2 className="mt-2 text-3xl font-black text-[#D98478]">
                       {item.flavor || "Sin sabor"}
                     </h2>
 
-                    <p className="mt-2 text-sm text-[#FFF3EE]/55">
+                    <p className="mt-2 text-sm text-[#F1E2DC]/55">
                       {formatDate(item.createdAt?.seconds)}
                     </p>
                   </div>
@@ -340,19 +340,19 @@ function StatCard({
   value: string;
 }) {
   return (
-    <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30">
-      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F2B6AD] text-[#050202]">
+    <div className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30">
+      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#D98478] text-[#0C0C0C]">
         {icon}
       </div>
-      <p className="text-sm text-[#FFF3EE]/55">{label}</p>
-      <p className="mt-2 text-3xl font-black text-[#F2B6AD]">{value}</p>
+      <p className="text-sm text-[#F1E2DC]/55">{label}</p>
+      <p className="mt-2 text-3xl font-black text-[#D98478]">{value}</p>
     </div>
   );
 }
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-full border border-[#E8A39A]/15 bg-[#2A1713] px-3 py-1 text-xs font-bold text-[#FFF3EE]/75">
+    <span className="rounded-full border border-[#D98478]/15 bg-[#2A1713] px-3 py-1 text-xs font-bold text-[#F1E2DC]/75">
       {children}
     </span>
   );
@@ -371,14 +371,14 @@ function Info({
     <div
       className={`rounded-2xl border p-4 ${
         highlight
-          ? "border-[#F2B6AD]/35 bg-[#F2B6AD]/10"
-          : "border-[#E8A39A]/10 bg-[#050202]/70"
+          ? "border-[#D98478]/35 bg-[#D98478]/10"
+          : "border-[#D98478]/10 bg-[#0C0C0C]/70"
       }`}
     >
-      <p className="text-xs font-black uppercase tracking-[0.2em] text-[#D8A85B]">
+      <p className="text-xs font-black uppercase tracking-[0.2em] text-[#B88B61]">
         {title}
       </p>
-      <p className="mt-2 text-sm leading-6 text-[#FFF3EE]/75">
+      <p className="mt-2 text-sm leading-6 text-[#F1E2DC]/75">
         {text || "Sin respuesta"}
       </p>
     </div>

@@ -30,13 +30,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return () => { generation++; unsubscribe(); };
   }, [router]);
   if (access !== "allowed") return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-5 bg-[#050202] p-6 text-[#F2B6AD]">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-5 bg-[#0C0C0C] p-6 text-[#D98478]">
       <p role="status">{access === "loading" ? "Verificando acceso..." : "Esta cuenta no tiene permisos de administrador."}</p>
       {access === "denied" && <Link href="/account">Volver a mi cuenta</Link>}
     </main>
   );
   return <div>
-    <button className="fixed bottom-5 right-5 z-50 rounded-full bg-[#F2B6AD] px-5 py-3 font-bold text-[#050202]" onClick={async () => {
+    <button className="fixed bottom-5 right-5 z-50 rounded-full bg-[#D98478] px-5 py-3 font-bold text-[#0C0C0C]" onClick={async () => {
       setAccess("denied");
       await signOut(auth);
       router.replace("/login");

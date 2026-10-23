@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0c0c0c;
+  --foreground: #f1e2dc;
+  --brand-black: #0c0c0c;
+  --brand-surface: #171313;
+  --brand-salmon: #d98478;
+  --brand-cream: #f1e2dc;
+  --brand-copper: #b88b61;
 }
 
 @theme inline {
@@ -12,15 +17,70 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+html { scroll-padding-top: 100px; }
+button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid #b88b61; outline-offset: 4px; }
+.brand-display, .bakery-home h1, .bakery-home h2, .bakery-home h3 { font-family: Georgia, "Times New Roman", serif; }
+.bakery-home { background: var(--brand-black); color: var(--brand-cream); overflow: clip; }
+.brand-eyebrow { color: var(--brand-copper); font-size: .72rem; line-height: 1.7; font-weight: 700; letter-spacing: .22em; }
+.home-hero { position: relative; border-bottom: 1px solid #b88b613d; }
+.home-hero-inner { max-width: 1400px; margin: auto; display: grid; grid-template-columns: 1fr 1.05fr; align-items: center; gap: 3rem; padding: 68px 48px 64px; }
+.home-hero-copy .brand-eyebrow { display: flex; align-items: center; gap: 10px; }
+.home-hero h1 { margin: 20px 0 24px; font-size: clamp(2.45rem, 3.65vw, 3.7rem); line-height: 1.12; font-weight: 500; letter-spacing: -.045em; }
+.home-hero h1 span { display: block; margin-bottom: 9px; color: var(--brand-salmon); font-size: clamp(3.1rem, 4.8vw, 4.65rem); font-style: italic; line-height: 1.06; }
+.home-hero-description { max-width: 480px; color: #d4c6c0; font-size: 1rem; line-height: 1.8; }
+.home-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 24px; }
+.home-primary, .home-secondary { display: inline-flex; justify-content: center; align-items: center; gap: 12px; padding: 15px 22px; min-height: 50px; border-radius: 999px; font-size: .9rem; font-weight: 700; transition: background .2s, color .2s; }
+.home-primary { background: var(--brand-salmon); color: var(--brand-black); }
+.home-primary:hover, .home-add:hover { background: #edaa9e; }
+.home-secondary { border: 1px solid var(--brand-copper); color: var(--brand-cream); }
+.home-secondary:hover { background: #b88b611c; }
+.home-pickup { display: flex; align-items: center; gap: 9px; font-size: .82rem; color: #dfc1a2; }
+.home-hero-visual { min-width: 0; position: relative; padding: 12px 0; }
+.home-hero-photo { position: relative; aspect-ratio: 1.7; overflow: hidden; border-radius: 44% 44% 20px 20px; background: var(--brand-surface); }
+.home-hero-photo img { object-position: 50% 68%; }
+.home-photo-caption { display: flex; justify-content: center; align-items: center; gap: 28px; margin-top: 20px; color: var(--brand-copper); font-size: .8rem; letter-spacing: .04em; }
+.home-photo-caption span { text-align: center; line-height: 1.5; }
+.home-photo-caption strong { color: var(--brand-salmon); font-family: Georgia, serif; font-size: 1.3rem; font-weight: 400; font-style: italic; }
+.home-section-inner { max-width: 1240px; margin: auto; }
+.home-menu { background: var(--brand-cream); color: #291e1b; padding: 60px 36px 54px; }
+.home-section-heading { text-align: center; }
+.home-menu .brand-eyebrow { color: #805334; }
+.home-section-heading h2 { margin: 9px 0 14px; font-weight: 500; font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1.1; letter-spacing: -.035em; }
+.home-section-heading > p:last-child { font-size: .95rem; line-height: 1.7; opacity: .82; }
+.home-products { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 34px; }
+.home-product { overflow: hidden; border: 1px solid #b88b6170; background: #f8eee9; border-radius: 20px; display: flex; flex-direction: column; padding: 9px; }
+.home-product-image { position: relative; aspect-ratio: 1.45; border-radius: 12px; overflow: hidden; background: #e5cfc4; }
+.home-product-image img { object-position: 50% 68%; transition: transform .35s; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) { .home-product:hover img { transform: scale(1.035); } }
+.home-product-tag { position: absolute; top: 10px; left: 10px; background: #0c0c0c; color: #f1e2dc; border: 1px solid #b88b6160; padding: 5px 10px; border-radius: 999px; font-size: .67rem; font-weight: 700; }
+.home-product-content { padding: 17px 12px 12px; display: flex; flex: 1; flex-direction: column; }
+.home-product h3 { font-size: 1.35rem; line-height: 1.2; font-weight: 500; }
+.home-product-description { margin-top: 10px; font-size: .83rem; line-height: 1.7; color: #624d45; flex: 1; }
+.home-product-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; }
+.home-product-price { color: #805334; font-family: Georgia, serif; font-size: 1.6rem; }
+.home-add { display: inline-flex; justify-content: center; align-items: center; gap: 9px; min-height: 44px; padding: 10px 18px; border-radius: 999px; background: var(--brand-salmon); color: var(--brand-black); font-size: .85rem; font-weight: 700; }
+.home-menu-footer { margin-top: 32px; text-align: center; }
+.home-text-link { display: inline-flex; align-items: center; gap: 8px; font-size: .9rem; font-weight: 700; text-decoration: underline; text-underline-offset: 6px; }
+.home-notice, .home-empty { margin-top: 24px; line-height: 1.8; }
+.home-box-section { padding: 72px 36px; }
+.home-box-inner { max-width: 1180px; margin: auto; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 70px; }
+.home-box-photo { position: relative; aspect-ratio: 1.25; border-radius: 22px; overflow: hidden; background: var(--brand-surface); }
+.home-box-copy h2 { margin-top: 18px; font-size: clamp(2rem, 3.4vw, 3rem); font-weight: 500; line-height: 1.15; letter-spacing: -.025em; }
+.home-box-copy h2 em { color: var(--brand-salmon); }
+.home-box-copy > p:not(.brand-eyebrow) { margin: 22px 0 25px; font-size: .95rem; line-height: 1.9; color: #d4c6c0; }
+.home-how { padding: 60px 36px 72px; border-top: 1px solid #b88b613d; background: var(--brand-surface); }
+.home-steps { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 40px; margin-top: 40px; }
+.home-steps article { text-align: center; }
+.home-steps svg { color: var(--brand-salmon); margin: 0 auto 17px; }
+.home-steps h3 { font-size: 1.4rem; font-weight: 500; }
+.home-steps p { margin-top: 12px; font-size: .85rem; line-height: 1.8; color: #d4c6c0; }
+@media(max-width: 1023px) { .home-hero-inner { gap: 24px; padding: 45px 26px; } .home-products { gap: 17px; } .home-product-bottom { flex-wrap: wrap; } }
+@media(max-width: 899px) { .home-hero-inner { grid-template-columns: 1fr; gap: 24px; padding: 35px 24px 36px; } .home-hero h1 { max-width: 650px; font-size: 2.8rem; } .home-hero h1 span { font-size: 3.6rem; } .home-hero-description { max-width: 600px; } .home-hero-visual { max-width: 680px; width: 100%; margin: auto; } .home-hero-photo { border-radius: 24px; aspect-ratio: 2; } .home-photo-caption { margin-top: 14px; } .home-products { grid-template-columns: repeat(2,minmax(0,1fr)); } .home-box-inner { gap: 30px; } }
+@media(max-width: 639px) { .home-hero h1 { font-size: 2.45rem; line-height: 1.1; } .home-hero h1 span { font-size: clamp(2.7rem, 10vw, 3.4rem); } .home-hero-description { font-size: .91rem; } .home-hero-actions { gap: 10px; margin-top: 23px; } .home-primary, .home-secondary { padding: 13px 17px; font-size: .84rem; } .home-pickup { font-size: .76rem; } .home-menu, .home-how { padding: 42px 20px; } .home-products { grid-template-columns: 1fr; max-width: 440px; margin: 27px auto 0; gap: 22px; } .home-product-image { aspect-ratio: 1.6; } .home-product-content { padding: 18px 12px 12px; } .home-product h3 { font-size: 1.5rem; } .home-product-bottom { flex-wrap: nowrap; } .home-box-section { padding: 45px 20px; } .home-box-inner { grid-template-columns: 1fr; gap: 30px; } .home-box-copy h2 { font-size: 2.35rem; } .home-steps { grid-template-columns: 1fr; gap: 32px; margin-top: 30px; } .home-steps p { max-width: 320px; margin-inline: auto; } }

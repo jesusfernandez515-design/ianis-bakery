@@ -183,21 +183,21 @@ export default function OrdersPage() {
     return (
       <PageShell>
         <div className="mx-auto flex min-h-[70vh] max-w-xl items-center justify-center">
-          <section className="w-full rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/95 p-7 text-center shadow-2xl shadow-black/40 md:p-10">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#F5ACB1] text-[#120704]">
+          <section className="w-full rounded-[2.5rem] border border-[#D98478]/20 bg-[#171313]/95 p-7 text-center shadow-2xl shadow-black/40 md:p-10">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#D98478] text-[#0C0C0C]">
               <LogIn size={38} />
             </div>
 
             <h1 className="mt-6 text-4xl font-black">Inicia sesión</h1>
 
-            <p className="mt-4 leading-7 text-[#FFF6EF]/60">
+            <p className="mt-4 leading-7 text-[#F1E2DC]/60">
               Debes iniciar sesión para consultar los pedidos vinculados con tu
               cuenta.
             </p>
 
             <Link
               href="/account"
-              className="mt-7 inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-7 py-5 font-black text-[#120704]"
+              className="mt-7 inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[#D98478] px-7 py-5 font-black text-[#0C0C0C]"
             >
               <LogIn size={20} />
               Ir a mi cuenta
@@ -205,7 +205,7 @@ export default function OrdersPage() {
 
             <Link
               href="/shop"
-              className="mt-4 inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-7 py-5 font-black"
+              className="mt-4 inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/70 px-7 py-5 font-black"
             >
               <ShoppingBag size={20} />
               Ir a la tienda
@@ -222,7 +222,7 @@ export default function OrdersPage() {
         <div className="mb-7 flex flex-wrap items-center justify-between gap-4">
           <Link
             href="/account"
-            className="inline-flex items-center gap-2 font-black text-[#F5ACB1]"
+            className="inline-flex items-center gap-2 font-black text-[#D98478]"
           >
             <ArrowLeft size={19} />
             Volver a mi cuenta
@@ -230,17 +230,17 @@ export default function OrdersPage() {
 
           <Link
             href="/cart"
-            className="inline-flex items-center gap-2 rounded-full bg-[#F5ACB1] px-5 py-3 font-black text-[#120704]"
+            className="inline-flex items-center gap-2 rounded-full bg-[#D98478] px-5 py-3 font-black text-[#0C0C0C]"
           >
             <ShoppingBag size={18} />
             Crear otro pedido
           </Link>
         </div>
 
-        <header className="rounded-[2.7rem] border border-[#F5ACB1]/20 bg-[#210D08]/90 p-6 shadow-2xl shadow-black/35 md:p-9">
+        <header className="rounded-[2.7rem] border border-[#D98478]/20 bg-[#171313]/90 p-6 shadow-2xl shadow-black/35 md:p-9">
           <div className="flex flex-col gap-7 md:flex-row md:items-center md:justify-between">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/20 bg-[#120704]/65 px-4 py-2 text-sm font-black text-[#F5ACB1]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#D98478]/20 bg-[#0C0C0C]/65 px-4 py-2 text-sm font-black text-[#D98478]">
                 <ReceiptText size={17} />
                 Historial de compras
               </div>
@@ -249,12 +249,12 @@ export default function OrdersPage() {
                 Mis pedidos
               </h1>
 
-              <p className="mt-4 max-w-2xl leading-7 text-[#FFF6EF]/60">
+              <p className="mt-4 max-w-2xl leading-7 text-[#F1E2DC]/60">
                 Consulta los productos, el total, el método de entrega y el
                 estado de cada pedido.
               </p>
 
-              <p className="mt-3 break-all text-sm text-[#FFF6EF]/40">
+              <p className="mt-3 break-all text-sm text-[#F1E2DC]/40">
                 {user.email}
               </p>
             </div>
@@ -264,7 +264,7 @@ export default function OrdersPage() {
               alt="Ianis Bakery"
               width={126}
               height={126}
-              className="h-28 w-28 rounded-full border border-[#FFF6EF]/50 object-cover"
+              className="h-28 w-28 rounded-full border border-[#F1E2DC]/50 object-cover"
               priority
             />
           </div>
@@ -290,7 +290,7 @@ export default function OrdersPage() {
           </div>
 
           {activeOrders > 0 && (
-            <div className="mt-5 rounded-2xl border border-[#D99B55]/20 bg-[#D99B55]/10 px-5 py-4 font-black text-[#F1C581]">
+            <div className="mt-5 rounded-2xl border border-[#B88B61]/20 bg-[#B88B61]/10 px-5 py-4 font-black text-[#F1C581]">
               Tienes {activeOrders} pedido
               {activeOrders === 1 ? "" : "s"} activo
               {activeOrders === 1 ? "" : "s"}.
@@ -314,8 +314,8 @@ export default function OrdersPage() {
         {loadingOrders ? (
           <LoadingState message="Cargando tus pedidos..." />
         ) : orders.length === 0 ? (
-          <section className="mt-8 rounded-[2.7rem] border border-dashed border-[#F5ACB1]/25 bg-[#210D08]/60 px-6 py-16 text-center">
-            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#F5ACB1]/10 text-[#F5ACB1]">
+          <section className="mt-8 rounded-[2.7rem] border border-dashed border-[#D98478]/25 bg-[#171313]/60 px-6 py-16 text-center">
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#D98478]/10 text-[#D98478]">
               <Package size={48} />
             </div>
 
@@ -323,14 +323,14 @@ export default function OrdersPage() {
               No tienes pedidos vinculados
             </h2>
 
-            <p className="mx-auto mt-4 max-w-xl leading-7 text-[#FFF6EF]/55">
+            <p className="mx-auto mt-4 max-w-xl leading-7 text-[#F1E2DC]/55">
               Los pedidos nuevos aparecerán aquí cuando los confirmes mientras
               tienes iniciada esta cuenta.
             </p>
 
             <Link
               href="/cart"
-              className="mt-7 inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 font-black text-[#120704]"
+              className="mt-7 inline-flex items-center justify-center gap-3 rounded-2xl bg-[#D98478] px-8 py-5 font-black text-[#0C0C0C]"
             >
               <ShoppingBag size={20} />
               Crear un pedido
@@ -348,7 +348,7 @@ export default function OrdersPage() {
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/20 bg-[#210D08]/75 px-5 py-3 font-black text-[#F5ACB1]"
+            className="inline-flex items-center gap-2 rounded-full border border-[#D98478]/20 bg-[#171313]/75 px-5 py-3 font-black text-[#D98478]"
           >
             <RefreshCcw size={18} />
             Actualizar pedidos
@@ -361,8 +361,8 @@ export default function OrdersPage() {
 
 function PageShell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen bg-[#120704] px-5 py-8 text-[#FFF6EF] md:px-10 lg:px-20">
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,172,177,0.18),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(217,155,85,0.14),transparent_38%)]" />
+    <main className="min-h-screen bg-[#0C0C0C] px-5 py-8 text-[#F1E2DC] md:px-10 lg:px-20">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(217,132,120,0.18),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(184,139,97,0.14),transparent_38%)]" />
 
       {children}
     </main>
@@ -375,10 +375,10 @@ function LoadingState({ message }: { message: string }) {
       <div className="text-center">
         <Loader2
           size={46}
-          className="mx-auto animate-spin text-[#F5ACB1]"
+          className="mx-auto animate-spin text-[#D98478]"
         />
 
-        <p className="mt-4 font-black text-[#F5ACB1]">{message}</p>
+        <p className="mt-4 font-black text-[#D98478]">{message}</p>
       </div>
     </div>
   );
@@ -394,14 +394,14 @@ function StatCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="rounded-[1.7rem] border border-[#F5ACB1]/15 bg-[#120704]/65 p-5">
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F5ACB1] text-[#120704]">
+    <div className="rounded-[1.7rem] border border-[#D98478]/15 bg-[#0C0C0C]/65 p-5">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#D98478] text-[#0C0C0C]">
         {icon}
       </div>
 
-      <p className="mt-4 text-3xl font-black text-[#F5ACB1]">{value}</p>
+      <p className="mt-4 text-3xl font-black text-[#D98478]">{value}</p>
 
-      <p className="mt-1 text-sm text-[#FFF6EF]/50">{label}</p>
+      <p className="mt-1 text-sm text-[#F1E2DC]/50">{label}</p>
     </div>
   );
 }
@@ -414,19 +414,19 @@ function OrderCard({ order }: { order: Order }) {
     order.delivery === "delivery" ? "Delivery" : "Recogido";
 
   return (
-    <article className="overflow-hidden rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/90 shadow-2xl shadow-black/25">
-      <div className="border-b border-[#F5ACB1]/12 p-6 md:p-7">
+    <article className="overflow-hidden rounded-[2.5rem] border border-[#D98478]/20 bg-[#171313]/90 shadow-2xl shadow-black/25">
+      <div className="border-b border-[#D98478]/12 p-6 md:p-7">
         <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.28em] text-[#D99B55]">
+            <p className="text-xs font-black uppercase tracking-[0.28em] text-[#B88B61]">
               Orden
             </p>
 
-            <h2 className="mt-2 break-all text-xl font-black text-[#F5ACB1]">
+            <h2 className="mt-2 break-all text-xl font-black text-[#D98478]">
               #{order.id}
             </h2>
 
-            <div className="mt-4 flex flex-wrap gap-3 text-sm text-[#FFF6EF]/55">
+            <div className="mt-4 flex flex-wrap gap-3 text-sm text-[#F1E2DC]/55">
               <span className="inline-flex items-center gap-2">
                 <CalendarDays size={16} />
                 {formatDate(order.createdAt)}
@@ -448,7 +448,7 @@ function OrderCard({ order }: { order: Order }) {
 
       <div className="p-6 md:p-7">
         {items.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#F5ACB1]/20 p-5 text-center text-[#FFF6EF]/50">
+          <div className="rounded-2xl border border-dashed border-[#D98478]/20 p-5 text-center text-[#F1E2DC]/50">
             Este pedido no contiene productos visibles.
           </div>
         ) : (
@@ -464,7 +464,7 @@ function OrderCard({ order }: { order: Order }) {
               return (
                 <div
                   key={`${item.id || item.name || "item"}-${index}`}
-                  className="flex items-center gap-4 rounded-[1.7rem] border border-[#F5ACB1]/12 bg-[#120704]/60 p-4"
+                  className="flex items-center gap-4 rounded-[1.7rem] border border-[#D98478]/12 bg-[#0C0C0C]/60 p-4"
                 >
                   <SafeOrderImage
                     src={normalizeImage(item.image, item.name)}
@@ -472,16 +472,16 @@ function OrderCard({ order }: { order: Order }) {
                   />
 
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-black text-[#F5ACB1]">
+                    <h3 className="font-black text-[#D98478]">
                       {item.name || "Cookie Ianis Bakery"}
                     </h3>
 
-                    <p className="mt-1 text-sm text-[#FFF6EF]/50">
+                    <p className="mt-1 text-sm text-[#F1E2DC]/50">
                       {quantity} × ${price.toFixed(2)}
                     </p>
                   </div>
 
-                  <p className="font-black text-[#D99B55]">
+                  <p className="font-black text-[#B88B61]">
                     ${lineTotal.toFixed(2)}
                   </p>
                 </div>
@@ -491,35 +491,35 @@ function OrderCard({ order }: { order: Order }) {
         )}
 
         <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_320px]">
-          <div className="rounded-[1.7rem] border border-[#F5ACB1]/12 bg-[#120704]/50 p-5">
-            <p className="font-black text-[#F5ACB1]">Información del pedido</p>
+          <div className="rounded-[1.7rem] border border-[#D98478]/12 bg-[#0C0C0C]/50 p-5">
+            <p className="font-black text-[#D98478]">Información del pedido</p>
 
-            <div className="mt-4 space-y-3 text-sm leading-6 text-[#FFF6EF]/60">
+            <div className="mt-4 space-y-3 text-sm leading-6 text-[#F1E2DC]/60">
               <p>
-                <strong className="text-[#FFF6EF]">Cliente:</strong>{" "}
+                <strong className="text-[#F1E2DC]">Cliente:</strong>{" "}
                 {order.customerName || "No disponible"}
               </p>
 
               <p>
-                <strong className="text-[#FFF6EF]">Teléfono:</strong>{" "}
+                <strong className="text-[#F1E2DC]">Teléfono:</strong>{" "}
                 {order.customerPhone || "No disponible"}
               </p>
 
               {order.delivery === "delivery" && (
                 <p>
-                  <strong className="text-[#FFF6EF]">Dirección:</strong>{" "}
+                  <strong className="text-[#F1E2DC]">Dirección:</strong>{" "}
                   {order.address || "No disponible"}
                 </p>
               )}
 
               <p>
-                <strong className="text-[#FFF6EF]">Nota:</strong>{" "}
+                <strong className="text-[#F1E2DC]">Nota:</strong>{" "}
                 {order.note || "Sin nota especial"}
               </p>
             </div>
           </div>
 
-          <div className="space-y-3 rounded-[1.7rem] border border-[#F5ACB1]/12 bg-[#120704]/70 p-5">
+          <div className="space-y-3 rounded-[1.7rem] border border-[#D98478]/12 bg-[#0C0C0C]/70 p-5">
             <PriceRow
               label="Subtotal"
               value={`$${Number(order.subtotal || 0).toFixed(2)}`}
@@ -535,7 +535,7 @@ function OrderCard({ order }: { order: Order }) {
               value={`$${Number(order.deliveryFee || 0).toFixed(2)}`}
             />
 
-            <div className="border-t border-[#F5ACB1]/15 pt-3">
+            <div className="border-t border-[#D98478]/15 pt-3">
               <PriceRow
                 label="Total"
                 value={`$${Number(order.total || 0).toFixed(2)}`}
@@ -575,7 +575,7 @@ function StatusBadge({ value }: { value: string }) {
     ? "border-green-500/25 bg-green-500/10 text-green-200"
     : cancelled
       ? "border-red-400/25 bg-red-400/10 text-red-200"
-      : "border-[#D99B55]/25 bg-[#D99B55]/10 text-[#F1C581]";
+      : "border-[#B88B61]/25 bg-[#B88B61]/10 text-[#F1C581]";
 
   return (
     <span
@@ -605,7 +605,7 @@ function PaymentBadge({ value }: { value: string }) {
       className={`rounded-full border px-4 py-2 text-xs font-black ${
         paid
           ? "border-green-500/25 bg-green-500/10 text-green-200"
-          : "border-[#F5ACB1]/20 bg-[#F5ACB1]/10 text-[#F5ACB1]"
+          : "border-[#D98478]/20 bg-[#D98478]/10 text-[#D98478]"
       }`}
     >
       Pago: {value}
@@ -627,8 +627,8 @@ function PriceRow({
       <span
         className={
           highlight
-            ? "text-lg font-black text-[#F5ACB1]"
-            : "text-sm text-[#FFF6EF]/55"
+            ? "text-lg font-black text-[#D98478]"
+            : "text-sm text-[#F1E2DC]/55"
         }
       >
         {label}
@@ -637,7 +637,7 @@ function PriceRow({
       <span
         className={
           highlight
-            ? "text-2xl font-black text-[#F5ACB1]"
+            ? "text-2xl font-black text-[#D98478]"
             : "font-black"
         }
       >

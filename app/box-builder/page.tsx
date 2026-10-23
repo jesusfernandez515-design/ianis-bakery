@@ -224,13 +224,13 @@ export default function BoxBuilderPage() {
   );
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#120704] text-[#FFF6EF]">
+    <div className="min-h-screen overflow-hidden bg-[#0C0C0C] text-[#F1E2DC]">
       <section className="relative px-5 pb-14 pt-10 md:px-10 md:pb-20 md:pt-16 lg:px-20">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,172,177,0.18),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(217,155,85,0.17),transparent_38%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(217,132,120,0.18),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(184,139,97,0.17),transparent_38%)]" />
 
         <div className="relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_560px] lg:items-center">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#F5ACB1]/25 bg-[#210D08]/75 px-5 py-3 text-sm font-black text-[#F5ACB1]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#D98478]/25 bg-[#171313]/75 px-5 py-3 text-sm font-black text-[#D98478]">
               <Sparkles size={17} />
               Constructor de cajas
             </div>
@@ -239,7 +239,7 @@ export default function BoxBuilderPage() {
               Crea tu caja perfecta.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#FFF6EF]/68 md:text-xl">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#F1E2DC]/68 md:text-xl">
               Elige el tamaño, combina tus sabores favoritos y envía el pedido
               completo directamente por WhatsApp.
             </p>
@@ -252,9 +252,9 @@ export default function BoxBuilderPage() {
           </div>
 
           <div className="relative mx-auto w-full max-w-[560px]">
-            <div className="absolute -inset-8 rounded-full bg-[#F5ACB1]/15 blur-3xl" />
+            <div className="absolute -inset-8 rounded-full bg-[#D98478]/15 blur-3xl" />
 
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08] p-3 shadow-2xl shadow-black/50">
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-[#D98478]/20 bg-[#171313] p-3 shadow-2xl shadow-black/50">
               <Image
                 src="/cookie-boxes.png"
                 alt="Cajas de 4, 6 y 12 cookies de Ianis Bakery"
@@ -271,14 +271,14 @@ export default function BoxBuilderPage() {
       <section className="px-5 pb-20 md:px-10 lg:px-20">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_420px]">
           <div className="space-y-8">
-            <section className="rounded-[2.3rem] border border-[#F5ACB1]/20 bg-[#210D08]/88 p-5 shadow-2xl shadow-black/25 md:p-7">
+            <section className="rounded-[2.3rem] border border-[#D98478]/20 bg-[#171313]/88 p-5 shadow-2xl shadow-black/25 md:p-7">
               <div className="mb-6 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F5ACB1] text-[#120704]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#D98478] text-[#0C0C0C]">
                   <Package size={24} />
                 </div>
 
                 <div>
-                  <p className="text-xs font-black uppercase tracking-[0.3em] text-[#D99B55]">
+                  <p className="text-xs font-black uppercase tracking-[0.3em] text-[#B88B61]">
                     Paso uno
                   </p>
 
@@ -297,8 +297,8 @@ export default function BoxBuilderPage() {
                       onClick={() => selectBox(box.size)}
                       className={`rounded-[1.7rem] border p-5 text-left transition ${
                         active
-                          ? "border-[#F5ACB1] bg-[#F5ACB1] text-[#120704] shadow-xl shadow-[#F5ACB1]/15"
-                          : "border-[#F5ACB1]/18 bg-[#120704]/65 text-[#FFF6EF] hover:border-[#F5ACB1]/45"
+                          ? "border-[#D98478] bg-[#D98478] text-[#0C0C0C] shadow-xl shadow-[#D98478]/15"
+                          : "border-[#D98478]/18 bg-[#0C0C0C]/65 text-[#F1E2DC] hover:border-[#D98478]/45"
                       }`}
                     >
                       <div className="flex items-start justify-between gap-3">
@@ -309,8 +309,8 @@ export default function BoxBuilderPage() {
                       <p
                         className={`mt-3 min-h-12 text-sm leading-6 ${
                           active
-                            ? "text-[#120704]/70"
-                            : "text-[#FFF6EF]/55"
+                            ? "text-[#0C0C0C]/70"
+                            : "text-[#F1E2DC]/55"
                         }`}
                       >
                         {box.description}
@@ -323,10 +323,10 @@ export default function BoxBuilderPage() {
               </div>
             </section>
 
-            <section className="rounded-[2.3rem] border border-[#F5ACB1]/20 bg-[#210D08]/88 p-5 shadow-2xl shadow-black/25 md:p-7">
+            <section className="rounded-[2.3rem] border border-[#D98478]/20 bg-[#171313]/88 p-5 shadow-2xl shadow-black/25 md:p-7">
               <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-xs font-black uppercase tracking-[0.3em] text-[#D99B55]">
+                  <p className="text-xs font-black uppercase tracking-[0.3em] text-[#B88B61]">
                     Paso dos
                   </p>
 
@@ -338,8 +338,8 @@ export default function BoxBuilderPage() {
                 <div
                   className={`rounded-full px-5 py-3 text-sm font-black ${
                     boxComplete
-                      ? "bg-[#F5ACB1] text-[#120704]"
-                      : "border border-[#F5ACB1]/20 bg-[#120704]/70 text-[#F5ACB1]"
+                      ? "bg-[#D98478] text-[#0C0C0C]"
+                      : "border border-[#D98478]/20 bg-[#0C0C0C]/70 text-[#D98478]"
                   }`}
                 >
                   {selectedCount}/{boxSize} cookies
@@ -355,13 +355,13 @@ export default function BoxBuilderPage() {
                   return (
                     <article
                       key={cookie.id}
-                      className={`overflow-hidden rounded-[2rem] border bg-[#FFF6EF] text-[#2A120B] shadow-xl transition ${
+                      className={`overflow-hidden rounded-[2rem] border bg-[#F1E2DC] text-[#291E1B] shadow-xl transition ${
                         selected
-                          ? "border-[#C95867] ring-4 ring-[#C95867]/15"
-                          : "border-[#E6B47C]/25"
+                          ? "border-[#A84355] ring-4 ring-[#A84355]/15"
+                          : "border-[#B88B61]/25"
                       }`}
                     >
-                      <div className="relative aspect-square overflow-hidden bg-[#EEDAC8]">
+                      <div className="relative aspect-square overflow-hidden bg-[#E5CFC4]">
                         <Image
                           src={cookie.image}
                           alt={cookie.name}
@@ -371,13 +371,13 @@ export default function BoxBuilderPage() {
                         />
 
                         {selected && (
-                          <div className="absolute right-4 top-4 flex h-12 min-w-12 items-center justify-center rounded-full border-4 border-white bg-[#C95867] px-3 text-xl font-black text-white shadow-xl">
+                          <div className="absolute right-4 top-4 flex h-12 min-w-12 items-center justify-center rounded-full border-4 border-white bg-[#A84355] px-3 text-xl font-black text-white shadow-xl">
                             {quantity}
                           </div>
                         )}
 
                         {selected && (
-                          <div className="absolute bottom-4 left-4 rounded-full bg-[#120704]/90 px-4 py-2 text-sm font-black text-[#F5ACB1] shadow-xl backdrop-blur">
+                          <div className="absolute bottom-4 left-4 rounded-full bg-[#0C0C0C]/90 px-4 py-2 text-sm font-black text-[#D98478] shadow-xl backdrop-blur">
                             {quantity === 1
                               ? "1 seleccionada"
                               : `${quantity} seleccionadas`}
@@ -390,7 +390,7 @@ export default function BoxBuilderPage() {
                           {cookie.name}
                         </h3>
 
-                        <p className="mt-2 text-sm font-semibold text-[#2A120B]/55">
+                        <p className="mt-2 text-sm font-semibold text-[#291E1B]/55">
                           {cookie.premiumExtra > 0
                             ? `+$${cookie.premiumExtra.toFixed(
                                 2
@@ -403,7 +403,7 @@ export default function BoxBuilderPage() {
                             type="button"
                             onClick={() => addCookie(cookie)}
                             disabled={boxIsFull}
-                            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-[#C95867] px-5 py-3 font-black text-white transition hover:bg-[#A74250] disabled:cursor-not-allowed disabled:opacity-40"
+                            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-[#A84355] px-5 py-3 font-black text-white transition hover:bg-[#A74250] disabled:cursor-not-allowed disabled:opacity-40"
                           >
                             <Plus size={18} />
                             Agregar
@@ -414,12 +414,12 @@ export default function BoxBuilderPage() {
                               type="button"
                               onClick={() => removeOneCookie(cookie.id)}
                               aria-label={`Quitar una ${cookie.name}`}
-                              className="flex h-12 w-12 items-center justify-center rounded-full border border-[#C95867]/25 bg-white text-[#C95867] transition active:scale-95"
+                              className="flex h-12 w-12 items-center justify-center rounded-full border border-[#A84355]/25 bg-white text-[#A84355] transition active:scale-95"
                             >
                               <Minus size={20} />
                             </button>
 
-                            <div className="flex h-12 items-center justify-center rounded-full bg-[#F8DDE0] text-lg font-black text-[#C95867]">
+                            <div className="flex h-12 items-center justify-center rounded-full bg-[#EFD2CB] text-lg font-black text-[#A84355]">
                               {quantity}
                             </div>
 
@@ -428,7 +428,7 @@ export default function BoxBuilderPage() {
                               onClick={() => addCookie(cookie)}
                               disabled={boxIsFull}
                               aria-label={`Agregar otra ${cookie.name}`}
-                              className="flex h-12 w-12 items-center justify-center rounded-full bg-[#C95867] text-white transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+                              className="flex h-12 w-12 items-center justify-center rounded-full bg-[#A84355] text-white transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
                             >
                               <Plus size={20} />
                             </button>
@@ -439,7 +439,7 @@ export default function BoxBuilderPage() {
                           <button
                             type="button"
                             onClick={() => removeCookieCompletely(cookie.id)}
-                            className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-[#C95867]/20 px-4 py-3 text-sm font-black text-[#C95867]"
+                            className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-[#A84355]/20 px-4 py-3 text-sm font-black text-[#A84355]"
                           >
                             <Trash2 size={16} />
                             Quitar este sabor
@@ -453,10 +453,10 @@ export default function BoxBuilderPage() {
             </section>
           </div>
 
-          <aside className="h-fit rounded-[2.3rem] border border-[#F5ACB1]/22 bg-[#210D08]/95 p-5 shadow-2xl shadow-black/40 md:p-6 lg:sticky lg:top-28">
+          <aside className="h-fit rounded-[2.3rem] border border-[#D98478]/22 bg-[#171313]/95 p-5 shadow-2xl shadow-black/40 md:p-6 lg:sticky lg:top-28">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.3em] text-[#D99B55]">
+                <p className="text-xs font-black uppercase tracking-[0.3em] text-[#B88B61]">
                   Resumen
                 </p>
 
@@ -466,8 +466,8 @@ export default function BoxBuilderPage() {
               <div
                 className={`flex h-12 w-12 items-center justify-center rounded-2xl ${
                   boxComplete
-                    ? "bg-[#F5ACB1] text-[#120704]"
-                    : "border border-[#F5ACB1]/20 text-[#F5ACB1]"
+                    ? "bg-[#D98478] text-[#0C0C0C]"
+                    : "border border-[#D98478]/20 text-[#D98478]"
                 }`}
               >
                 {boxComplete ? (
@@ -478,22 +478,22 @@ export default function BoxBuilderPage() {
               </div>
             </div>
 
-            <div className="mt-6 rounded-[1.7rem] border border-[#F5ACB1]/15 bg-[#120704]/70 p-4">
+            <div className="mt-6 rounded-[1.7rem] border border-[#D98478]/15 bg-[#0C0C0C]/70 p-4">
               <div className="flex items-center justify-between gap-4">
-                <p className="font-black text-[#F5ACB1]">
+                <p className="font-black text-[#D98478]">
                   {selectedBox.name}
                 </p>
 
-                <p className="text-sm font-black text-[#D99B55]">
+                <p className="text-sm font-black text-[#B88B61]">
                   {spacesLeft === 0
                     ? "Caja completa"
                     : `${spacesLeft} espacio${spacesLeft === 1 ? "" : "s"}`}
                 </p>
               </div>
 
-              <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#FFF6EF]/10">
+              <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#F1E2DC]/10">
                 <div
-                  className="h-full rounded-full bg-[#F5ACB1] transition-all duration-300"
+                  className="h-full rounded-full bg-[#D98478] transition-all duration-300"
                   style={{
                     width: `${Math.min(
                       (selectedCount / boxSize) * 100,
@@ -504,33 +504,33 @@ export default function BoxBuilderPage() {
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-3">
-                <div className="rounded-2xl bg-[#210D08] p-3 text-center">
-                  <p className="text-2xl font-black text-[#F5ACB1]">
+                <div className="rounded-2xl bg-[#171313] p-3 text-center">
+                  <p className="text-2xl font-black text-[#D98478]">
                     {selectedCount}
                   </p>
-                  <p className="mt-1 text-xs text-[#FFF6EF]/45">
+                  <p className="mt-1 text-xs text-[#F1E2DC]/45">
                     Seleccionadas
                   </p>
                 </div>
 
-                <div className="rounded-2xl bg-[#210D08] p-3 text-center">
-                  <p className="text-2xl font-black text-[#D99B55]">
+                <div className="rounded-2xl bg-[#171313] p-3 text-center">
+                  <p className="text-2xl font-black text-[#B88B61]">
                     {spacesLeft}
                   </p>
-                  <p className="mt-1 text-xs text-[#FFF6EF]/45">
+                  <p className="mt-1 text-xs text-[#F1E2DC]/45">
                     Restantes
                   </p>
                 </div>
               </div>
 
               {selectedCookies.length === 0 ? (
-                <div className="mt-5 rounded-2xl border border-dashed border-[#F5ACB1]/20 px-4 py-8 text-center">
+                <div className="mt-5 rounded-2xl border border-dashed border-[#D98478]/20 px-4 py-8 text-center">
                   <Cookie
                     size={36}
-                    className="mx-auto text-[#F5ACB1]/60"
+                    className="mx-auto text-[#D98478]/60"
                   />
 
-                  <p className="mt-3 text-sm leading-6 text-[#FFF6EF]/50">
+                  <p className="mt-3 text-sm leading-6 text-[#F1E2DC]/50">
                     Selecciona tus sabores para comenzar a llenar la caja.
                   </p>
                 </div>
@@ -539,7 +539,7 @@ export default function BoxBuilderPage() {
                   {selectedCookies.map((selectedCookie) => (
                     <div
                       key={selectedCookie.id}
-                      className="flex items-center gap-3 rounded-2xl border border-[#F5ACB1]/12 bg-[#210D08]/85 p-3"
+                      className="flex items-center gap-3 rounded-2xl border border-[#D98478]/12 bg-[#171313]/85 p-3"
                     >
                       <div className="relative">
                         <Image
@@ -550,17 +550,17 @@ export default function BoxBuilderPage() {
                           className="h-14 w-14 rounded-xl object-cover"
                         />
 
-                        <span className="absolute -right-2 -top-2 flex h-7 min-w-7 items-center justify-center rounded-full bg-[#F5ACB1] px-2 text-xs font-black text-[#120704]">
+                        <span className="absolute -right-2 -top-2 flex h-7 min-w-7 items-center justify-center rounded-full bg-[#D98478] px-2 text-xs font-black text-[#0C0C0C]">
                           {selectedCookie.quantity}
                         </span>
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-black text-[#F5ACB1]">
+                        <p className="truncate text-sm font-black text-[#D98478]">
                           {selectedCookie.shortName}
                         </p>
 
-                        <p className="mt-1 text-xs text-[#FFF6EF]/45">
+                        <p className="mt-1 text-xs text-[#F1E2DC]/45">
                           Cantidad: {selectedCookie.quantity}
                         </p>
                       </div>
@@ -572,7 +572,7 @@ export default function BoxBuilderPage() {
                             removeOneCookie(selectedCookie.id)
                           }
                           aria-label={`Quitar una ${selectedCookie.name}`}
-                          className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#120704] text-[#F5ACB1]"
+                          className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0C0C0C] text-[#D98478]"
                         >
                           <Minus size={16} />
                         </button>
@@ -582,7 +582,7 @@ export default function BoxBuilderPage() {
                           onClick={() => addCookie(selectedCookie)}
                           disabled={boxComplete}
                           aria-label={`Agregar otra ${selectedCookie.name}`}
-                          className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F5ACB1] text-[#120704] disabled:opacity-35"
+                          className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#D98478] text-[#0C0C0C] disabled:opacity-35"
                         >
                           <Plus size={16} />
                         </button>
@@ -593,7 +593,7 @@ export default function BoxBuilderPage() {
                             removeCookieCompletely(selectedCookie.id)
                           }
                           aria-label={`Eliminar ${selectedCookie.name}`}
-                          className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#F5ACB1]/20 text-[#F5ACB1]"
+                          className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#D98478]/20 text-[#D98478]"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -610,7 +610,7 @@ export default function BoxBuilderPage() {
                 value={customerName}
                 onChange={(event) => setCustomerName(event.target.value)}
                 placeholder="Nombre del cliente"
-                className="w-full rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-5 py-4 text-[#FFF6EF] outline-none placeholder:text-[#FFF6EF]/30 focus:border-[#F5ACB1]/60"
+                className="w-full rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/70 px-5 py-4 text-[#F1E2DC] outline-none placeholder:text-[#F1E2DC]/30 focus:border-[#D98478]/60"
               />
 
               <input
@@ -618,17 +618,17 @@ export default function BoxBuilderPage() {
                 value={customerPhone}
                 onChange={(event) => setCustomerPhone(event.target.value)}
                 placeholder="Número de teléfono"
-                className="w-full rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-5 py-4 text-[#FFF6EF] outline-none placeholder:text-[#FFF6EF]/30 focus:border-[#F5ACB1]/60"
+                className="w-full rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/70 px-5 py-4 text-[#F1E2DC] outline-none placeholder:text-[#F1E2DC]/30 focus:border-[#D98478]/60"
               />
 
               <textarea
                 value={note}
                 onChange={(event) => setNote(event.target.value)}
                 placeholder="Nota, dedicatoria o instrucciones especiales..."
-                className="min-h-24 w-full resize-none rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-5 py-4 text-[#FFF6EF] outline-none placeholder:text-[#FFF6EF]/30 focus:border-[#F5ACB1]/60"
+                className="min-h-24 w-full resize-none rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/70 px-5 py-4 text-[#F1E2DC] outline-none placeholder:text-[#F1E2DC]/30 focus:border-[#D98478]/60"
               />
 
-              <div className="space-y-3 rounded-2xl border border-[#F5ACB1]/15 bg-[#120704]/70 p-5">
+              <div className="space-y-3 rounded-2xl border border-[#D98478]/15 bg-[#0C0C0C]/70 p-5">
                 <PriceRow
                   label="Caja base"
                   value={`$${selectedBox.price.toFixed(2)}`}
@@ -639,7 +639,7 @@ export default function BoxBuilderPage() {
                   value={`$${premiumExtras.toFixed(2)}`}
                 />
 
-                <div className="border-t border-[#F5ACB1]/12 pt-3">
+                <div className="border-t border-[#D98478]/12 pt-3">
                   <PriceRow
                     label="Total"
                     value={`$${total.toFixed(2)}`}
@@ -652,7 +652,7 @@ export default function BoxBuilderPage() {
                 type="button"
                 onClick={clearBox}
                 disabled={selectedCount === 0}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-6 py-4 font-black text-[#FFF6EF] disabled:cursor-not-allowed disabled:opacity-35"
+                className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/70 px-6 py-4 font-black text-[#F1E2DC] disabled:cursor-not-allowed disabled:opacity-35"
               >
                 <RotateCcw size={18} />
                 Vaciar caja
@@ -660,7 +660,7 @@ export default function BoxBuilderPage() {
 
               {cartError && <p role="alert">{cartError}</p>}
               <button type="button" onClick={continueToCart} disabled={!boxComplete}
-                className="w-full rounded-2xl bg-[#F5ACB1] px-7 py-5 font-black text-[#120704] disabled:opacity-40">
+                className="w-full rounded-2xl bg-[#D98478] px-7 py-5 font-black text-[#0C0C0C] disabled:opacity-40">
                 Continuar al carrito
               </button>
               <a
@@ -675,7 +675,7 @@ export default function BoxBuilderPage() {
                 className={`flex w-full items-center justify-center gap-3 rounded-2xl px-7 py-5 text-center text-lg font-black transition ${
                   boxComplete
                     ? "bg-[#25D366] text-white shadow-xl shadow-[#25D366]/15"
-                    : "pointer-events-none bg-[#F5ACB1]/30 text-[#120704]/50"
+                    : "pointer-events-none bg-[#D98478]/30 text-[#0C0C0C]/50"
                 }`}
               >
                 <ShoppingBag size={21} />
@@ -683,7 +683,7 @@ export default function BoxBuilderPage() {
               </a>
 
               {!boxComplete && (
-                <p className="text-center text-xs leading-5 text-[#FFF6EF]/45">
+                <p className="text-center text-xs leading-5 text-[#F1E2DC]/45">
                   Selecciona las {spacesLeft} cookie
                   {spacesLeft === 1 ? "" : "s"} restante
                   {spacesLeft === 1 ? "" : "s"} para completar la caja.
@@ -705,9 +705,9 @@ function MiniStat({
   label: string;
 }) {
   return (
-    <div className="rounded-2xl border border-[#F5ACB1]/15 bg-[#210D08]/70 p-4">
-      <p className="text-xl font-black text-[#F5ACB1]">{value}</p>
-      <p className="mt-1 text-[11px] leading-4 text-[#FFF6EF]/45">
+    <div className="rounded-2xl border border-[#D98478]/15 bg-[#171313]/70 p-4">
+      <p className="text-xl font-black text-[#D98478]">{value}</p>
+      <p className="mt-1 text-[11px] leading-4 text-[#F1E2DC]/45">
         {label}
       </p>
     </div>
@@ -728,8 +728,8 @@ function PriceRow({
       <span
         className={
           highlight
-            ? "text-lg font-black text-[#F5ACB1]"
-            : "text-sm text-[#FFF6EF]/55"
+            ? "text-lg font-black text-[#D98478]"
+            : "text-sm text-[#F1E2DC]/55"
         }
       >
         {label}
@@ -738,8 +738,8 @@ function PriceRow({
       <span
         className={
           highlight
-            ? "text-2xl font-black text-[#F5ACB1]"
-            : "font-black text-[#FFF6EF]"
+            ? "text-2xl font-black text-[#D98478]"
+            : "font-black text-[#F1E2DC]"
         }
       >
         {value}

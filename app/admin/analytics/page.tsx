@@ -219,20 +219,20 @@ export default function AnalyticsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#050202] px-5 py-8 text-[#FFF3EE]">
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(242,182,173,0.22),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(216,168,91,0.14),transparent_38%)]" />
+    <main className="min-h-screen bg-[#0C0C0C] px-5 py-8 text-[#F1E2DC]">
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(217,132,120,0.22),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(216,168,91,0.14),transparent_38%)]" />
 
       <div className="mx-auto max-w-7xl">
         <header className="mb-8">
           <Link
             href="/admin"
-            className="mb-6 inline-flex items-center gap-2 text-sm font-black text-[#F2B6AD]"
+            className="mb-6 inline-flex items-center gap-2 text-sm font-black text-[#D98478]"
           >
             <ArrowLeft size={18} />
             Volver al dashboard
           </Link>
 
-          <div className="rounded-[2.5rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/40">
+          <div className="rounded-[2.5rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/40">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-4">
                 <Image
@@ -240,18 +240,18 @@ export default function AnalyticsPage() {
                   alt="Ianis Bakery"
                   width={84}
                   height={84}
-                  className="rounded-full border border-[#FFF3EE]/60 object-contain"
+                  className="rounded-full border border-[#F1E2DC]/60 object-contain"
                   priority
                 />
 
                 <div>
-                  <p className="text-sm uppercase tracking-[0.35em] text-[#D8A85B]">
+                  <p className="text-sm uppercase tracking-[0.35em] text-[#B88B61]">
                     Analytics Pro
                   </p>
                   <h1 className="mt-2 text-4xl font-black md:text-5xl">
                     Ianis Bakery
                   </h1>
-                  <p className="mt-2 text-sm text-[#FFF3EE]/55">
+                  <p className="mt-2 text-sm text-[#F1E2DC]/55">
                     Datos premium para tomar decisiones de sabor, precio y venta.
                   </p>
                 </div>
@@ -259,7 +259,7 @@ export default function AnalyticsPage() {
 
               <button
                 onClick={exportCSV}
-                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F2B6AD] px-6 py-4 font-black text-[#050202]"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#D98478] px-6 py-4 font-black text-[#0C0C0C]"
               >
                 <Download />
                 Exportar CSV
@@ -275,8 +275,8 @@ export default function AnalyticsPage() {
               onClick={() => setRange(item)}
               className={`rounded-full px-5 py-3 font-black transition ${
                 range === item
-                  ? "bg-[#F2B6AD] text-[#050202]"
-                  : "border border-[#E8A39A]/20 bg-[#1A0D0B]/80 text-[#F2B6AD]"
+                  ? "bg-[#D98478] text-[#0C0C0C]"
+                  : "border border-[#D98478]/20 bg-[#171313]/80 text-[#D98478]"
               }`}
             >
               {item}
@@ -292,41 +292,41 @@ export default function AnalyticsPage() {
         </section>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-3">
-          <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30 lg:col-span-2">
+          <div className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30 lg:col-span-2">
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <p className="text-sm uppercase tracking-[0.25em] text-[#D8A85B]">
+                <p className="text-sm uppercase tracking-[0.25em] text-[#B88B61]">
                   Promedios
                 </p>
                 <h2 className="mt-2 text-2xl font-black">
                   Calidad del producto
                 </h2>
               </div>
-              <BarChart3 className="text-[#F2B6AD]" />
+              <BarChart3 className="text-[#D98478]" />
             </div>
 
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#3A211B" />
-                  <XAxis dataKey="name" stroke="#FFF3EE" fontSize={12} />
-                  <YAxis stroke="#FFF3EE" domain={[0, 10]} />
+                  <XAxis dataKey="name" stroke="#F1E2DC" fontSize={12} />
+                  <YAxis stroke="#F1E2DC" domain={[0, 10]} />
                   <Tooltip
                     contentStyle={{
-                      background: "#1A0D0B",
+                      background: "#171313",
                       border: "1px solid rgba(232,163,154,0.25)",
                       borderRadius: "16px",
-                      color: "#FFF3EE",
+                      color: "#F1E2DC",
                     }}
                   />
-                  <Bar dataKey="value" radius={[14, 14, 0, 0]} fill="#F2B6AD" />
+                  <Bar dataKey="value" radius={[14, 14, 0, 0]} fill="#D98478" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30">
-            <p className="text-sm uppercase tracking-[0.25em] text-[#D8A85B]">
+          <div className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30">
+            <p className="text-sm uppercase tracking-[0.25em] text-[#B88B61]">
               Precio ideal
             </p>
             <h2 className="mt-2 text-2xl font-black">Preferencias</h2>
@@ -339,7 +339,7 @@ export default function AnalyticsPage() {
                       <Cell
                         key={index}
                         fill={
-                          ["#F2B6AD", "#D8A85B", "#E8A39A", "#FFF3EE"][
+                          ["#D98478", "#B88B61", "#D98478", "#F1E2DC"][
                             index % 4
                           ]
                         }
@@ -348,10 +348,10 @@ export default function AnalyticsPage() {
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      background: "#1A0D0B",
+                      background: "#171313",
                       border: "1px solid rgba(232,163,154,0.25)",
                       borderRadius: "16px",
-                      color: "#FFF3EE",
+                      color: "#F1E2DC",
                     }}
                   />
                 </PieChart>
@@ -361,8 +361,8 @@ export default function AnalyticsPage() {
         </section>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-2">
-          <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30">
-            <p className="text-sm uppercase tracking-[0.25em] text-[#D8A85B]">
+          <div className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30">
+            <p className="text-sm uppercase tracking-[0.25em] text-[#B88B61]">
               Ranking
             </p>
             <h2 className="mt-2 text-2xl font-black">Sabores ganadores</h2>
@@ -374,19 +374,19 @@ export default function AnalyticsPage() {
                 flavorRanking.map((item, index) => (
                   <div
                     key={item.flavor}
-                    className="rounded-2xl border border-[#E8A39A]/10 bg-[#050202]/70 p-4"
+                    className="rounded-2xl border border-[#D98478]/10 bg-[#0C0C0C]/70 p-4"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <p className="font-black text-[#F2B6AD]">
+                        <p className="font-black text-[#D98478]">
                           #{index + 1} {item.flavor}
                         </p>
-                        <p className="text-sm text-[#FFF3EE]/55">
+                        <p className="text-sm text-[#F1E2DC]/55">
                           {item.count} respuesta(s)
                         </p>
                       </div>
 
-                      <span className="rounded-full bg-[#F2B6AD] px-3 py-1 text-sm font-black text-[#050202]">
+                      <span className="rounded-full bg-[#D98478] px-3 py-1 text-sm font-black text-[#0C0C0C]">
                         {item.average}/10
                       </span>
                     </div>
@@ -396,8 +396,8 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-gradient-to-br from-[#F2B6AD] to-[#D8A85B] p-6 text-[#050202] shadow-2xl shadow-[#E8A39A]/20">
-            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#050202] text-[#F2B6AD]">
+          <div className="rounded-[2rem] border border-[#D98478]/15 bg-gradient-to-br from-[#D98478] to-[#B88B61] p-6 text-[#0C0C0C] shadow-2xl shadow-[#D98478]/20">
+            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0C0C0C] text-[#D98478]">
               <CalendarDays />
             </div>
 
@@ -417,7 +417,7 @@ export default function AnalyticsPage() {
 
             <Link
               href="/menu"
-              className="mt-6 inline-flex items-center gap-3 rounded-2xl bg-[#050202] px-6 py-4 font-black text-[#FFF3EE]"
+              className="mt-6 inline-flex items-center gap-3 rounded-2xl bg-[#0C0C0C] px-6 py-4 font-black text-[#F1E2DC]"
             >
               Ver menú
               <Cookie />
@@ -439,21 +439,21 @@ function Card({
   value: string;
 }) {
   return (
-    <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30">
-      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F2B6AD] text-[#050202]">
+    <div className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30">
+      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#D98478] text-[#0C0C0C]">
         {icon}
       </div>
-      <p className="text-sm text-[#FFF3EE]/55">{label}</p>
-      <p className="mt-2 text-3xl font-black text-[#F2B6AD]">{value}</p>
+      <p className="text-sm text-[#F1E2DC]/55">{label}</p>
+      <p className="mt-2 text-3xl font-black text-[#D98478]">{value}</p>
     </div>
   );
 }
 
 function Empty() {
   return (
-    <div className="rounded-2xl border border-dashed border-[#E8A39A]/20 bg-[#050202]/50 p-8 text-center">
-      <Cookie className="mx-auto mb-3 text-[#F2B6AD]" />
-      <p className="text-[#FFF3EE]/55">Todavía no hay datos.</p>
+    <div className="rounded-2xl border border-dashed border-[#D98478]/20 bg-[#0C0C0C]/50 p-8 text-center">
+      <Cookie className="mx-auto mb-3 text-[#D98478]" />
+      <p className="text-[#F1E2DC]/55">Todavía no hay datos.</p>
     </div>
   );
      }

@@ -187,19 +187,19 @@ export default function AdminOrdersPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#120704] px-5 py-8 text-[#FFF6EF]">
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,172,177,0.24),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(210,142,71,0.20),transparent_38%)]" />
+    <main className="min-h-screen bg-[#0C0C0C] px-5 py-8 text-[#F1E2DC]">
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(217,132,120,0.24),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(210,142,71,0.20),transparent_38%)]" />
 
       <div className="mx-auto max-w-7xl">
         <Link
           href="/admin"
-          className="mb-6 inline-flex items-center gap-2 text-sm font-black text-[#F5ACB1]"
+          className="mb-6 inline-flex items-center gap-2 text-sm font-black text-[#D98478]"
         >
           <ArrowLeft size={18} />
           Volver al dashboard
         </Link>
 
-        <header className="rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/90 p-6 shadow-2xl shadow-black/40">
+        <header className="rounded-[2.5rem] border border-[#D98478]/20 bg-[#171313]/90 p-6 shadow-2xl shadow-black/40">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-4">
               <Image
@@ -207,18 +207,18 @@ export default function AdminOrdersPage() {
                 alt="Ianis Bakery"
                 width={84}
                 height={84}
-                className="rounded-full border border-[#FFF6EF]/70 object-contain"
+                className="rounded-full border border-[#F1E2DC]/70 object-contain"
                 priority
               />
 
               <div>
-                <p className="text-sm uppercase tracking-[0.35em] text-[#D99B55]">
+                <p className="text-sm uppercase tracking-[0.35em] text-[#B88B61]">
                   Pedidos en tiempo real
                 </p>
                 <h1 className="mt-2 text-4xl font-black md:text-5xl">
                   Centro de órdenes
                 </h1>
-                <p className="mt-2 text-sm text-[#FFF6EF]/55">
+                <p className="mt-2 text-sm text-[#F1E2DC]/55">
                   Administra pedidos reales guardados en Firestore.
                 </p>
               </div>
@@ -226,7 +226,7 @@ export default function AdminOrdersPage() {
 
             <Link
               href="/shop"
-              className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-6 py-4 font-black text-[#120704]"
+              className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#D98478] px-6 py-4 font-black text-[#0C0C0C]"
             >
               <ShoppingBag />
               Abrir tienda
@@ -257,36 +257,36 @@ export default function AdminOrdersPage() {
           />
         </section>
 
-        <section className="mt-8 rounded-[2rem] border border-[#F5ACB1]/20 bg-[#210D08]/90 p-5 shadow-2xl shadow-black/30">
+        <section className="mt-8 rounded-[2rem] border border-[#D98478]/20 bg-[#171313]/90 p-5 shadow-2xl shadow-black/30">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.35em] text-[#D99B55]">
+              <p className="text-sm uppercase tracking-[0.35em] text-[#B88B61]">
                 Gestión
               </p>
               <h2 className="mt-2 text-3xl font-black">Pedidos recientes</h2>
             </div>
 
             <div className="flex flex-col gap-3 md:flex-row">
-              <div className="flex items-center gap-2 rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-4 py-3">
-                <Search size={18} className="text-[#F5ACB1]" />
+              <div className="flex items-center gap-2 rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/70 px-4 py-3">
+                <Search size={18} className="text-[#D98478]" />
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Buscar cliente, teléfono o ID..."
-                  className="w-full bg-transparent text-sm outline-none placeholder:text-[#FFF6EF]/35 md:w-80"
+                  className="w-full bg-transparent text-sm outline-none placeholder:text-[#F1E2DC]/35 md:w-80"
                 />
               </div>
 
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-4 py-3 text-sm font-bold text-[#FFF6EF] outline-none"
+                className="rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/70 px-4 py-3 text-sm font-bold text-[#F1E2DC] outline-none"
               >
-                <option value="Todos" className="bg-[#120704]">
+                <option value="Todos" className="bg-[#0C0C0C]">
                   Todos
                 </option>
                 {statuses.map((status) => (
-                  <option key={status} value={status} className="bg-[#120704]">
+                  <option key={status} value={status} className="bg-[#0C0C0C]">
                     {status}
                   </option>
                 ))}
@@ -297,10 +297,10 @@ export default function AdminOrdersPage() {
 
         <section className="mt-8 space-y-5">
           {filtered.length === 0 ? (
-            <div className="rounded-[2rem] border border-dashed border-[#F5ACB1]/25 bg-[#210D08]/70 p-10 text-center">
-              <Cookie className="mx-auto mb-4 text-[#F5ACB1]" size={48} />
+            <div className="rounded-[2rem] border border-dashed border-[#D98478]/25 bg-[#171313]/70 p-10 text-center">
+              <Cookie className="mx-auto mb-4 text-[#D98478]" size={48} />
               <h2 className="text-3xl font-black">No hay pedidos</h2>
-              <p className="mt-2 text-[#FFF6EF]/55">
+              <p className="mt-2 text-[#F1E2DC]/55">
                 Cuando alguien cree un pedido desde el carrito, aparecerá aquí.
               </p>
             </div>
@@ -319,19 +319,19 @@ export default function AdminOrdersPage() {
               return (
                 <article
                   key={order.id}
-                  className="rounded-[2rem] border border-[#F5ACB1]/15 bg-[#210D08]/90 p-5 shadow-2xl shadow-black/25"
+                  className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-5 shadow-2xl shadow-black/25"
                 >
                   <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                      <p className="text-sm uppercase tracking-[0.25em] text-[#D99B55]">
+                      <p className="text-sm uppercase tracking-[0.25em] text-[#B88B61]">
                         Pedido {order.id.slice(0, 8)}
                       </p>
 
-                      <h2 className="mt-2 text-3xl font-black text-[#F5ACB1]">
+                      <h2 className="mt-2 text-3xl font-black text-[#D98478]">
                         {order.customerName || "Cliente sin nombre"}
                       </h2>
 
-                      <div className="mt-4 grid gap-3 text-sm text-[#FFF6EF]/70 md:grid-cols-2">
+                      <div className="mt-4 grid gap-3 text-sm text-[#F1E2DC]/70 md:grid-cols-2">
                         <Info icon={<Phone size={16} />} text={order.customerPhone || "Sin teléfono"} />
                         <Info icon={<Clock size={16} />} text={formatDate(order.createdAt?.seconds)} />
                         <Info
@@ -347,7 +347,7 @@ export default function AdminOrdersPage() {
 
                     <div className="flex flex-col gap-3 lg:items-end">
                       <Status status={order.status || "Pendiente"} />
-                      <p className="text-sm font-semibold text-[#FFF6EF]/75">Pago: {order.paymentStatus || "Pendiente"}</p>
+                      <p className="text-sm font-semibold text-[#F1E2DC]/75">Pago: {order.paymentStatus || "Pendiente"}</p>
                       {isTestOrder(order) && <p className="text-sm font-bold text-amber-200">PRUEBA · No preparar · Sin cobro real</p>}
 
                       <select
@@ -355,13 +355,13 @@ export default function AdminOrdersPage() {
                         disabled={updatingId === order.id || isTestOrder(order)}
                         aria-label={`Estado del pedido ${order.id.slice(0, 8)}`}
                         onChange={(e) => updateStatus(order.id, e.target.value)}
-                        className="rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/80 px-4 py-3 text-sm font-black text-[#FFF6EF] outline-none"
+                        className="rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/80 px-4 py-3 text-sm font-black text-[#F1E2DC] outline-none"
                       >
                         {statuses.map((status) => (
                           <option
                             key={status}
                             value={status}
-                            className="bg-[#120704]"
+                            className="bg-[#0C0C0C]"
                           >
                             {status}
                           </option>
@@ -370,8 +370,8 @@ export default function AdminOrdersPage() {
                     </div>
                   </div>
 
-                  <div className="mt-5 rounded-2xl border border-[#F5ACB1]/15 bg-[#120704]/70 p-4">
-                    <p className="mb-3 text-sm font-black uppercase tracking-[0.25em] text-[#D99B55]">
+                  <div className="mt-5 rounded-2xl border border-[#D98478]/15 bg-[#0C0C0C]/70 p-4">
+                    <p className="mb-3 text-sm font-black uppercase tracking-[0.25em] text-[#B88B61]">
                       Productos
                     </p>
 
@@ -379,13 +379,13 @@ export default function AdminOrdersPage() {
                       {(order.items || []).map((item, index) => (
                         <div
                           key={`${item.id || item.name}-${index}`}
-                          className="flex items-center justify-between gap-3 rounded-xl bg-[#210D08]/80 px-4 py-3"
+                          className="flex items-center justify-between gap-3 rounded-xl bg-[#171313]/80 px-4 py-3"
                         >
                           <div>
-                            <p className="font-black text-[#F5ACB1]">
+                            <p className="font-black text-[#D98478]">
                               {item.name || "Producto"}
                             </p>
-                            <p className="text-sm text-[#FFF6EF]/55">
+                            <p className="text-sm text-[#F1E2DC]/55">
                               Cantidad: {item.qty || 0}
                             </p>
                           </div>
@@ -411,7 +411,7 @@ export default function AdminOrdersPage() {
                   <div className="mt-5 grid gap-3 md:grid-cols-4">
                     <a
                       href={`tel:${order.customerPhone || ""}`}
-                      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/75 px-5 py-4 font-black text-[#F5ACB1]"
+                      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/75 px-5 py-4 font-black text-[#D98478]"
                     >
                       <Phone size={18} />
                       Llamar
@@ -429,7 +429,7 @@ export default function AdminOrdersPage() {
 
                     <button
                       onClick={() => printOrder(order)}
-                      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/75 px-5 py-4 font-black text-[#FFF6EF]"
+                      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/75 px-5 py-4 font-black text-[#F1E2DC]"
                     >
                       <Printer size={18} />
                       Imprimir
@@ -437,7 +437,7 @@ export default function AdminOrdersPage() {
 
                     <Link
                       href="/admin/analytics"
-                      className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#F5ACB1] px-5 py-4 font-black text-[#120704]"
+                      className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#D98478] px-5 py-4 font-black text-[#0C0C0C]"
                     >
                       <User size={18} />
                       Analytics
@@ -477,20 +477,20 @@ function StatCard({
   value: string;
 }) {
   return (
-    <div className="rounded-[2rem] border border-[#F5ACB1]/15 bg-[#210D08]/90 p-6 shadow-2xl shadow-black/30">
-      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F5ACB1] text-[#120704]">
+    <div className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30">
+      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#D98478] text-[#0C0C0C]">
         {icon}
       </div>
-      <p className="text-sm text-[#FFF6EF]/55">{label}</p>
-      <p className="mt-2 text-3xl font-black text-[#F5ACB1]">{value}</p>
+      <p className="text-sm text-[#F1E2DC]/55">{label}</p>
+      <p className="mt-2 text-3xl font-black text-[#D98478]">{value}</p>
     </div>
   );
 }
 
 function Info({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
-    <div className="flex items-center gap-2 rounded-2xl border border-[#F5ACB1]/10 bg-[#120704]/70 px-4 py-3">
-      <span className="text-[#F5ACB1]">{icon}</span>
+    <div className="flex items-center gap-2 rounded-2xl border border-[#D98478]/10 bg-[#0C0C0C]/70 px-4 py-3">
+      <span className="text-[#D98478]">{icon}</span>
       <span>{text}</span>
     </div>
   );
@@ -498,11 +498,11 @@ function Info({ icon, text }: { icon: React.ReactNode; text: string }) {
 
 function Detail({ title, text }: { title: string; text?: string }) {
   return (
-    <div className="rounded-2xl border border-[#F5ACB1]/10 bg-[#120704]/70 p-4">
-      <p className="text-xs font-black uppercase tracking-[0.25em] text-[#D99B55]">
+    <div className="rounded-2xl border border-[#D98478]/10 bg-[#0C0C0C]/70 p-4">
+      <p className="text-xs font-black uppercase tracking-[0.25em] text-[#B88B61]">
         {title}
       </p>
-      <p className="mt-2 text-sm leading-6 text-[#FFF6EF]/70">
+      <p className="mt-2 text-sm leading-6 text-[#F1E2DC]/70">
         {text || "Sin información"}
       </p>
     </div>
@@ -512,15 +512,15 @@ function Detail({ title, text }: { title: string; text?: string }) {
 function Status({ status }: { status: string }) {
   const styles =
     status === "Pendiente"
-      ? "bg-[#D99B55] text-[#120704]"
+      ? "bg-[#B88B61] text-[#0C0C0C]"
       : status === "Confirmado"
-      ? "bg-[#F5ACB1] text-[#120704]"
+      ? "bg-[#D98478] text-[#0C0C0C]"
       : status === "En preparación"
-      ? "bg-[#C95867] text-white"
+      ? "bg-[#A84355] text-white"
       : status === "Horneando"
       ? "bg-[#A74250] text-white"
       : status === "Listo para recoger"
-      ? "bg-[#FFF6EF] text-[#120704]"
+      ? "bg-[#F1E2DC] text-[#0C0C0C]"
       : status === "En ruta"
       ? "bg-[#25D366] text-white"
       : status === "Entregado"

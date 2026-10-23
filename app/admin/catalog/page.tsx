@@ -136,19 +136,19 @@ export default function AdminCatalogPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#120704] px-5 py-8 text-[#FFF6EF]">
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,172,177,0.24),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(210,142,71,0.20),transparent_38%)]" />
+    <main className="min-h-screen bg-[#0C0C0C] px-5 py-8 text-[#F1E2DC]">
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(217,132,120,0.24),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(210,142,71,0.20),transparent_38%)]" />
 
       <div className="mx-auto max-w-7xl">
         <Link
           href="/admin"
-          className="mb-6 inline-flex items-center gap-2 text-sm font-black text-[#F5ACB1]"
+          className="mb-6 inline-flex items-center gap-2 text-sm font-black text-[#D98478]"
         >
           <ArrowLeft size={18} />
           Volver al dashboard
         </Link>
 
-        <header className="rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/90 p-6 shadow-2xl shadow-black/40">
+        <header className="rounded-[2.5rem] border border-[#D98478]/20 bg-[#171313]/90 p-6 shadow-2xl shadow-black/40">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-4">
               <Image
@@ -156,24 +156,24 @@ export default function AdminCatalogPage() {
                 alt="Ianis Bakery"
                 width={84}
                 height={84}
-                className="rounded-full border border-[#FFF6EF]/70 object-contain"
+                className="rounded-full border border-[#F1E2DC]/70 object-contain"
                 priority
               />
 
               <div>
-                <p className="text-sm uppercase tracking-[0.35em] text-[#D99B55]">
+                <p className="text-sm uppercase tracking-[0.35em] text-[#B88B61]">
                   Catálogo dinámico
                 </p>
                 <h1 className="mt-2 text-4xl font-black md:text-5xl">
                   Productos Firebase
                 </h1>
-                <p className="mt-2 text-sm text-[#FFF6EF]/55">
+                <p className="mt-2 text-sm text-[#F1E2DC]/55">
                   Crea, edita y administra sabores sin tocar código.
                 </p>
               </div>
             </div>
 
-            <div className="rounded-2xl bg-[#F5ACB1] px-6 py-4 text-center font-black text-[#120704]">
+            <div className="rounded-2xl bg-[#D98478] px-6 py-4 text-center font-black text-[#0C0C0C]">
               {products.length} productos
             </div>
           </div>
@@ -182,13 +182,13 @@ export default function AdminCatalogPage() {
         <section className="mt-8 grid gap-8 lg:grid-cols-[420px_1fr]">
           <form
             onSubmit={saveProduct}
-            className="h-fit rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08]/90 p-6 shadow-2xl shadow-black/30 lg:sticky lg:top-6"
+            className="h-fit rounded-[2.5rem] border border-[#D98478]/20 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30 lg:sticky lg:top-6"
           >
             <div className="mb-6 flex items-center gap-3">
               {editingId ? (
-                <Edit className="text-[#F5ACB1]" />
+                <Edit className="text-[#D98478]" />
               ) : (
-                <Plus className="text-[#F5ACB1]" />
+                <Plus className="text-[#D98478]" />
               )}
               <h2 className="text-3xl font-black">
                 {editingId ? "Editar producto" : "Nuevo producto"}
@@ -266,8 +266,8 @@ export default function AdminCatalogPage() {
                 />
               </Field>
 
-              <label className="flex items-center justify-between rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 p-4">
-                <span className="font-black text-[#F5ACB1]">Producto activo</span>
+              <label className="flex items-center justify-between rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/70 p-4">
+                <span className="font-black text-[#D98478]">Producto activo</span>
                 <input
                   type="checkbox"
                   checked={form.active}
@@ -283,7 +283,7 @@ export default function AdminCatalogPage() {
 
               <button
                 disabled={saving}
-                className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#F5ACB1] px-8 py-5 text-lg font-black text-[#120704] disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#D98478] px-8 py-5 text-lg font-black text-[#0C0C0C] disabled:opacity-60"
               >
                 <Save />
                 {saving ? "Guardando..." : editingId ? "Guardar cambios" : "Crear producto"}
@@ -296,7 +296,7 @@ export default function AdminCatalogPage() {
                     setEditingId(null);
                     setForm(emptyForm);
                   }}
-                  className="w-full rounded-2xl border border-[#F5ACB1]/20 bg-[#120704]/70 px-8 py-4 font-black text-[#FFF6EF]"
+                  className="w-full rounded-2xl border border-[#D98478]/20 bg-[#0C0C0C]/70 px-8 py-4 font-black text-[#F1E2DC]"
                 >
                   Cancelar edición
                 </button>
@@ -305,21 +305,21 @@ export default function AdminCatalogPage() {
           </form>
 
           <section>
-            <div className="mb-6 flex items-center gap-2 rounded-2xl border border-[#F5ACB1]/15 bg-[#210D08]/90 px-4 py-4">
-              <Search size={18} className="text-[#F5ACB1]" />
+            <div className="mb-6 flex items-center gap-2 rounded-2xl border border-[#D98478]/15 bg-[#171313]/90 px-4 py-4">
+              <Search size={18} className="text-[#D98478]" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar producto..."
-                className="w-full bg-transparent outline-none placeholder:text-[#FFF6EF]/35"
+                className="w-full bg-transparent outline-none placeholder:text-[#F1E2DC]/35"
               />
             </div>
 
             {filtered.length === 0 ? (
-              <div className="rounded-[2rem] border border-dashed border-[#F5ACB1]/25 bg-[#210D08]/70 p-10 text-center">
-                <Cookie className="mx-auto mb-4 text-[#F5ACB1]" size={48} />
+              <div className="rounded-[2rem] border border-dashed border-[#D98478]/25 bg-[#171313]/70 p-10 text-center">
+                <Cookie className="mx-auto mb-4 text-[#D98478]" size={48} />
                 <h2 className="text-3xl font-black">Sin productos</h2>
-                <p className="mt-2 text-[#FFF6EF]/55">
+                <p className="mt-2 text-[#F1E2DC]/55">
                   Crea el primer producto desde el formulario.
                 </p>
               </div>
@@ -328,7 +328,7 @@ export default function AdminCatalogPage() {
                 {filtered.map((product) => (
                   <article
                     key={product.id}
-                    className="overflow-hidden rounded-[2.2rem] border border-[#F5ACB1]/20 bg-[#FFF6EF] text-[#2A120B] shadow-2xl shadow-black/25"
+                    className="overflow-hidden rounded-[2.2rem] border border-[#D98478]/20 bg-[#F1E2DC] text-[#291E1B] shadow-2xl shadow-black/25"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <Image
@@ -339,14 +339,14 @@ export default function AdminCatalogPage() {
                         className="h-full w-full object-cover"
                       />
 
-                      <span className="absolute left-4 top-4 rounded-full bg-[#C95867] px-4 py-2 text-xs font-black text-white">
+                      <span className="absolute left-4 top-4 rounded-full bg-[#A84355] px-4 py-2 text-xs font-black text-white">
                         {product.tag || "Premium"}
                       </span>
 
                       <span
                         className={`absolute right-4 top-4 rounded-full px-4 py-2 text-xs font-black ${
                           product.active
-                            ? "bg-[#120704] text-[#F5ACB1]"
+                            ? "bg-[#0C0C0C] text-[#D98478]"
                             : "bg-gray-700 text-white"
                         }`}
                       >
@@ -357,19 +357,19 @@ export default function AdminCatalogPage() {
                     <div className="p-5">
                       <div className="flex items-start justify-between gap-3">
                         <h3 className="text-2xl font-black">{product.name}</h3>
-                        <p className="rounded-full bg-[#F5ACB1] px-3 py-1 font-black text-[#120704]">
+                        <p className="rounded-full bg-[#D98478] px-3 py-1 font-black text-[#0C0C0C]">
                           ${Number(product.price || 0).toFixed(2)}
                         </p>
                       </div>
 
-                      <p className="mt-3 min-h-20 text-sm leading-6 text-[#2A120B]/70">
+                      <p className="mt-3 min-h-20 text-sm leading-6 text-[#291E1B]/70">
                         {product.description}
                       </p>
 
                       <div className="mt-5 grid grid-cols-2 gap-3">
                         <button
                           onClick={() => editProduct(product)}
-                          className="flex items-center justify-center gap-2 rounded-full border border-[#C95867]/25 bg-white px-4 py-3 font-black text-[#C95867]"
+                          className="flex items-center justify-center gap-2 rounded-full border border-[#A84355]/25 bg-white px-4 py-3 font-black text-[#A84355]"
                         >
                           <Edit size={16} />
                           Editar
@@ -377,7 +377,7 @@ export default function AdminCatalogPage() {
 
                         <button
                           onClick={() => removeProduct(product.id)}
-                          className="flex items-center justify-center gap-2 rounded-full bg-[#C95867] px-4 py-3 font-black text-white"
+                          className="flex items-center justify-center gap-2 rounded-full bg-[#A84355] px-4 py-3 font-black text-white"
                         >
                           <Trash2 size={16} />
                           Borrar
@@ -424,7 +424,7 @@ function Field({
 }) {
   return (
     <label className="block space-y-2">
-      <span className="font-black text-[#F5ACB1]">{label}</span>
+      <span className="font-black text-[#D98478]">{label}</span>
       {children}
     </label>
   );

@@ -32,19 +32,19 @@ export default function ForgotPasswordPage() {
     } finally { submitting.current = false; setLoading(false); }
   }
 
-  return <main className="min-h-screen bg-[#120704] px-5 py-16 text-[#FFF6EF]">
-    <div className="mx-auto max-w-md rounded-[2.5rem] border border-[#F5ACB1]/20 bg-[#210D08] p-7">
+  return <main className="min-h-screen bg-[#0C0C0C] px-5 py-16 text-[#F1E2DC]">
+    <div className="mx-auto max-w-md rounded-[2.5rem] border border-[#D98478]/20 bg-[#171313] p-7">
       <Image src="/logo-ianis.png" alt="Ianis Bakery" width={112} height={112} className="mx-auto rounded-full" priority />
       <h1 className="mt-7 text-center text-3xl font-black">Recuperar contraseña</h1>
-      <p className="mt-4 text-sm leading-6 text-[#FFF6EF]/70">Escribe el correo de tu cuenta. Te enviaremos un enlace para elegir una nueva contraseña.</p>
+      <p className="mt-4 text-sm leading-6 text-[#F1E2DC]/70">Escribe el correo de tu cuenta. Te enviaremos un enlace para elegir una nueva contraseña.</p>
       <form onSubmit={recover} className="mt-7 space-y-5">
         <label className="block font-bold" htmlFor="recovery-email">Correo electrónico</label>
-        <input id="recovery-email" name="email" type="email" autoComplete="email" required maxLength={254} value={email} onChange={event => { setEmail(event.target.value); setNotice(null); }} className="w-full rounded-xl border border-[#F5ACB1]/30 bg-[#120704] p-4 outline-none focus:border-[#F5ACB1]" />
+        <input id="recovery-email" name="email" type="email" autoComplete="email" required maxLength={254} value={email} onChange={event => { setEmail(event.target.value); setNotice(null); }} className="w-full rounded-xl border border-[#D98478]/30 bg-[#0C0C0C] p-4 outline-none focus:border-[#D98478]" />
         {notice && <p role={notice.type === "error" ? "alert" : "status"} className={`rounded-xl border p-4 text-sm leading-6 ${notice.type === "error" ? "border-red-300/30 text-red-100" : "border-green-300/30 text-green-100"}`}>{notice.message}</p>}
-        <button type="submit" disabled={loading || cooldown > 0} className="w-full rounded-xl bg-[#F5ACB1] p-4 font-black text-[#120704] disabled:opacity-50">{loading ? "Solicitando enlace…" : cooldown > 0 ? `Volver a solicitar en ${cooldown}s` : "Enviar enlace de recuperación"}</button>
+        <button type="submit" disabled={loading || cooldown > 0} className="w-full rounded-xl bg-[#D98478] p-4 font-black text-[#0C0C0C] disabled:opacity-50">{loading ? "Solicitando enlace…" : cooldown > 0 ? `Volver a solicitar en ${cooldown}s` : "Enviar enlace de recuperación"}</button>
       </form>
-      <Link href="/account" className="mt-7 block text-center font-bold text-[#F5ACB1]">Volver a mi cuenta</Link>
-      <Link href="/login" className="mt-4 block text-center text-sm text-[#FFF6EF]/65">Acceso de administrador</Link>
+      <Link href="/account" className="mt-7 block text-center font-bold text-[#D98478]">Volver a mi cuenta</Link>
+      <Link href="/login" className="mt-4 block text-center text-sm text-[#F1E2DC]/65">Acceso de administrador</Link>
     </div>
   </main>;
 }

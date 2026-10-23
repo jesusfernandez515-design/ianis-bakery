@@ -158,38 +158,38 @@ export default function AdminDashboardPage() {
   const topFlavor = flavorRanking[0];
 
   return (
-    <main className="min-h-screen bg-[#0B0706] px-5 py-8 text-[#FFF3EE]">
+    <main className="min-h-screen bg-[#0B0706] px-5 py-8 text-[#F1E2DC]">
       <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(232,163,154,0.20),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(216,168,91,0.14),transparent_35%)]" />
 
       <div className="mx-auto max-w-7xl">
         <header className="mb-8">
           <Link
             href="/"
-            className="mb-5 inline-flex items-center gap-2 text-sm font-bold text-[#F2B6AD]"
+            className="mb-5 inline-flex items-center gap-2 text-sm font-bold text-[#D98478]"
           >
             <ArrowLeft size={18} />
             Volver al inicio
           </Link>
 
-          <div className="flex flex-col gap-6 rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-6 rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-4">
               <Image
                 src="/logo-ianis.png"
                 alt="Ianis Bakery"
                 width={84}
                 height={84}
-                className="rounded-full border border-[#E8A39A]/30 object-cover"
+                className="rounded-full border border-[#D98478]/30 object-cover"
                 priority
               />
 
               <div>
-                <p className="text-sm uppercase tracking-[0.35em] text-[#D8A85B]">
+                <p className="text-sm uppercase tracking-[0.35em] text-[#B88B61]">
                   Admin Dashboard
                 </p>
                 <h1 className="mt-2 text-4xl font-black md:text-5xl">
                   Ianis Bakery
                 </h1>
-                <p className="mt-2 text-sm text-[#FFF3EE]/55">
+                <p className="mt-2 text-sm text-[#F1E2DC]/55">
                   Panel premium para analizar degustaciones y decisiones de venta.
                 </p>
               </div>
@@ -204,7 +204,7 @@ export default function AdminDashboardPage() {
         </header>
 
         <section className="mb-8 grid gap-5 lg:grid-cols-3">
-          <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-gradient-to-br from-[#F2B6AD] to-[#D8A85B] p-6 text-[#0B0706] shadow-2xl shadow-[#E8A39A]/20 lg:col-span-2">
+          <div className="rounded-[2rem] border border-[#D98478]/15 bg-gradient-to-br from-[#D98478] to-[#B88B61] p-6 text-[#0B0706] shadow-2xl shadow-[#D98478]/20 lg:col-span-2">
             <p className="text-sm font-black uppercase tracking-[0.3em]">
               Acceso rápido
             </p>
@@ -219,7 +219,7 @@ export default function AdminDashboardPage() {
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/qr"
-                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#0B0706] px-6 py-4 font-black text-[#FFF3EE]"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl bg-[#0B0706] px-6 py-4 font-black text-[#F1E2DC]"
               >
                 <QrCode />
                 Abrir página QR
@@ -227,7 +227,7 @@ export default function AdminDashboardPage() {
 
               <Link
                 href="/taste"
-                className="inline-flex items-center justify-center gap-3 rounded-2xl border border-[#0B0706]/20 bg-[#FFF3EE]/60 px-6 py-4 font-black text-[#0B0706]"
+                className="inline-flex items-center justify-center gap-3 rounded-2xl border border-[#0B0706]/20 bg-[#F1E2DC]/60 px-6 py-4 font-black text-[#0B0706]"
               >
                 <Cookie />
                 Abrir encuesta
@@ -235,18 +235,18 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30">
-            <p className="text-sm uppercase tracking-[0.25em] text-[#D8A85B]">
+          <div className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30">
+            <p className="text-sm uppercase tracking-[0.25em] text-[#B88B61]">
               Redes
             </p>
-            <h2 className="mt-2 text-2xl font-black text-[#F2B6AD]">
+            <h2 className="mt-2 text-2xl font-black text-[#D98478]">
               Instagram
             </h2>
-            <p className="mt-3 text-[#FFF3EE]/60">
+            <p className="mt-3 text-[#F1E2DC]/60">
               Usa esta cuenta en stickers, empaques, tarjetas y publicaciones.
             </p>
-            <div className="mt-5 rounded-2xl border border-[#E8A39A]/15 bg-[#0B0706]/70 p-4">
-              <p className="text-xl font-black text-[#F2B6AD]">
+            <div className="mt-5 rounded-2xl border border-[#D98478]/15 bg-[#0B0706]/70 p-4">
+              <p className="text-xl font-black text-[#D98478]">
                 @ianis_bakery
               </p>
             </div>
@@ -277,42 +277,42 @@ export default function AdminDashboardPage() {
         </section>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-3">
-          <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30 lg:col-span-2">
+          <div className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30 lg:col-span-2">
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <p className="text-sm uppercase tracking-[0.25em] text-[#D8A85B]">
+                <p className="text-sm uppercase tracking-[0.25em] text-[#B88B61]">
                   Calificaciones
                 </p>
                 <h2 className="mt-2 text-2xl font-black">
                   Promedios generales
                 </h2>
               </div>
-              <BarChart3 className="text-[#F2B6AD]" />
+              <BarChart3 className="text-[#D98478]" />
             </div>
 
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#3A211B" />
-                  <XAxis dataKey="name" stroke="#FFF3EE" fontSize={12} />
-                  <YAxis stroke="#FFF3EE" domain={[0, 10]} />
+                  <XAxis dataKey="name" stroke="#F1E2DC" fontSize={12} />
+                  <YAxis stroke="#F1E2DC" domain={[0, 10]} />
                   <Tooltip
                     contentStyle={{
-                      background: "#1A0D0B",
+                      background: "#171313",
                       border: "1px solid rgba(232,163,154,0.25)",
                       borderRadius: "16px",
-                      color: "#FFF3EE",
+                      color: "#F1E2DC",
                     }}
                   />
-                  <Bar dataKey="value" radius={[12, 12, 0, 0]} fill="#F2B6AD" />
+                  <Bar dataKey="value" radius={[12, 12, 0, 0]} fill="#D98478" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30">
+          <div className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30">
             <div className="mb-6">
-              <p className="text-sm uppercase tracking-[0.25em] text-[#D8A85B]">
+              <p className="text-sm uppercase tracking-[0.25em] text-[#B88B61]">
                 Precio
               </p>
               <h2 className="mt-2 text-2xl font-black">Preferencia</h2>
@@ -326,7 +326,7 @@ export default function AdminDashboardPage() {
                       <Cell
                         key={index}
                         fill={
-                          ["#F2B6AD", "#D8A85B", "#E8A39A", "#FFF3EE"][
+                          ["#D98478", "#B88B61", "#D98478", "#F1E2DC"][
                             index % 4
                           ]
                         }
@@ -335,10 +335,10 @@ export default function AdminDashboardPage() {
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      background: "#1A0D0B",
+                      background: "#171313",
                       border: "1px solid rgba(232,163,154,0.25)",
                       borderRadius: "16px",
-                      color: "#FFF3EE",
+                      color: "#F1E2DC",
                     }}
                   />
                 </PieChart>
@@ -348,8 +348,8 @@ export default function AdminDashboardPage() {
         </section>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-3">
-          <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30">
-            <p className="text-sm uppercase tracking-[0.25em] text-[#D8A85B]">
+          <div className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30">
+            <p className="text-sm uppercase tracking-[0.25em] text-[#B88B61]">
               Ranking
             </p>
             <h2 className="mt-2 text-2xl font-black">Sabores favoritos</h2>
@@ -361,19 +361,19 @@ export default function AdminDashboardPage() {
                 flavorRanking.map((item, index) => (
                   <div
                     key={item.flavor}
-                    className="rounded-2xl border border-[#E8A39A]/10 bg-[#0B0706]/70 p-4"
+                    className="rounded-2xl border border-[#D98478]/10 bg-[#0B0706]/70 p-4"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <p className="font-black text-[#F2B6AD]">
+                        <p className="font-black text-[#D98478]">
                           #{index + 1} {item.flavor}
                         </p>
-                        <p className="text-sm text-[#FFF3EE]/55">
+                        <p className="text-sm text-[#F1E2DC]/55">
                           {item.count} respuesta(s)
                         </p>
                       </div>
 
-                      <span className="rounded-full bg-[#F2B6AD] px-3 py-1 text-sm font-black text-[#0B0706]">
+                      <span className="rounded-full bg-[#D98478] px-3 py-1 text-sm font-black text-[#0B0706]">
                         {item.average}/10
                       </span>
                     </div>
@@ -383,22 +383,22 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30 lg:col-span-2">
+          <div className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30 lg:col-span-2">
             <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="text-sm uppercase tracking-[0.25em] text-[#D8A85B]">
+                <p className="text-sm uppercase tracking-[0.25em] text-[#B88B61]">
                   Respuestas
                 </p>
                 <h2 className="mt-2 text-2xl font-black">Opiniones recibidas</h2>
               </div>
 
-              <div className="flex items-center gap-2 rounded-2xl border border-[#E8A39A]/15 bg-[#0B0706]/70 px-4 py-3">
-                <Search size={18} className="text-[#F2B6AD]" />
+              <div className="flex items-center gap-2 rounded-2xl border border-[#D98478]/15 bg-[#0B0706]/70 px-4 py-3">
+                <Search size={18} className="text-[#D98478]" />
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Buscar..."
-                  className="bg-transparent text-sm outline-none placeholder:text-[#FFF3EE]/35"
+                  className="bg-transparent text-sm outline-none placeholder:text-[#F1E2DC]/35"
                 />
               </div>
             </div>
@@ -410,14 +410,14 @@ export default function AdminDashboardPage() {
                 filtered.map((item) => (
                   <article
                     key={item.id}
-                    className="rounded-2xl border border-[#E8A39A]/10 bg-[#0B0706]/70 p-5"
+                    className="rounded-2xl border border-[#D98478]/10 bg-[#0B0706]/70 p-5"
                   >
                     <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                       <div>
-                        <p className="text-xl font-black text-[#F2B6AD]">
+                        <p className="text-xl font-black text-[#D98478]">
                           {item.flavor || "Sin sabor"}
                         </p>
-                        <p className="text-sm text-[#FFF3EE]/55">
+                        <p className="text-sm text-[#F1E2DC]/55">
                           {item.name || "Cliente anónimo"}
                         </p>
                       </div>
@@ -458,7 +458,7 @@ function QuickLink({
   return (
     <Link
       href={href}
-      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#E8A39A]/15 bg-[#0B0706]/70 px-5 py-4 font-black text-[#F2B6AD] transition hover:bg-[#2A1713]"
+      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#D98478]/15 bg-[#0B0706]/70 px-5 py-4 font-black text-[#D98478] transition hover:bg-[#2A1713]"
     >
       {icon}
       {label}
@@ -476,19 +476,19 @@ function StatCard({
   value: string;
 }) {
   return (
-    <div className="rounded-[2rem] border border-[#E8A39A]/15 bg-[#1A0D0B]/90 p-6 shadow-2xl shadow-black/30">
-      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F2B6AD] text-[#0B0706]">
+    <div className="rounded-[2rem] border border-[#D98478]/15 bg-[#171313]/90 p-6 shadow-2xl shadow-black/30">
+      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#D98478] text-[#0B0706]">
         {icon}
       </div>
-      <p className="text-sm text-[#FFF3EE]/55">{label}</p>
-      <p className="mt-2 text-3xl font-black text-[#F2B6AD]">{value}</p>
+      <p className="text-sm text-[#F1E2DC]/55">{label}</p>
+      <p className="mt-2 text-3xl font-black text-[#D98478]">{value}</p>
     </div>
   );
 }
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-full border border-[#E8A39A]/15 bg-[#2A1713] px-3 py-1 text-xs font-bold text-[#FFF3EE]/75">
+    <span className="rounded-full border border-[#D98478]/15 bg-[#2A1713] px-3 py-1 text-xs font-bold text-[#F1E2DC]/75">
       {children}
     </span>
   );
@@ -496,11 +496,11 @@ function Badge({ children }: { children: React.ReactNode }) {
 
 function Comment({ title, text }: { title: string; text?: string }) {
   return (
-    <div className="rounded-2xl border border-[#E8A39A]/10 bg-[#1A0D0B]/80 p-4">
-      <p className="text-xs font-black uppercase tracking-[0.2em] text-[#D8A85B]">
+    <div className="rounded-2xl border border-[#D98478]/10 bg-[#171313]/80 p-4">
+      <p className="text-xs font-black uppercase tracking-[0.2em] text-[#B88B61]">
         {title}
       </p>
-      <p className="mt-2 text-sm leading-6 text-[#FFF3EE]/70">
+      <p className="mt-2 text-sm leading-6 text-[#F1E2DC]/70">
         {text || "Sin respuesta"}
       </p>
     </div>
@@ -509,9 +509,9 @@ function Comment({ title, text }: { title: string; text?: string }) {
 
 function Empty({ text }: { text: string }) {
   return (
-    <div className="rounded-2xl border border-dashed border-[#E8A39A]/20 bg-[#0B0706]/50 p-8 text-center">
-      <Cookie className="mx-auto mb-3 text-[#F2B6AD]" />
-      <p className="text-[#FFF3EE]/55">{text}</p>
+    <div className="rounded-2xl border border-dashed border-[#D98478]/20 bg-[#0B0706]/50 p-8 text-center">
+      <Cookie className="mx-auto mb-3 text-[#D98478]" />
+      <p className="text-[#F1E2DC]/55">{text}</p>
     </div>
   );
 }
