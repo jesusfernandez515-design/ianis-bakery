@@ -44,7 +44,7 @@ button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
 .home-pickup { display: flex; align-items: center; gap: 9px; font-size: .82rem; color: #dfc1a2; }
 .home-hero-visual { min-width: 0; position: relative; padding: 12px 0; }
 .home-hero-photo { position: relative; aspect-ratio: 1.7; overflow: hidden; border-radius: 44% 44% 20px 20px; background: var(--brand-surface); }
-.home-hero-photo img { object-position: 50% 68%; }
+.home-hero-photo img { object-position: 50% 79%; transform: scale(1.35); }
 .home-photo-caption { display: flex; justify-content: center; align-items: center; gap: 28px; margin-top: 20px; color: var(--brand-copper); font-size: .8rem; letter-spacing: .04em; }
 .home-photo-caption span { text-align: center; line-height: 1.5; }
 .home-photo-caption strong { color: var(--brand-salmon); font-family: Georgia, serif; font-size: 1.3rem; font-weight: 400; font-style: italic; }
@@ -57,8 +57,8 @@ button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
 .home-products { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 34px; }
 .home-product { overflow: hidden; border: 1px solid #b88b6170; background: #f8eee9; border-radius: 20px; display: flex; flex-direction: column; padding: 9px; }
 .home-product-image { position: relative; aspect-ratio: 1.45; border-radius: 12px; overflow: hidden; background: #e5cfc4; }
-.home-product-image img { object-position: 50% 68%; transition: transform .35s; }
-@media (hover: hover) and (prefers-reduced-motion: no-preference) { .home-product:hover img { transform: scale(1.035); } }
+.home-product-image img { object-position: 50% 85%; transform: scale(1.4); transition: transform .35s; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) { .home-product:hover img { transform: scale(1.44); } }
 .home-product-tag { position: absolute; top: 10px; left: 10px; background: #0c0c0c; color: #f1e2dc; border: 1px solid #b88b6160; padding: 5px 10px; border-radius: 999px; font-size: .67rem; font-weight: 700; }
 .home-product-content { padding: 17px 12px 12px; display: flex; flex: 1; flex-direction: column; }
 .home-product h3 { font-size: 1.35rem; line-height: 1.2; font-weight: 500; }
