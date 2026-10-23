@@ -1,10 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import Stripe from 'stripe';
+import { spawnSync } from 'node:child_process';
 import { quoteCheckout } from '../lib/checkout-quote.ts';
 import { confirmsPayment } from '../lib/payment-confirmation.ts';
 import { fallbackProducts } from '../lib/catalog.ts';
 import { paymentsConfigured } from '../lib/server/stripe.ts';
+
+test('Firebase server SDK loads when the runtime disables require(ESM)', () => {
+  const result=spawnSync(process.execPath,['--no-experimental-require-module','-e','require("firebase-admin/auth");require("firebase-admin/firestore")'],{cwd:new URL('..',import.meta.url),encoding:'utf8'});
+  assert.equal(result.status,0,result.stderr);
+});
 
 test('production, live keys and incomplete configuration cannot enable payments', () => {
   const names=['VERCEL_ENV','PAYMENTS_MODE','STRIPE_SECRET_KEY','STRIPE_ACCOUNT_ID','STRIPE_WEBHOOK_SECRET','FIREBASE_ADMIN_PROJECT_ID','FIREBASE_ADMIN_CLIENT_EMAIL','FIREBASE_ADMIN_PRIVATE_KEY'];

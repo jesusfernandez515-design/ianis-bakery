@@ -1,8 +1,6 @@
 import { createHash } from "node:crypto";
-import { FieldValue } from "firebase-admin/firestore";
 import { fallbackProducts, type CatalogProduct } from "@/lib/catalog";
 import { CheckoutError, quoteCheckout } from "@/lib/checkout-quote";
-import { adminServices } from "@/lib/server/firebase-admin";
 import { paymentsConfigured, verifiedStripeClient } from "@/lib/server/stripe";
 
 export const runtime = "nodejs";
@@ -18,6 +16,9 @@ export async function POST(request: Request) {
     if (raw.length > 20000) throw new CheckoutError("Pedido demasiado grande.", 413);
     const key = request.headers.get("idempotency-key");
     if (!key || !/^[a-f\d-]{36}$/.test(key)) throw new CheckoutError("Reintenta el pago desde el carrito.");
+    const [{ adminServices }, { FieldValue }] = await Promise.all([
+      import("@/lib/server/firebase-admin"), import("firebase-admin/firestore"),
+    ]);
     const { db, auth } = adminServices();
     const token = request.headers.get("authorization")?.match(/^Bearer (.+)$/)?.[1];
     if (!token) throw new CheckoutError("Inicia sesión para pagar online.", 401);

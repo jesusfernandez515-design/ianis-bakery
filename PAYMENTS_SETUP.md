@@ -2,6 +2,9 @@
 
 This release is **sandbox only**. No merchant account, credentials, real charges,
 or tax registration is created by installing the code. RoadLink is not used.
+Firebase Admin is pinned to 13.10.0 to avoid the jwks-rsa 4 / jose ESM loading
+failure observed in the Vercel Node runtime with Admin 14.5.0. Its modules load
+only for enabled payment operations, not the public availability check.
 
 ## Implemented
 

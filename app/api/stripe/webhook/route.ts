@@ -1,6 +1,4 @@
 import type Stripe from "stripe";
-import { FieldValue } from "firebase-admin/firestore";
-import { adminServices } from "@/lib/server/firebase-admin";
 import { paymentsConfigured, stripeClient } from "@/lib/server/stripe";
 import { confirmsPayment, type PaymentAttempt } from "@/lib/payment-confirmation";
 
@@ -20,6 +18,9 @@ export async function POST(request: Request) {
   const attemptId = session.metadata?.attemptId;
   if (!attemptId || !/^[a-f\d]{64}$/.test(attemptId)) return new Response("Unrelated session");
   try {
+    const [{ adminServices }, { FieldValue }] = await Promise.all([
+      import("@/lib/server/firebase-admin"), import("firebase-admin/firestore"),
+    ]);
     const { db } = adminServices();
     const attemptRef = db.collection("checkoutAttempts").doc(attemptId);
     await db.runTransaction(async transaction => {
