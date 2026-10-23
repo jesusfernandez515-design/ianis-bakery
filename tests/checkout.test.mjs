@@ -35,9 +35,14 @@ test('server ignores customer prices, names, totals and cookie counts', () => {
   assert.equal(quote.itemCount,1);
   assert.throws(()=>quoteCheckout({...input(),expectedTotalCents:1},fallbackProducts));
 });
-test('coupon rounds in cents and delivery is calculated by server', () => {
-  const quote=quoteCheckout({...input(),coupon:' ianis10 ',delivery:'delivery',address:'Dirección ficticia',expectedTotalCents:749},fallbackProducts);
-  assert.equal(quote.discount,0.5); assert.equal(quote.total,7.49);
+test('pickup coupon rounds in cents and never adds a delivery fee', () => {
+  const quote=quoteCheckout({...input(),coupon:' ianis10 ',expectedTotalCents:449},fallbackProducts);
+  assert.equal(quote.discount,0.5); assert.equal(quote.total,4.49); assert.equal(quote.deliveryFee,0);
+});
+test('delivery attempts from old or altered carts are rejected', () => {
+  for(const fee of [0,3]) assert.throws(()=>quoteCheckout({...input(),delivery:'delivery',deliveryFee:fee,address:'Dirección ficticia',expectedTotalCents:499+fee*100},fallbackProducts),/solo ofrecemos recogido/);
+  const quote=quoteCheckout({...input(),address:'Dirección innecesaria',deliveryFee:3},fallbackProducts);
+  assert.equal(quote.address,''); assert.equal(quote.deliveryFee,0);
 });
 test('boxes require exact flavors, count and authoritative premium charges', () => {
   const box={size:4,selections:[{id:'nutella',qty:3},{id:'coconut',qty:1}]};

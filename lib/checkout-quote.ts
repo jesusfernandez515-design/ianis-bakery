@@ -26,8 +26,8 @@ export function quoteCheckout(input: unknown, catalog: CatalogProduct[]) {
   const customerPhone = text(body.customerPhone, 30, true);
   if (!/^\+?[\d\s().-]+$/.test(customerPhone) || customerPhone.replace(/\D/g, "").length < 10) throw new CheckoutError("Revisa el teléfono.");
   const delivery = body.delivery;
-  if (delivery !== "pickup" && delivery !== "delivery") throw new CheckoutError("Selecciona recogido o delivery.");
-  const address = delivery === "delivery" ? text(body.address, 500, true) : "";
+  if (delivery !== "pickup") throw new CheckoutError("Por el momento solo ofrecemos recogido en Holiday, Florida.");
+  const address = "";
   const note = text(body.note, 1000);
   const coupon = text(body.coupon, 30).toUpperCase();
   if (coupon && coupon !== "IANIS10") throw new CheckoutError("Cupón no válido.");
@@ -60,7 +60,7 @@ export function quoteCheckout(input: unknown, catalog: CatalogProduct[]) {
   });
   const subtotalCents = items.reduce((sum, item) => sum + Math.round(item.lineTotal * 100), 0);
   const discountCents = coupon === "IANIS10" ? Math.round(subtotalCents / 10) : 0;
-  const deliveryCents = delivery === "delivery" ? 300 : 0;
+  const deliveryCents = 0;
   const totalCents = subtotalCents - discountCents + deliveryCents;
   if (!Number.isSafeInteger(totalCents) || totalCents < 50 || totalCents > 100000) throw new CheckoutError("El pedido supera el límite de pago online ($1,000).");
   if (!Number.isInteger(body.expectedTotalCents) || body.expectedTotalCents !== totalCents) throw new CheckoutError("El precio cambió. Revisa el catálogo y el total antes de pagar.", 409);

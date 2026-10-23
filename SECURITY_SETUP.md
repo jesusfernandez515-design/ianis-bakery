@@ -21,6 +21,10 @@ Payments remain unconfigured and disabled. The sandbox-only Stripe integration
 is prepared; see PAYMENTS_SETUP.md for secure configuration and launch gaps.
 No live charge capability has been enabled. New checkoutAttempts/checkoutLimits
 collections are server-only under the existing catch-all deny rule.
+The owner confirmed pickup only in Holiday, Florida. New client orders must use
+delivery=pickup, deliveryFee=0 and an empty address. The published rule update
+passed 27 emulator permission checks, including four blocked delivery/fee/address
+variants. Existing order history remains readable with its original data.
 Local build verification uses isolated Firebase fixture values, never production
 credentials. Customer order history only links new orders made while signed in;
 legacy guest orders cannot safely be assigned from a phone/name match.

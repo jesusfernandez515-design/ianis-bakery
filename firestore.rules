@@ -42,8 +42,9 @@ service cloud.firestore {
         && request.resource.data.discount is number && request.resource.data.discount >= 0
         && request.resource.data.discount <= request.resource.data.subtotal
         && request.resource.data.total is number && request.resource.data.total >= 0
-        && request.resource.data.delivery in ['pickup', 'delivery']
-        && request.resource.data.deliveryFee == (request.resource.data.delivery == 'delivery' ? 3 : 0)
+        && request.resource.data.delivery == 'pickup'
+        && request.resource.data.deliveryFee == 0
+        && request.resource.data.address == ''
         && request.resource.data.status == 'Pendiente'
         && request.resource.data.paymentStatus == 'Pendiente'
         && request.resource.data.source == 'website'

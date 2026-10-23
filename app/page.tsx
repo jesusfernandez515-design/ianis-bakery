@@ -89,6 +89,7 @@ export default function HomePage() {
               cremosos, sabores intensos y una presentación hecha para
               enamorar.
             </p>
+            <p className="mt-4 font-bold text-[#F5ACB1]">Solo recogido en Holiday, Florida.</p>
 
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
               <Link

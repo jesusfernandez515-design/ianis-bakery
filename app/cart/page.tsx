@@ -35,7 +35,6 @@ type CartItem = Product & {
   box?: CheckoutItem["box"];
 };
 
-type DeliveryType = "pickup" | "delivery";
 
 const BUSINESS_WHATSAPP_NUMBER = "17274039118";
 const CART_STORAGE_KEY = "ianis-bakery-cart";
@@ -50,13 +49,12 @@ export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [cartLoaded, setCartLoaded] = useState(false);
 
-  const [delivery, setDelivery] =
-    useState<DeliveryType>("pickup");
+  const delivery = "pickup";
 
   const [coupon, setCoupon] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
-  const [address, setAddress] = useState("");
+  const address = "";
   const [note, setNote] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -142,8 +140,7 @@ export default function CartPage() {
   const discount = normalizedCoupon === "IANIS10"
     ? Math.round(Math.round(subtotal * 100) / 10) / 100 : 0;
 
-  const deliveryFee =
-    delivery === "delivery" && items.length > 0 ? 3 : 0;
+  const deliveryFee = 0;
 
   const total = Math.max(
     subtotal - discount + deliveryFee,
@@ -238,7 +235,6 @@ export default function CartPage() {
 
     const cleanCustomerName = customerName.trim();
     const cleanCustomerPhone = customerPhone.trim();
-    const cleanAddress = address.trim();
     const cleanNote = note.trim();
 
     if (!cleanCustomerName) {
@@ -251,16 +247,6 @@ export default function CartPage() {
     if (cleanCustomerPhone.replace(/\D/g, "").length < 10) {
       setErrorMessage(
         "Escribe un teléfono válido con código de área."
-      );
-      return;
-    }
-
-    if (
-      delivery === "delivery" &&
-      !cleanAddress
-    ) {
-      setErrorMessage(
-        "Escribe la dirección completa para el delivery."
       );
       return;
     }
@@ -305,10 +291,7 @@ export default function CartPage() {
           customerEmail: user?.email || "",
           customerName: cleanCustomerName,
           customerPhone: cleanCustomerPhone,
-          address:
-            delivery === "delivery"
-              ? cleanAddress
-              : "",
+          address: "",
           note: cleanNote,
           delivery,
           coupon: normalizedCoupon,
@@ -400,20 +383,11 @@ export default function CartPage() {
         "PRODUCTOS",
         itemLines || "Sin productos",
         "",
-        `Método: ${
-          delivery === "pickup"
-            ? "Recogido en tienda"
-            : "Delivery"
-        }`,
-        `Dirección: ${
-          delivery === "delivery"
-            ? address.trim() || "Sin dirección"
-            : "No aplica"
-        }`,
+        "Método: Recogido en Holiday, Florida",
+        "Punto y horario de recogido: coordinar con la panadería.",
         "",
         `Subtotal: $${subtotal.toFixed(2)}`,
         `Descuento: -$${discount.toFixed(2)}`,
-        `Delivery: $${deliveryFee.toFixed(2)}`,
         `TOTAL: $${total.toFixed(2)}`,
         "",
         `Nota: ${
@@ -422,11 +396,8 @@ export default function CartPage() {
       ].join("\n")
     );
   }, [
-    address,
     customerName,
     customerPhone,
-    delivery,
-    deliveryFee,
     discount,
     items,
     note,
@@ -787,50 +758,10 @@ export default function CartPage() {
                 className="input"
               />
 
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDelivery("pickup");
-                    setAddress("");
-                    clearOrderConfirmation();
-                  }}
-                  className={`rounded-2xl px-4 py-4 font-black ${
-                    delivery === "pickup"
-                      ? "bg-[#F5ACB1] text-[#120704]"
-                      : "border border-[#F5ACB1]/20 bg-[#120704]/60"
-                  }`}
-                >
-                  Recogido
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDelivery("delivery");
-                    clearOrderConfirmation();
-                  }}
-                  className={`rounded-2xl px-4 py-4 font-black ${
-                    delivery === "delivery"
-                      ? "bg-[#F5ACB1] text-[#120704]"
-                      : "border border-[#F5ACB1]/20 bg-[#120704]/60"
-                  }`}
-                >
-                  Delivery
-                </button>
+              <div className="rounded-2xl border border-[#F5ACB1]/25 bg-[#120704]/70 p-4">
+                <p className="font-black text-[#F5ACB1]">Solo recogido · Holiday, Florida</p>
+                <p className="mt-2 text-sm leading-6 text-[#FFF6EF]/70">Consulta el punto y horario de recogido con la panadería. Por el momento no ofrecemos delivery.</p>
               </div>
-
-              {delivery === "delivery" && (
-                <textarea
-                  value={address}
-                  onChange={(event) => {
-                    setAddress(event.target.value);
-                    clearOrderConfirmation();
-                  }}
-                  placeholder="Dirección completa"
-                  className="input min-h-24 resize-none"
-                />
-              )}
 
               <textarea
                 value={note}
@@ -861,11 +792,6 @@ export default function CartPage() {
                 <Row
                   label="Descuento"
                   value={`-$${discount.toFixed(2)}`}
-                />
-
-                <Row
-                  label="Delivery"
-                  value={`$${deliveryFee.toFixed(2)}`}
                 />
 
                 <div className="border-t border-[#F5ACB1]/15 pt-3">

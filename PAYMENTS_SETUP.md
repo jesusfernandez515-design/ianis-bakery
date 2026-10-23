@@ -13,7 +13,9 @@ only for enabled payment operations, not the public availability check.
 - Same-origin POST, bounded request/cart sizes, five new attempts per user per
   ten minutes, persisted idempotency across retries and back navigation.
 - Server loads the Firestore catalog (seed fallback only when it is empty),
-  calculates quantities, box flavors/premium extras, IANIS10 and delivery in cents.
+  calculates quantities, box flavors/premium extras and IANIS10 in cents.
+  The current service is pickup only in Holiday, Florida, with no delivery fee;
+  altered/legacy delivery requests are rejected by both Checkout and Firestore.
   Mismatched displayed totals are rejected rather than charged silently.
 - Private checkoutAttempts documents bind server-quoted amount, order and session.
   Existing Firestore catch-all denies all client access to these and checkoutLimits.
